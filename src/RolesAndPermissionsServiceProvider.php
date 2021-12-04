@@ -18,8 +18,6 @@ class RolesAndPermissionsServiceProvider extends PackageServiceProvider
         $package
             ->name('roles-and-permissions')
             ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_roles-and-permissions_table')
             ->hasCommand(RolesAndPermissionsCommand::class);
     }
 }
