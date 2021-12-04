@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 trait HasRolesAndPermissions
 {
-
     protected $pivotModel;
 
     public function of(Model $model, string $relationshipName = null)
@@ -28,7 +27,7 @@ trait HasRolesAndPermissions
 
             if (is_array($permission)) {
                 // Ensure every value in the array is a valid permission
-                return !array_diff($permission, $validPermissions);
+                return ! array_diff($permission, $validPermissions);
             }
 
             return in_array($permission, $validPermissions);
@@ -42,11 +41,10 @@ trait HasRolesAndPermissions
     {
         $roleKey = config('roles-and-permissions.role_key');
 
-        if($this->where($roleKey, $role)->exists()) {
+        if ($this->where($roleKey, $role)->exists()) {
             return true;
         }
 
         return false;
     }
-
 }
