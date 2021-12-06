@@ -8,7 +8,7 @@ trait Authorizable
 {
     public function authorize(...$permissions): bool
     {
-        if($this->has(...$permissions)) {
+        if ($this->has(...$permissions)) {
             return true;
         }
 

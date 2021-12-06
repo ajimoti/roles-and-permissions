@@ -32,5 +32,4 @@ class GenerateRoleFile extends GeneratorCommand
 
         return self::SUCCESS;
     }
-
 }
