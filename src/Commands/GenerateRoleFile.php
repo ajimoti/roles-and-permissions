@@ -6,7 +6,7 @@ use Illuminate\Console\GeneratorCommand;
 
 class GenerateRoleFile extends GeneratorCommand
 {
-    protected $name = 'roles:generate';
+    protected $name = 'make:role';
 
     public $description = 'Generate an enum file for roles';
 

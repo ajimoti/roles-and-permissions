@@ -6,7 +6,12 @@ use BenSampo\Enum\Enum;
 
 class BaseRole extends Enum
 {
+    // Indicates if the roles should be considered in the hierarchy of how they are in the permissions() method.
+    // This means the roles will have permissions assigned to them, and the permissions of the roles below them.
     protected static $useHierarchy = false;
+
+    // Indicates if the user or pivot role should be deleted when this role is removed from the user.
+    protected static $deletePivotOnRemove = false;
 
     final public static function getPermissions($role): array
     {
@@ -43,7 +48,12 @@ class BaseRole extends Enum
         return static::getValues();
     }
 
-    final private static function usesHierarchy()
+    final public static function deletePivotOnRemove(): bool
+    {
+        return static::$deletePivotOnRemove;
+    }
+
+    final private static function usesHierarchy(): bool
     {
         return static::$useHierarchy;
     }

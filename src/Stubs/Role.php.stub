@@ -13,6 +13,8 @@ final class DummyClass extends BaseRole
 
     // protected static $useHierarchy = false;
 
+    // protected static $deletePivotOnRemove = false;
+
     final public static function permissions(): array
     {
         return [

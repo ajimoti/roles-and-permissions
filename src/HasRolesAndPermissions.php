@@ -57,7 +57,7 @@ trait HasRolesAndPermissions
     {
         $roleEnum = config('roles-and-permissions.roles_enum.users');
         if (! in_array($role, $roleEnum::getValues())) {
-            throw new \InvalidArgumentException("The role {$role} does not exist.");
+            throw new \InvalidArgumentException("The role `{$role}` does not exist.");
         }
 
         static::unguard();

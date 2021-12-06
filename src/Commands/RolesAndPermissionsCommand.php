@@ -30,8 +30,8 @@ class RolesAndPermissionsCommand extends Command
             $this->info('Published configuration');
         }
 
-        $this->call('roles:generate', ['name' => 'Role']);
-        $this->call('roles:generate-permission', ['name' => 'Permission']);
+        $this->call('make:role', ['name' => 'Role']);
+        $this->call('make:permission', ['name' => 'Permission']);
 
         $this->comment('Package installed successfully.');
 

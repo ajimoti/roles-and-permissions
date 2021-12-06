@@ -6,7 +6,7 @@ use Illuminate\Console\GeneratorCommand;
 
 class GeneratePermissionFile extends GeneratorCommand
 {
-    protected $name = 'roles:generate-permission';
+    protected $name = 'make:permission';
 
     public $description = 'Generate an enum file for permissions';
 
