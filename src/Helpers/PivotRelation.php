@@ -3,7 +3,6 @@
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
 use Closure;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
 use Tarzancodes\RolesAndPermissions\Contracts\HasRoleContract;
