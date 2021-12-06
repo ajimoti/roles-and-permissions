@@ -32,6 +32,12 @@ class BaseRole extends Enum
         return $rolesAndPermissions[$role];
     }
 
+    final public static function allPermissionsAreValid(string|int $role, array $permissions): bool
+    {
+        // Verify every value in the array is a valid permission
+        return !array_diff($permissions, static::getPermissions($role));
+    }
+
     final public static function all(): array
     {
         return static::getValues();

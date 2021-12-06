@@ -40,8 +40,7 @@ class PivotRelation implements HasRoleContract
         $permissions = collect($permissions)->flatten()->all();
 
         if ($role = $this->pivot->getRole()) {
-            // Verify every value in the array is a valid permission
-            return !array_diff($permissions, $roleEnum::getPermissions($role));
+            return $roleEnum::allPermissionsAreValid($role, $permissions);
         }
 
         return false;

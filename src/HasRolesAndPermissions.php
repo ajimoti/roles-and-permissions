@@ -40,8 +40,7 @@ trait HasRolesAndPermissions
         $permissions = collect($permissions)->flatten()->all();
 
         if ($role = $this->{$roleColumnName}) {
-            // Verify every value in the array is a valid permission
-            return !array_diff($permissions, $roleEnum::getPermissions($role));
+            return $roleEnum::allPermissionsAreValid($role, $permissions);
         }
 
         return false;
