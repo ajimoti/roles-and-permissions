@@ -46,16 +46,6 @@ class PivotRelation implements HasRoleContract
         return false;
     }
 
-    // public function authorize(...$permissions): bool
-    // {
-    //     if($this->has(...$permissions)) {
-    //         return true;
-    //     }
-
-    //     // abort(403, 'You are not authorized to perform this action.');
-    //     throw new PermissionDeniedException('You are not authorized to perform this action.');
-    // }
-
     public function permissions(): array
     {
         $roleEnum = $this->pivot->getRoleEnum();

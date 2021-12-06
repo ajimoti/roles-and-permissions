@@ -5,7 +5,6 @@ namespace Tarzancodes\RolesAndPermissions;
 use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
 use Tarzancodes\RolesAndPermissions\Helpers\PivotRelation;
-use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
 
 trait HasRolesAndPermissions
 {
