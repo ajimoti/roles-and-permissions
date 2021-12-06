@@ -31,23 +31,23 @@ class PivotRelation implements HasRoleContract
     // public function can($permission)
     public function can($permission, $arguments = [])
     {
-        $roleEnum = $this->pivot->getRoleEnum();
+        $roleEnumClass = $this->pivot->roleEnumClass();
 
-        if ($role = $this->pivot->getRole()) {
-            return in_array($permission, $roleEnum::getPermissions($role));
+        if ($role = $this->pivot->role()) {
+            return in_array($permission, $roleEnumClass::getPermissions($role));
         }
-        // dd($roleEnum, $role);
+
         return false;
     }
 
     public function has(...$permissions): bool
     {
-        $roleEnum = $this->pivot->getRoleEnum();
+        $roleEnumClass = $this->pivot->roleEnumClass();
 
         $permissions = collect($permissions)->flatten()->all();
 
-        if ($role = $this->pivot->getRole()) {
-            return $roleEnum::allPermissionsAreValid($role, $permissions);
+        if ($role = $this->pivot->role()) {
+            return $roleEnumClass::allPermissionsAreValid($role, $permissions);
         }
 
         return false;
@@ -55,30 +55,30 @@ class PivotRelation implements HasRoleContract
 
     public function permissions(): array
     {
-        $roleEnum = $this->pivot->getRoleEnum();
+        $roleEnumClass = $this->pivot->roleEnumClass();
 
-        if (empty($this->pivot->getRole())) {
+        if (empty($this->pivot->role())) {
             return [];
         }
 
-        return $roleEnum::getPermissions($this->pivot->getRole());
+        return $roleEnumClass::getPermissions($this->pivot->role());
     }
 
     public function assign(string $role): bool
     {
-        $roleEnum = $this->pivot->getRoleEnum();
+        $roleEnumClass = $this->pivot->roleEnumClass();
 
-        if (! in_array($role, $roleEnum::getValues())) {
+        if (! in_array($role, $roleEnumClass::getValues())) {
             throw new \InvalidArgumentException("The role `{$role}` does not exist.");
         }
 
-        if ($this->pivot->getRelationshipInstanceWithPivotQuery()->exists()) {
-            return $this->pivot->getRelationshipInstanceWithPivotQuery()->updateExistingPivot($this->relatedModel->id, [
+        if ($this->pivot->relationshipInstanceWithPivotQuery()->exists()) {
+            return $this->pivot->relationshipInstanceWithPivotQuery()->updateExistingPivot($this->relatedModel->id, [
                 $this->roleColumnName => $role,
             ]);
         }
 
-        $this->pivot->getRelationshipInstanceWithPivotQuery()->attach($this->relatedModel->id, [
+        $this->pivot->relationshipInstanceWithPivotQuery()->attach($this->relatedModel->id, [
             $this->roleColumnName => $role,
         ]);
 
@@ -87,13 +87,13 @@ class PivotRelation implements HasRoleContract
 
     public function removeRole(): bool
     {
-        $roleEnum = $this->pivot->getRoleEnum();
+        $roleEnumClass = $this->pivot->roleEnumClass();
 
-        if ($roleEnum::deletePivotOnRemove()) {
-            return $this->pivot->getRelationshipInstanceWithPivotQuery()->detach($this->relatedModel->id);
+        if ($roleEnumClass::deletePivotOnRemove()) {
+            return $this->pivot->relationshipInstanceWithPivotQuery()->detach($this->relatedModel->id);
         }
 
-        return $this->pivot->getRelationshipInstanceWithPivotQuery()->updateExistingPivot($this->relatedModel->id, [
+        return $this->pivot->relationshipInstanceWithPivotQuery()->updateExistingPivot($this->relatedModel->id, [
             $this->roleColumnName => null,
         ]);
     }
@@ -110,6 +110,6 @@ class PivotRelation implements HasRoleContract
     // }
     public function where(Closure $closure)
     {
-        $closure($this->pivot->getRelationshipInstance());
+        $closure($this->pivot->relationshipInstance());
     }
 }

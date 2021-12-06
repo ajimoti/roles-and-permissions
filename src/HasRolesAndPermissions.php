@@ -22,10 +22,10 @@ trait HasRolesAndPermissions
     public function can($permission, $arguments = [])
     {
         $roleColumnName = config('roles-and-permissions.role_column_name');
-        $roleEnum = config('roles-and-permissions.roles_enum.users');
+        $roleEnumClass = config('roles-and-permissions.roles_enum.users');
 
         if ($role = $this->{$roleColumnName}) {
-            return in_array($permission, $roleEnum::getPermissions($role));
+            return in_array($permission, $roleEnumClass::getPermissions($role));
         }
 
         return false;
@@ -34,12 +34,12 @@ trait HasRolesAndPermissions
     public function has(...$permissions): bool
     {
         $roleColumnName = config('roles-and-permissions.role_column_name');
-        $roleEnum = config('roles-and-permissions.roles_enum.users');
+        $roleEnumClass = config('roles-and-permissions.roles_enum.users');
 
         $permissions = collect($permissions)->flatten()->all();
 
         if ($role = $this->{$roleColumnName}) {
-            return $roleEnum::allPermissionsAreValid($role, $permissions);
+            return $roleEnumClass::allPermissionsAreValid($role, $permissions);
         }
 
         return false;
@@ -48,15 +48,15 @@ trait HasRolesAndPermissions
     public function permissions(): array
     {
         $roleColumnName = config('roles-and-permissions.role_column_name');
-        $roleEnum = config('roles-and-permissions.roles_enum.users');
+        $roleEnumClass = config('roles-and-permissions.roles_enum.users');
 
-        return $roleEnum::getPermissions($this->{$roleColumnName});
+        return $roleEnumClass::getPermissions($this->{$roleColumnName});
     }
 
     public function assign(string|int $role): bool
     {
-        $roleEnum = config('roles-and-permissions.roles_enum.users');
-        if (! in_array($role, $roleEnum::getValues())) {
+        $roleEnumClass = config('roles-and-permissions.roles_enum.users');
+        if (! in_array($role, $roleEnumClass::getValues())) {
             throw new \InvalidArgumentException("The role `{$role}` does not exist.");
         }
 

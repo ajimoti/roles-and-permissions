@@ -22,12 +22,12 @@ class Pivot
 
     public function getRelatedWithPivot(): ?Model
     {
-        return $this->getRelationshipInstanceWithPivotQuery()->first();
+        return $this->relationshipInstanceWithPivotQuery()->first();
     }
 
-    public function getRelationshipInstanceWithPivotQuery(): BelongsToMany
+    public function relationshipInstanceWithPivotQuery(): BelongsToMany
     {
-        $relationship = $this->getRelationshipInstance();
+        $relationship = $this->relationshipInstance();
 
         // $this->conditions[] = [$relationship->getRelatedPivotKeyName(), $this->relatedModel->getKeyName()];
 
@@ -38,7 +38,7 @@ class Pivot
         // return $relationship->where($relationship->getRelatedPivotKeyName(), $this->relatedModel->getKeyName());
     }
 
-    public function getRelationshipInstance()
+    public function relationshipInstance()
     {
         $roleColumnName = $this->roleColumnName;
         $relationName = $this->getRelationName();
@@ -63,14 +63,14 @@ class Pivot
         }
     }
 
-    public function getRole()
+    public function role()
     {
         $roleColumnName = $this->roleColumnName;
 
         return $this->getRelatedWithPivot()?->pivot->{$roleColumnName};
     }
 
-    public function getRoleEnum(): string
+    public function roleEnumClass(): string
     {
         $pivotTableName = $this->getPivotTableName();
 
@@ -94,6 +94,6 @@ class Pivot
 
     private function getPivotTableName()
     {
-        return $this->getRelationshipInstance()->getTable();
+        return $this->relationshipInstance()->getTable();
     }
 }
