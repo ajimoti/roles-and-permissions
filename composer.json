@@ -31,8 +31,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Tarzancodes\\RolesAndPermissions\\": "src",
-            "Tarzancodes\\RolesAndPermissions\\Database\\Factories\\": "database/factories"
+            "Tarzancodes\\RolesAndPermissions\\": "src"
         }
     },
     "autoload-dev": {

@@ -3,50 +3,80 @@
 namespace Tarzancodes\RolesAndPermissions;
 
 use Illuminate\Database\Eloquent\Model;
+use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
+use Tarzancodes\RolesAndPermissions\Helpers\PivotRelation;
+use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
 
 trait HasRolesAndPermissions
 {
+    use Authorizable;
 
-    protected $pivotModel;
+    protected Model $pivotModel;
 
     public function of(Model $model, string $relationshipName = null)
     {
-        $this->pivotModel = $model;
-
-        return $this;
+        return new PivotRelation($this, $model, $relationshipName);
     }
 
     // can accept a permission, an array of permissions, or multiple parameters
-    public function can($permission)
+    // public function can($permission)
+    public function can($permission, $arguments = [])
     {
-        $roleKey = config('roles-and-permissions.role_key');
-        $roleClass = config('roles-and-permissions.roles_class');
-        $rolesAndPermissions = $roleClass::rolesAndPermissions();
+        $roleColumnName = config('roles-and-permissions.role_column_name');
+        $roleEnum = config('roles-and-permissions.roles_enum.users');
 
-        if (array_key_exists($roleKey, $rolesAndPermissions)) {
-            $validPermissions = $rolesAndPermissions[$roleKey];
-
-            if (is_array($permission)) {
-                // Ensure every value in the array is a valid permission
-                return !array_diff($permission, $validPermissions);
-            }
-
-            return in_array($permission, $validPermissions);
+        if ($role = $this->{$roleColumnName}) {
+            return in_array($permission, $roleEnum::getPermissions($role));
         }
 
         return false;
     }
 
-    // can accept a permission, an array of permissions, or multiple parameters
-    public function hasRole($role): bool
+    public function has(...$permissions): bool
     {
-        $roleKey = config('roles-and-permissions.role_key');
+        $roleColumnName = config('roles-and-permissions.role_column_name');
+        $roleEnum = config('roles-and-permissions.roles_enum.users');
 
-        if($this->where($roleKey, $role)->exists()) {
-            return true;
+        $permissions = collect($permissions)->flatten()->all();
+
+        if ($role = $this->{$roleColumnName}) {
+            // Verify every value in the array is a valid permission
+            return !array_diff($permissions, $roleEnum::getPermissions($role));
         }
 
         return false;
     }
 
+    public function permissions(): array
+    {
+        $roleColumnName = config('roles-and-permissions.role_column_name');
+        $roleEnum = config('roles-and-permissions.roles_enum.users');
+
+        return $roleEnum::getPermissions($this->{$roleColumnName});
+    }
+
+    public function assign(string|int $role): bool
+    {
+        $roleEnum = config('roles-and-permissions.roles_enum.users');
+        if (! in_array($role, $roleEnum::getValues())) {
+            throw new \InvalidArgumentException("The role {$role} does not exist.");
+        }
+
+        static::unguard();
+            $updated = $this->update([config('roles-and-permissions.role_column_name') => $role]);
+        static::reguard();
+
+        return $updated;
+    }
+
+    public function removeRole(): bool
+    {
+        $roleColumnName = config('roles-and-permissions.role_column_name');
+
+        static::unguard();
+            $updated = $this->update([$roleColumnName => null]);
+        static::reguard();
+
+        return $updated;
+    }
 }

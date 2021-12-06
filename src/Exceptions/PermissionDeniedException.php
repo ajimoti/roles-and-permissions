@@ -4,7 +4,7 @@ namespace Tarzancodes\RolesAndPermissions\Exceptions;
 
 use Exception;
 
-class UnauthorizedException extends Exception
+class PermissionDeniedException extends Exception
 {
 
 }

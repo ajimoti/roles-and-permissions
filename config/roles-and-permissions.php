@@ -2,11 +2,12 @@
 
 return [
 
-    'report_as_json' => true,
+    'role_column_name' => 'role',
 
-    'role_key' => 'role',
+    'roles_enum' => [
+        'users' => \App\Enums\Role::class,
 
-    'roles_class' => \App\Enums\Role::class,
+        // 'merchant_user' => \App\Enums\MerchantUserRole::class,
+    ],
 
-    'permissions_class' => \App\Enums\Permission::class,
 ];
