@@ -2,9 +2,9 @@
 
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Str;
 
 class Pivot
 {
@@ -13,7 +13,8 @@ class Pivot
         protected Model $relatedModel,
         protected ?string $relationName = null,
         protected array $conditions = [],
-    ){}
+    ) {
+    }
 
     public function getRelatedWithPivot(): Model
     {

@@ -5,7 +5,6 @@ namespace Tarzancodes\RolesAndPermissions;
 use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
 use Tarzancodes\RolesAndPermissions\Helpers\PivotRelation;
-use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
 
 trait HasRolesAndPermissions
 {
@@ -62,7 +61,7 @@ trait HasRolesAndPermissions
         }
 
         static::unguard();
-            $updated = $this->update([config('roles-and-permissions.role_column_name') => $role]);
+        $updated = $this->update([config('roles-and-permissions.role_column_name') => $role]);
         static::reguard();
 
         return $updated;
@@ -73,7 +72,7 @@ trait HasRolesAndPermissions
         $roleColumnName = config('roles-and-permissions.role_column_name');
 
         static::unguard();
-            $updated = $this->update([$roleColumnName => null]);
+        $updated = $this->update([$roleColumnName => null]);
         static::reguard();
 
         return $updated;

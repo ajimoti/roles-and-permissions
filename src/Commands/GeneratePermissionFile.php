@@ -32,5 +32,4 @@ class GeneratePermissionFile extends GeneratorCommand
 
         return self::SUCCESS;
     }
-
 }

@@ -55,13 +55,13 @@ class RolesAndPermissionsCommand extends Command
     {
         $params = [
             '--provider' => "Tarzancodes\RolesAndPermissions\RolesAndPermissionsServiceProvider",
-            '--tag' => "roles-and-permissions-config"
+            '--tag' => "roles-and-permissions-config",
         ];
 
         if ($forcePublish === true) {
             $params['--force'] = true;
         }
 
-       $this->call('vendor:publish', $params);
+        $this->call('vendor:publish', $params);
     }
 }

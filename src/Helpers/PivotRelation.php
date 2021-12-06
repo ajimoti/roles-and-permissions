@@ -72,14 +72,14 @@ class PivotRelation implements HasRoleContract
         }
 
         return $this->pivot->getRelationshipInstance()->updateExistingPivot($this->relatedModel->id, [
-            config('roles-and-permissions.role_column_name') => $role
+            config('roles-and-permissions.role_column_name') => $role,
         ]);
     }
 
     public function removeRole(): bool
     {
         return $this->pivot->getRelationshipInstance()->updateExistingPivot($this->relatedModel->id, [
-            config('roles-and-permissions.role_column_name') => null
+            config('roles-and-permissions.role_column_name') => null,
         ]);
     }
 
