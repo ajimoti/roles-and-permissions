@@ -6,7 +6,6 @@ use Illuminate\Console\GeneratorCommand;
 
 class GeneratePermissionFile extends GeneratorCommand
 {
-
     /**
      * The name and signature of the console command.
      *
