@@ -94,7 +94,7 @@ trait HasRolesAndPermissions
         }
 
         static::unguard();
-            $updated = $this->update([$this->roleColumnName() => $role]);
+        $updated = $this->update([$this->roleColumnName() => $role]);
         static::reguard();
 
         return $updated;
@@ -108,7 +108,7 @@ trait HasRolesAndPermissions
     public function removeRole(): bool
     {
         static::unguard();
-            $updated = $this->update([$this->roleColumnName() => null]);
+        $updated = $this->update([$this->roleColumnName() => null]);
         static::reguard();
 
         return $updated;

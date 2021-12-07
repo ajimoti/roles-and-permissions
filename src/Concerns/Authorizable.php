@@ -18,7 +18,7 @@ trait Authorizable
      * Check if the model has the permissions
      *
      * @param [type] ...$permissions
-     * @return boolean
+     * @return bool
      */
     abstract public function has(...$permissions): bool;
 
@@ -33,14 +33,14 @@ trait Authorizable
      * Assign the given role to the model.
      *
      * @param string $role
-     * @return boolean
+     * @return bool
      */
     abstract public function assign(string $role): bool;
 
     /**
      * Remove role from model
      *
-     * @return boolean
+     * @return bool
      */
     abstract public function removeRole(): bool;
 

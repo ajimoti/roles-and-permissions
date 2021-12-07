@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\File;
 
 class RolesAndPermissionsCommand extends Command
 {
-
     /**
      * The name and signature of the console command.
      *
