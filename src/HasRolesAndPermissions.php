@@ -4,77 +4,133 @@ namespace Tarzancodes\RolesAndPermissions;
 
 use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
-use Tarzancodes\RolesAndPermissions\Helpers\PivotRelation;
+use Tarzancodes\RolesAndPermissions\Helpers\PivotHasRoleAndPermissions;
 
 trait HasRolesAndPermissions
 {
     use Authorizable;
 
-    protected Model $pivotModel;
-
-    public function of(Model $model, string $relationshipName = null)
+    /**
+     * A model may have multiple roles.
+     *
+     * @return Tarzancodes\RolesAndPermissions\Helpers\PivotHasRoleAndPermissions
+     */
+    public function of(Model $model, string $relationshipName = null): PivotHasRoleAndPermissions
     {
-        return new PivotRelation($this, $model, $relationshipName);
+        return new PivotHasRoleAndPermissions($this, $model, $relationshipName);
     }
 
-    // can accept a permission, an array of permissions, or multiple parameters
-    // public function can($permission)
+    /**
+     * Checks if the model has the given permission.
+     *
+     * @param string $permission
+     * @param array $arguments
+     * @return bool
+     */
     public function can($permission, $arguments = [])
     {
-        $roleColumnName = config('roles-and-permissions.role_column_name');
-        $roleEnumClass = config('roles-and-permissions.roles_enum.users');
+        $roleEnumClass = $this->roleEnumClass();
 
-        if ($role = $this->{$roleColumnName}) {
+        if ($role = $this->{$this->roleColumnName()}) {
             return in_array($permission, $roleEnumClass::getPermissions($role));
         }
 
         return false;
     }
 
+    /**
+     * Checks if the model has the given permissions.
+     *
+     * @param string $permissions
+     * @return bool
+     */
     public function has(...$permissions): bool
     {
-        $roleColumnName = config('roles-and-permissions.role_column_name');
-        $roleEnumClass = config('roles-and-permissions.roles_enum.users');
+        $roleEnumClass = $this->roleEnumClass();
 
         $permissions = collect($permissions)->flatten()->all();
 
-        if ($role = $this->{$roleColumnName}) {
+        if ($role = $this->{$this->roleColumnName()}) {
             return $roleEnumClass::allPermissionsAreValid($role, $permissions);
         }
 
         return false;
     }
 
-    public function permissions(): array
+    /**
+     * Checks if the model has the given role.
+     *
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole(string|int $role): bool
     {
-        $roleColumnName = config('roles-and-permissions.role_column_name');
-        $roleEnumClass = config('roles-and-permissions.roles_enum.users');
-
-        return $roleEnumClass::getPermissions($this->{$roleColumnName});
+        return $this->{$this->roleColumnName()} === $role;
     }
 
+    /**
+     * Get all the model's permissions.
+     *
+     * @return array
+     */
+    public function permissions(): array
+    {
+        $roleEnumClass = $this->roleEnumClass();
+
+        return $roleEnumClass::getPermissions($this->{$this->roleColumnName()});
+    }
+
+    /**
+     * Assign the given role to the model.
+     *
+     * @param int|string $role
+     * @return bool
+     */
     public function assign(string|int $role): bool
     {
-        $roleEnumClass = config('roles-and-permissions.roles_enum.users');
+        $roleEnumClass = $this->roleEnumClass();
         if (! in_array($role, $roleEnumClass::getValues())) {
             throw new \InvalidArgumentException("The role `{$role}` does not exist.");
         }
 
         static::unguard();
-        $updated = $this->update([config('roles-and-permissions.role_column_name') => $role]);
+            $updated = $this->update([$this->roleColumnName() => $role]);
         static::reguard();
 
         return $updated;
     }
 
+    /**
+     * Revoke the model's role.
+     *
+     * @return bool
+     */
     public function removeRole(): bool
     {
-        $roleColumnName = config('roles-and-permissions.role_column_name');
-
         static::unguard();
-        $updated = $this->update([$roleColumnName => null]);
+            $updated = $this->update([$this->roleColumnName() => null]);
         static::reguard();
 
         return $updated;
+    }
+
+    /**
+     * Get the name of the "role" column.
+     *
+     * @return string
+     */
+    private function roleColumnName(): string
+    {
+        return config('roles-and-permissions.role_column_name');
+    }
+
+    /**
+     * Get the name of the "role" enum class.
+     *
+     * @return string
+     */
+    private function roleEnumClass(): string
+    {
+        return config('roles-and-permissions.roles_enum.users');
     }
 }

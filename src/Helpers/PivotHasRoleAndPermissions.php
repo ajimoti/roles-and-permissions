@@ -5,18 +5,39 @@ namespace Tarzancodes\RolesAndPermissions\Helpers;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
-use Tarzancodes\RolesAndPermissions\Contracts\HasRoleContract;
 
-class PivotRelation implements HasRoleContract
+class PivotHasRoleAndPermissions
 {
     use Authorizable;
 
+    /**
+     * Conditions for the "where" clause on the pivot table
+     *
+     * @var array
+     */
     protected array $conditions = [];
 
+    /**
+     * An instance of the pivot model helper
+     *
+     * @var Pivot
+     */
     protected Pivot $pivot;
 
+    /**
+     * The name of the "role" column on the pivot table.
+     *
+     * @var string
+     */
     protected string $roleColumnName;
 
+    /**
+     * Boot pivot relationship
+     *
+     * @param Model $localModel
+     * @param Model $relatedModel
+     * @param string|null $relationName
+     */
     public function __construct(
         protected Model $localModel,
         protected Model $relatedModel,
@@ -26,8 +47,13 @@ class PivotRelation implements HasRoleContract
         $this->roleColumnName = config('roles-and-permissions.role_column_name');
     }
 
-    // can accept a permission, an array of permissions, or multiple parameters
-    // public function can($permission)
+    /**
+     * Checks if the model has the given permission.
+     *
+     * @param string $permission
+     * @param array $arguments
+     * @return bool
+     */
     public function can($permission, $arguments = [])
     {
         $roleEnumClass = $this->pivot->roleEnumClass();
@@ -39,6 +65,12 @@ class PivotRelation implements HasRoleContract
         return false;
     }
 
+    /**
+     * Checks if the model has the given permission.
+     *
+     * @param string $role
+     * @return bool
+     */
     public function has(...$permissions): bool
     {
         $roleEnumClass = $this->pivot->roleEnumClass();
@@ -52,6 +84,22 @@ class PivotRelation implements HasRoleContract
         return false;
     }
 
+    /**
+     * Checks if the model has the given role.
+     *
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole(string|int $role): bool
+    {
+        return $this->pivot->role() === $role;
+    }
+
+    /**
+     * Get all the model's permissions.
+     *
+     * @return array
+     */
     public function permissions(): array
     {
         $roleEnumClass = $this->pivot->roleEnumClass();
@@ -63,12 +111,18 @@ class PivotRelation implements HasRoleContract
         return $roleEnumClass::getPermissions($this->pivot->role());
     }
 
+    /**
+     * Assign the given role to the model.
+     *
+     * @param int|string $role
+     * @return bool
+     */
     public function assign(string $role): bool
     {
         $roleEnumClass = $this->pivot->roleEnumClass();
 
         if (! in_array($role, $roleEnumClass::getValues())) {
-            throw new \InvalidArgumentException("The role `{$role}` does not exist.");
+            throw new \InvalidArgumentException("The role `[{$role}]` does not exist.");
         }
 
         if ($this->pivot->relationshipInstanceWithPivotQuery()->exists()) {
@@ -84,6 +138,11 @@ class PivotRelation implements HasRoleContract
         return true;
     }
 
+    /**
+     * Revoke the model's role.
+     *
+     * @return bool
+     */
     public function removeRole(): bool
     {
         $roleEnumClass = $this->pivot->roleEnumClass();

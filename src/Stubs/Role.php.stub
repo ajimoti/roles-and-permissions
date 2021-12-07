@@ -11,10 +11,11 @@ final class DummyClass extends BaseRole
     const Admin = 'admin';
     const Customer = 'customer';
 
-    // protected static $useHierarchy = false;
-
-    // protected static $deletePivotOnRemove = false;
-
+    /**
+     * Set available roles and their permissions.
+     *
+     * @return array
+     */
     final public static function permissions(): array
     {
         return [

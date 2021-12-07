@@ -9,8 +9,21 @@ use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationName;
 
 class Pivot
 {
+    /**
+     * The name of the "role" column on the pivot table.
+     *
+     * @var string
+     */
     protected string $roleColumnName;
 
+    /**
+     * Boot pivot relationship
+     *
+     * @param Model $localModel
+     * @param Model $relatedModel
+     * @param string|null $relationName
+     * @param array $conditions
+     */
     public function __construct(
         protected Model $localModel,
         protected Model $relatedModel,
@@ -20,11 +33,21 @@ class Pivot
         $this->roleColumnName = config('roles-and-permissions.role_column_name');
     }
 
-    public function getRelatedWithPivot(): ?Model
+    /**
+     * Get the related model with pivot attributes.
+     *
+     * @return Model|null
+     */
+    public function getRelatedModelWithPivot(): ?Model
     {
         return $this->relationshipInstanceWithPivotQuery()->first();
     }
 
+    /**
+     * Get the relationship instance with pivot attributes.
+     *
+     * @return BelongsToMany
+     */
     public function relationshipInstanceWithPivotQuery(): BelongsToMany
     {
         $relationship = $this->relationshipInstance();
@@ -38,21 +61,26 @@ class Pivot
         // return $relationship->where($relationship->getRelatedPivotKeyName(), $this->relatedModel->getKeyName());
     }
 
-    public function relationshipInstance()
+    /**
+     * Get the relationship instance.
+     *
+     * @return BelongsToMany
+     */
+    public function relationshipInstance(): BelongsToMany
     {
         $roleColumnName = $this->roleColumnName;
-        $relationName = $this->getRelationName();
+        $relationName = $this->getRelationshipName();
 
         try {
-            if ($this->localModel->{$relationName}() instanceof BelongsToMany) {
-                // return $this->localModel->{$relationName}()->withPivot($roleColumnName);
-                return $this->localModel->{$relationName}()->withPivot($roleColumnName)->withTimestamps();
+            $relationshipInstance = $this->localModel->{$relationName}();
+            if ($relationshipInstance instanceof BelongsToMany) {
+                return $relationshipInstance->withPivot($roleColumnName)->withTimestamps();
             }
 
             throw new \InvalidArgumentException("The `{$relationName}` relation is not a BelongsToMany relation.");
         } catch (\Exception $exception) {
             if ($exception instanceof \BadMethodCallException) {
-                $message = "The `{$relationName}` relation does not exist in model - " . $this->localModel::class . ".";
+                $message = "`{$relationName}` relation does not exist in model [" . $this->localModel::class . "].";
                 $message .= isset($this->relationName) ? " Ensure the right relation name was passed" :
                                 " Pass the right relation name as the second argument";
 
@@ -63,13 +91,21 @@ class Pivot
         }
     }
 
-    public function role()
+    /**
+     * Get the role.
+     *
+     * @return string|null
+     */
+    public function role(): ?string
     {
-        $roleColumnName = $this->roleColumnName;
-
-        return $this->getRelatedWithPivot()?->pivot->{$roleColumnName};
+        return $this->getRelatedModelWithPivot()?->pivot->{$this->roleColumnName};
     }
 
+    /**
+     * Get the name of the "role" enum class.
+     *
+     * @return string
+     */
     public function roleEnumClass(): string
     {
         $pivotTableName = $this->getPivotTableName();
@@ -78,21 +114,36 @@ class Pivot
                 config('roles-and-permissions.roles_enum.users');
     }
 
-    private function getRelationName(): string
+    /**
+     * Get the relationship name on the local model
+     *
+     * @return string
+     */
+    private function getRelationshipName(): string
     {
         if ($this->relationName) {
             return $this->relationName;
         }
 
-        return $this->guessRelationName();
+        return $this->guessRelationshipName();
     }
 
-    private function guessRelationName(): string
+    /**
+     * Guess the relationship name on the local model
+     *
+     * @return string
+     */
+    private function guessRelationshipName(): string
     {
         return Str::of($this->relatedModel->getTable())->camel()->plural();
     }
 
-    private function getPivotTableName()
+    /**
+     * Get the pivot table name
+     *
+     * @return string
+     */
+    private function getPivotTableName(): string
     {
         return $this->relationshipInstance()->getTable();
     }

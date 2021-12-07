@@ -6,8 +6,13 @@ use BenSampo\Enum\Enum;
 
 class BasePermission extends Enum
 {
+    /**
+     * Get all permissions
+     *
+     * @return array
+     */
     public function all(): array
     {
-        return $this->getValues();
+        return static::getValues();
     }
 }
