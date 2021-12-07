@@ -51,11 +51,9 @@ class GeneratePermissionFile extends GeneratorCommand
 
     public function handle(): int
     {
-        $this->info('Generating file...');
-
         parent::handle();
 
-        $this->info('File generated successfully!');
+        $this->info('Permission file generated successfully!');
 
         return self::SUCCESS;
     }
