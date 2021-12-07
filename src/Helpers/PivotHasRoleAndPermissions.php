@@ -15,7 +15,7 @@ class PivotHasRoleAndPermissions
      *
      * @var array
      */
-    const CONDITIONAL_METHODS = [
+    public const CONDITIONAL_METHODS = [
         'wherePivot',
         'wherePivotIn',
         'wherePivotNotIn',
@@ -180,7 +180,9 @@ class PivotHasRoleAndPermissions
         }
 
         throw new BadMethodCallException(sprintf(
-            'Call to undefined method %s::%s()', static::class, $method
+            'Call to undefined method %s::%s()',
+            static::class,
+            $method
         ));
     }
 }
