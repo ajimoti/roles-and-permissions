@@ -17,6 +17,13 @@ class Pivot
     protected string $roleColumnName;
 
     /**
+     * Conditions for the "where" clause on the pivot table
+     *
+     * @var array
+     */
+    protected array $conditions = [];
+
+    /**
      * Boot pivot relationship
      *
      * @param Model $localModel
@@ -28,7 +35,6 @@ class Pivot
         protected Model $localModel,
         protected Model $relatedModel,
         protected ?string $relationName = null,
-        protected array $conditions = [],
     ) {
         $this->roleColumnName = config('roles-and-permissions.role_column_name');
     }
@@ -52,13 +58,13 @@ class Pivot
     {
         $relationship = $this->relationshipInstance();
 
-        // $this->conditions[] = [$relationship->getRelatedPivotKeyName(), $this->relatedModel->getKeyName()];
+        $query = $relationship->wherePivot($relationship->getRelatedPivotKeyName(), $this->relatedModel->id);
 
-        return $relationship->wherePivot($relationship->getRelatedPivotKeyName(), $this->relatedModel->id);
+        foreach ($this->conditions as $condition) {
+            $query->{$condition['method_name']}(...$condition['parameters']);
+        }
 
-        // return $relationship->wherePivot($this->conditions);
-        // return $relationship->where($this->conditions);
-        // return $relationship->where($relationship->getRelatedPivotKeyName(), $this->relatedModel->getKeyName());
+        return $query;
     }
 
     /**
@@ -112,6 +118,19 @@ class Pivot
 
         return config("roles-and-permissions.roles_enum.{$pivotTableName}") ??
                 config('roles-and-permissions.roles_enum.users');
+    }
+
+    /**
+     * Append a condition to the "where" clause on the pivot table.
+     *
+     * @return void
+     */
+    public function appendCondition(string $method, array $parameters): void
+    {
+        $this->conditions[] = [
+            'method_name' => $method,
+            'parameters' => $parameters
+        ];
     }
 
     /**

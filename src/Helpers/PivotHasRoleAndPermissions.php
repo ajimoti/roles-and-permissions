@@ -2,7 +2,7 @@
 
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
-use Closure;
+use BadMethodCallException;
 use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
 
@@ -11,11 +11,19 @@ class PivotHasRoleAndPermissions
     use Authorizable;
 
     /**
-     * Conditions for the "where" clause on the pivot table
+     * Methods used to filter results when defining a 'belongsToMany' relationship
      *
      * @var array
      */
-    protected array $conditions = [];
+    const CONDITIONAL_METHODS = [
+        'wherePivot',
+        'wherePivotIn',
+        'wherePivotNotIn',
+        'wherePivotBetween',
+        'wherePivotNotBetween',
+        'wherePivotNull',
+        'wherePivotNotNull',
+    ];
 
     /**
      * An instance of the pivot model helper
@@ -43,7 +51,7 @@ class PivotHasRoleAndPermissions
         protected Model $relatedModel,
         protected ?string $relationName = null
     ) {
-        $this->pivot = new Pivot($localModel, $relatedModel, $relationName, $this->conditions);
+        $this->pivot = new Pivot($localModel, $relatedModel, $relationName);
         $this->roleColumnName = config('roles-and-permissions.role_column_name');
     }
 
@@ -156,18 +164,23 @@ class PivotHasRoleAndPermissions
         ]);
     }
 
-    // public function where(string|array $column, $operator = null, $value = null): self
-    // {
-    //     if (is_array($column)) {
-    //         $this->conditions = $column;
-    //     } else {
-    //         $this->conditions[] = [$column, $operator, $value];
-    //     }
-
-    //     return $this;
-    // }
-    public function where(Closure $closure)
+    /**
+     * Handle dynamic method calls into the model.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
     {
-        $closure($this->pivot->relationshipInstance());
+        if (in_array($method, self::CONDITIONAL_METHODS)) {
+            $this->pivot->appendCondition($method, $parameters);
+
+            return $this;
+        }
+
+        throw new BadMethodCallException(sprintf(
+            'Call to undefined method %s::%s()', static::class, $method
+        ));
     }
 }
