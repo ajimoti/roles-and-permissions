@@ -3,7 +3,6 @@
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
 use BadMethodCallException;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
@@ -17,7 +16,7 @@ class PivotHasRoleAndPermissions
      *
      * @var array
      */
-    const CONDITIONAL_METHOD_PREFIXES = [
+    public const CONDITIONAL_METHOD_PREFIXES = [
         'where',
         'orWhere',
     ];
