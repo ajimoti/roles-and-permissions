@@ -129,7 +129,7 @@ class Pivot
     {
         $this->conditions[] = [
             'method_name' => $method,
-            'parameters' => $parameters
+            'parameters' => $parameters,
         ];
     }
 
