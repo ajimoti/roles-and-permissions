@@ -70,6 +70,7 @@ trait HasRolesAndPermissions
 
         // blah blah blah
         [$role] = $roles;
+
         return $this->{$this->roleColumnName()} === $role;
     }
 
@@ -102,7 +103,7 @@ trait HasRolesAndPermissions
         }
 
         static::unguard();
-            $updated = $this->update([$this->roleColumnName() => $role]);
+        $updated = $this->update([$this->roleColumnName() => $role]);
         static::reguard();
 
         return $updated;
@@ -118,7 +119,7 @@ trait HasRolesAndPermissions
     {
         // blah
         static::unguard();
-            $updated = $this->update([$this->roleColumnName() => null]);
+        $updated = $this->update([$this->roleColumnName() => null]);
         static::reguard();
 
         return $updated;

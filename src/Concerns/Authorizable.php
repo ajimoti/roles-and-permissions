@@ -22,7 +22,6 @@ trait Authorizable
      */
     abstract public function hasRoles(...$roles): bool;
 
-
     /**
      * Get the model's permissions
      *
