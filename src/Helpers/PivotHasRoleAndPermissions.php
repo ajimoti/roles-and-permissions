@@ -4,9 +4,11 @@ namespace Tarzancodes\RolesAndPermissions\Helpers;
 
 use BadMethodCallException;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
 use Tarzancodes\RolesAndPermissions\Facades\Check;
+use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
 
 class PivotHasRoleAndPermissions
 {
@@ -28,6 +30,13 @@ class PivotHasRoleAndPermissions
      * @var Pivot
      */
     protected Pivot $pivot;
+
+    /**
+     * Pivot columns to set when assigning a role
+     *
+     * @var array
+     */
+    protected array $pivotData = [];
 
     /**
      * The name of the "role" column on the pivot table.
@@ -67,27 +76,27 @@ class PivotHasRoleAndPermissions
     /**
      * Checks if the model has the given permission.
      *
-     * @param array|string|int $permissions
+     * @param string|int|array $permissions
      * @return bool
      */
     public function has(...$permissions): bool
     {
         $permissions = collect($permissions)->flatten()->all();
 
-        return Check::forAll($permissions)->in($this->pivot->permissions());
+        return Check::all($permissions)->existsIn($this->pivot->permissions());
     }
 
     /**
      * Checks if the model has the given role.
      *
-     * @param array|string|int $role
+     * @param string|int|array $role
      * @return bool
      */
-    public function hasRole(...$roles): bool
+    public function hasRoles(...$roles): bool
     {
         $roles = collect($roles)->flatten()->all();
 
-        return Check::forAll($roles)->in($this->pivot->roles());
+        return Check::all($roles)->existsIn($this->pivot->roles());
     }
 
     /**
@@ -101,49 +110,80 @@ class PivotHasRoleAndPermissions
     }
 
     /**
+     * Columns to set when assigning a role.
+     *
+     * @param array $columns
+     * @return self
+     */
+    public function withPivot(array $columns): self
+    {
+        $this->pivotData = $columns;
+
+        return $this;
+    }
+
+    /**
      * Assign the given role to the model.
      *
      * @param int|string $role
      * @return bool
      */
-    public function assign(string $role, array $pivotData): bool
+    public function assign(...$roles): bool
     {
+        $roles = collect($roles)->flatten()->all();
         $roleEnumClass = $this->pivot->roleEnumClass();
 
-        if (! in_array($role, $roleEnumClass::getValues())) {
-            throw new \InvalidArgumentException("The role `[{$role}]` does not exist.");
-        }
+        DB::beginTransaction();
+            foreach ($roles as $role) {
+                if (! in_array($role, $roleEnumClass::all())) {
+                    throw new InvalidArgumentException(
+                        sprintf(
+                            'The role "%s" does not exist on the "%s" enum class.',
+                            $role,
+                            $roleEnumClass
+                        )
+                    );
+                }
 
-        if ($this->pivot->relationshipInstanceWithPivotQuery()->wherePivot($this->roleColumnName, $role)->exists()) {
-            return $this->pivot->relationshipInstanceWithPivotQuery()->updateExistingPivot($this->relatedModel->id, [
-                $this->roleColumnName => $role,
-            ]);
-        }
+                $pivotTableData = array_merge([$this->roleColumnName => $role], $this->pivotData);
+                $roleExists = $this->pivot->relationshipInstanceAsQuery()->wherePivot($this->roleColumnName, $role)->exists();
 
-        $this->pivot->relationshipInstance()->attach(
-            $this->relatedModel->id,
-            array_merge([$this->roleColumnName => $role], $pivotData)
-        );
+                // If the model is already assigned the role, and the pivot data isset,
+                // we proceed to update the pivot table we the new data.
+                if ($roleExists && ! empty($this->pivotData)) {
+                    $this->pivot->relationshipInstanceAsQuery()->updateExistingPivot($this->relatedModel->id, $pivotTableData);
+                }
+
+                if (! $roleExists) {
+                    // Assign the role to the model, and attach the pivot data.
+                    $this->pivot->relationshipInstance()->attach($this->relatedModel->id, $pivotTableData);
+                }
+            }
+
+        DB::commit();
 
         return true;
     }
 
     /**
-     * Revoke the model's role.
+     * Remove the model's role.
      *
+     * @param string|int|array $roles
      * @return bool
      */
-    public function removeRole(): bool
+    public function removeRole(...$roles): bool
     {
+        $roles = collect($roles)->flatten()->all();
         $roleEnumClass = $this->pivot->roleEnumClass();
 
+        $query = $this->pivot->relationshipInstanceAsQuery()
+                    ->wherePivotIn($this->roleColumnName, $roles);
+
         if ($roleEnumClass::deletePivotOnRemove()) {
-            return $this->pivot->relationshipInstanceWithPivotQuery()->detach($this->relatedModel->id);
+            return $query->detach();
         }
 
-        return $this->pivot->relationshipInstanceWithPivotQuery()->updateExistingPivot($this->relatedModel->id, [
-            $this->roleColumnName => null,
-        ]);
+        return $query->updateExistingPivot($this->relatedModel->id, [$this->roleColumnName => null]);
     }
 
     /**
@@ -155,7 +195,9 @@ class PivotHasRoleAndPermissions
      */
     public function __call($method, $parameters)
     {
-        if (Str::startsWith($method, self::CONDITIONAL_METHOD_PREFIXES)) {
+        if (Str::startsWith($method, self::CONDITIONAL_METHOD_PREFIXES) ||
+            method_exists($this->relatedModel, 'scope' . Str::ucfirst($method))) {
+
             $this->pivot->appendCondition($method, $parameters);
 
             return $this;

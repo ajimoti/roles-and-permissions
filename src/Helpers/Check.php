@@ -12,7 +12,7 @@ class Check
      *
      * @return self
      */
-    public function forAll(array $needle): self
+    public function all(array $needle): self
     {
         $this->needle = $needle;
 

@@ -7,20 +7,21 @@ use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
 trait Authorizable
 {
     /**
-     * Check if the model has a role.
-     *
-     * @param string|array $role
-     * @return bool
-     */
-    abstract public function hasRole(string|int $role): bool;
-
-    /**
      * Check if the model has the permissions
      *
-     * @param [type] ...$permissions
+     * @param string|int|array $permissions
      * @return bool
      */
     abstract public function has(...$permissions): bool;
+
+    /**
+     * Check if the model has a role.
+     *
+     * @param string|int|array $role
+     * @return bool
+     */
+    abstract public function hasRoles(...$roles): bool;
+
 
     /**
      * Get the model's permissions
@@ -32,17 +33,18 @@ trait Authorizable
     /**
      * Assign the given role to the model.
      *
-     * @param string $role
+     * @param string|int|array $roles
      * @return bool
      */
-    abstract public function assign(string $role): bool;
+    abstract public function assign(...$roles): bool;
 
     /**
      * Remove role from model
      *
+     * @param string|int|array $roles
      * @return bool
      */
-    abstract public function removeRole(): bool;
+    abstract public function removeRole(...$roles): bool;
 
     /**
      * Check if the model has a permission.

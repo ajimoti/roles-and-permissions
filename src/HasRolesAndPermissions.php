@@ -52,7 +52,7 @@ trait HasRolesAndPermissions
         $permissions = collect($permissions)->flatten()->all();
 
         if ($role = $this->{$this->roleColumnName()}) {
-            return Check::forAll($permissions)->in($roleEnumClass::getPermissions($role));
+            return Check::all($permissions)->existsIn($roleEnumClass::getPermissions($role));
         }
 
         return false;
@@ -64,8 +64,12 @@ trait HasRolesAndPermissions
      * @param string $role
      * @return bool
      */
-    public function hasRole(string|int $role): bool
+    public function hasRoles(...$roles): bool
     {
+        $roles = collect($roles)->flatten()->all();
+
+        // blah blah blah
+        [$role] = $roles;
         return $this->{$this->roleColumnName()} === $role;
     }
 
@@ -84,18 +88,21 @@ trait HasRolesAndPermissions
     /**
      * Assign the given role to the model.
      *
-     * @param int|string $role
+     * @param string|int|array $roles
      * @return bool
      */
-    public function assign(string|int $role): bool
+    public function assign(...$roles): bool
     {
+        // blahh
+        [$role] = $roles;
+
         $roleEnumClass = $this->roleEnumClass();
         if (! in_array($role, $roleEnumClass::getValues())) {
             throw new \InvalidArgumentException("The role `{$role}` does not exist.");
         }
 
         static::unguard();
-        $updated = $this->update([$this->roleColumnName() => $role]);
+            $updated = $this->update([$this->roleColumnName() => $role]);
         static::reguard();
 
         return $updated;
@@ -104,12 +111,14 @@ trait HasRolesAndPermissions
     /**
      * Revoke the model's role.
      *
+     * @param string|int|array $roles
      * @return bool
      */
-    public function removeRole(): bool
+    public function removeRole(...$roles): bool
     {
+        // blah
         static::unguard();
-        $updated = $this->update([$this->roleColumnName() => null]);
+            $updated = $this->update([$this->roleColumnName() => null]);
         static::reguard();
 
         return $updated;

@@ -47,15 +47,15 @@ class Pivot
      */
     public function getRelatedModelsWithPivot(): ?Collection
     {
-        return $this->relationshipInstanceWithPivotQuery()->get();
+        return $this->relationshipInstanceAsQuery()->get();
     }
 
     /**
-     * Get the relationship instance with pivot attributes.
+     * Get the relationship instance with conditions set as a query.
      *
      * @return BelongsToMany
      */
-    public function relationshipInstanceWithPivotQuery(): BelongsToMany
+    public function relationshipInstanceAsQuery(): BelongsToMany
     {
         $relationship = $this->relationshipInstance();
 
