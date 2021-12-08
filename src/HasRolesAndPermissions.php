@@ -3,9 +3,8 @@
 namespace Tarzancodes\RolesAndPermissions;
 
 use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
-use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
+use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Helpers\PivotHasRoleAndPermissions;
 
 trait HasRolesAndPermissions

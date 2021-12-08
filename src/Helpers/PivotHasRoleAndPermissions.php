@@ -5,8 +5,8 @@ namespace Tarzancodes\RolesAndPermissions\Helpers;
 use BadMethodCallException;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
+use Tarzancodes\RolesAndPermissions\Facades\Check;
 
 class PivotHasRoleAndPermissions
 {
@@ -121,7 +121,8 @@ class PivotHasRoleAndPermissions
         }
 
         $this->pivot->relationshipInstance()->attach(
-            $this->relatedModel->id, array_merge([$this->roleColumnName => $role], $pivotData)
+            $this->relatedModel->id,
+            array_merge([$this->roleColumnName => $role], $pivotData)
         );
 
         return true;

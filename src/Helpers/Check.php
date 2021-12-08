@@ -29,6 +29,4 @@ class Check
     {
         return empty(array_diff($this->needle, $haystack));
     }
-
-
 }
