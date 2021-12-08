@@ -36,7 +36,7 @@ class Pivot
         protected Model $relatedModel,
         protected ?string $relationName = null,
     ) {
-        $this->roleColumnName = config('roles-and-permissions.role_column_name');
+        $this->roleColumnName = config('roles-and-permissions.pivot.role_column_name');
     }
 
     /**

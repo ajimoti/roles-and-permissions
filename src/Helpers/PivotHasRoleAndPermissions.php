@@ -3,6 +3,7 @@
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
 use BadMethodCallException;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
 
@@ -15,14 +16,9 @@ class PivotHasRoleAndPermissions
      *
      * @var array
      */
-    const CONDITIONAL_METHODS = [
-        'wherePivot',
-        'wherePivotIn',
-        'wherePivotNotIn',
-        'wherePivotBetween',
-        'wherePivotNotBetween',
-        'wherePivotNull',
-        'wherePivotNotNull',
+    const CONDITIONAL_METHOD_PREFIXES = [
+        'where',
+        'orWhere',
     ];
 
     /**
@@ -52,7 +48,7 @@ class PivotHasRoleAndPermissions
         protected ?string $relationName = null
     ) {
         $this->pivot = new Pivot($localModel, $relatedModel, $relationName);
-        $this->roleColumnName = config('roles-and-permissions.role_column_name');
+        $this->roleColumnName = config('roles-and-permissions.pivot.role_column_name');
     }
 
     /**
@@ -173,7 +169,7 @@ class PivotHasRoleAndPermissions
      */
     public function __call($method, $parameters)
     {
-        if (in_array($method, self::CONDITIONAL_METHODS)) {
+        if (Str::startsWith($method, self::CONDITIONAL_METHOD_PREFIXES)) {
             $this->pivot->appendCondition($method, $parameters);
 
             return $this;

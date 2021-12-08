@@ -121,7 +121,7 @@ trait HasRolesAndPermissions
      */
     private function roleColumnName(): string
     {
-        return config('roles-and-permissions.role_column_name');
+        return config('roles-and-permissions.pivot.role_column_name');
     }
 
     /**
