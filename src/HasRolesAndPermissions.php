@@ -3,7 +3,9 @@
 namespace Tarzancodes\RolesAndPermissions;
 
 use Illuminate\Database\Eloquent\Model;
+use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
+use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
 use Tarzancodes\RolesAndPermissions\Helpers\PivotHasRoleAndPermissions;
 
 trait HasRolesAndPermissions
@@ -39,7 +41,7 @@ trait HasRolesAndPermissions
     }
 
     /**
-     * Checks if the model has the given permissions.
+     * Checks if the model has all the given permissions.
      *
      * @param string $permissions
      * @return bool
@@ -51,14 +53,14 @@ trait HasRolesAndPermissions
         $permissions = collect($permissions)->flatten()->all();
 
         if ($role = $this->{$this->roleColumnName()}) {
-            return $roleEnumClass::allPermissionsAreValid($role, $permissions);
+            return Check::forAll($permissions)->in($roleEnumClass::getPermissions($role));
         }
 
         return false;
     }
 
     /**
-     * Checks if the model has the given role.
+     * Checks if the model has all the given roles.
      *
      * @param string $role
      * @return bool

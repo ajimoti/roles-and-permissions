@@ -60,19 +60,6 @@ abstract class BaseRole extends Enum
     }
 
     /**
-     * Ensure all permissions passed belongs to the role
-     *
-     * @param string|int $role
-     * @param array $permissions
-     * @return bool
-     */
-    final public static function allPermissionsAreValid(string|int $role, array $permissions): bool
-    {
-        // Verify every value in the array is a valid permission
-        return ! array_diff($permissions, static::getPermissions($role));
-    }
-
-    /**
      * Get all roles
      *
      * @return array

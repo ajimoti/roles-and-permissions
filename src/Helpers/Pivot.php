@@ -2,9 +2,10 @@
 
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationName;
 
 class Pivot
@@ -40,13 +41,13 @@ class Pivot
     }
 
     /**
-     * Get the related model with pivot attributes.
+     * Get the related models with pivot attributes.
      *
-     * @return Model|null
+     * @return \Illuminate\Database\Eloquent\Collection|null
      */
-    public function getRelatedModelWithPivot(): ?Model
+    public function getRelatedModelsWithPivot(): ?Collection
     {
-        return $this->relationshipInstanceWithPivotQuery()->first();
+        return $this->relationshipInstanceWithPivotQuery()->get();
     }
 
     /**
@@ -58,7 +59,7 @@ class Pivot
     {
         $relationship = $this->relationshipInstance();
 
-        $query = $relationship->wherePivot($relationship->getRelatedPivotKeyName(), $this->relatedModel->id);
+        $query = $relationship->wherePivot($relationship->getRelatedPivotKeyName(), $this->relatedModel->getKey());
 
         foreach ($this->conditions as $condition) {
             $query->{$condition['method_name']}(...$condition['parameters']);
@@ -98,13 +99,34 @@ class Pivot
     }
 
     /**
-     * Get the role.
+     * Get the roles.
      *
-     * @return string|null
+     * @return array
      */
-    public function role(): ?string
+    public function roles(): array
     {
-        return $this->getRelatedModelWithPivot()?->pivot->{$this->roleColumnName};
+        foreach ($this->getRelatedModelsWithPivot() as $model) {
+            $roles[] = $model->pivot->{$this->roleColumnName};
+        }
+
+        return $roles ?? [];
+    }
+
+    /**
+     * Get the permissions.
+     *
+     * @return array
+     */
+    public function permissions(): array
+    {
+        $roleEnumClass = $this->roleEnumClass();
+
+        $allPermissions = [];
+        foreach ($this->roles() as $role) {
+            $allPermissions = array_merge($allPermissions, $roleEnumClass::getPermissions($role));
+        }
+
+        return $allPermissions;
     }
 
     /**

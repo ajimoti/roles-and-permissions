@@ -5,6 +5,7 @@ namespace Tarzancodes\RolesAndPermissions\Helpers;
 use BadMethodCallException;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
 
 class PivotHasRoleAndPermissions
@@ -60,43 +61,33 @@ class PivotHasRoleAndPermissions
      */
     public function can($permission, $arguments = [])
     {
-        $roleEnumClass = $this->pivot->roleEnumClass();
-
-        if ($role = $this->pivot->role()) {
-            return in_array($permission, $roleEnumClass::getPermissions($role));
-        }
-
-        return false;
+        return in_array($permission, $this->pivot->permissions());
     }
 
     /**
      * Checks if the model has the given permission.
      *
-     * @param string $role
+     * @param array|string|int $permissions
      * @return bool
      */
     public function has(...$permissions): bool
     {
-        $roleEnumClass = $this->pivot->roleEnumClass();
-
         $permissions = collect($permissions)->flatten()->all();
 
-        if ($role = $this->pivot->role()) {
-            return $roleEnumClass::allPermissionsAreValid($role, $permissions);
-        }
-
-        return false;
+        return Check::forAll($permissions)->in($this->pivot->permissions());
     }
 
     /**
      * Checks if the model has the given role.
      *
-     * @param string $role
+     * @param array|string|int $role
      * @return bool
      */
-    public function hasRole(string|int $role): bool
+    public function hasRole(...$roles): bool
     {
-        return $this->pivot->role() === $role;
+        $roles = collect($roles)->flatten()->all();
+
+        return Check::forAll($roles)->in($this->pivot->roles());
     }
 
     /**
@@ -106,13 +97,7 @@ class PivotHasRoleAndPermissions
      */
     public function permissions(): array
     {
-        $roleEnumClass = $this->pivot->roleEnumClass();
-
-        if (empty($this->pivot->role())) {
-            return [];
-        }
-
-        return $roleEnumClass::getPermissions($this->pivot->role());
+        return $this->pivot->permissions();
     }
 
     /**
@@ -121,7 +106,7 @@ class PivotHasRoleAndPermissions
      * @param int|string $role
      * @return bool
      */
-    public function assign(string $role): bool
+    public function assign(string $role, array $pivotData): bool
     {
         $roleEnumClass = $this->pivot->roleEnumClass();
 
@@ -129,15 +114,15 @@ class PivotHasRoleAndPermissions
             throw new \InvalidArgumentException("The role `[{$role}]` does not exist.");
         }
 
-        if ($this->pivot->relationshipInstanceWithPivotQuery()->exists()) {
+        if ($this->pivot->relationshipInstanceWithPivotQuery()->wherePivot($this->roleColumnName, $role)->exists()) {
             return $this->pivot->relationshipInstanceWithPivotQuery()->updateExistingPivot($this->relatedModel->id, [
                 $this->roleColumnName => $role,
             ]);
         }
 
-        $this->pivot->relationshipInstanceWithPivotQuery()->attach($this->relatedModel->id, [
-            $this->roleColumnName => $role,
-        ]);
+        $this->pivot->relationshipInstance()->attach(
+            $this->relatedModel->id, array_merge([$this->roleColumnName => $role], $pivotData)
+        );
 
         return true;
     }
