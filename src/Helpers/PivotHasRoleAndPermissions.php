@@ -3,8 +3,8 @@
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
 use BadMethodCallException;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
 use Tarzancodes\RolesAndPermissions\Facades\Check;
 
