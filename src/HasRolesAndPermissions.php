@@ -2,18 +2,19 @@
 
 namespace Tarzancodes\RolesAndPermissions;
 
-use InvalidArgumentException;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\Facades\Check;
-use Tarzancodes\RolesAndPermissions\Models\ModelRole;
-use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
+use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
+use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
+use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Helpers\PivotHasRoleAndPermissions;
+use Tarzancodes\RolesAndPermissions\Models\ModelRole;
 
 trait HasRolesAndPermissions
 {
-    use Authorizable, HasRoles;
+    use Authorizable;
+    use HasRoles;
 
     // protected $service;
 
@@ -105,27 +106,27 @@ trait HasRolesAndPermissions
                             ->all();
 
         DB::beginTransaction();
-            foreach ($roles as $role) {
-                if (! in_array($role, $roleEnumClass::all())) {
-                    throw new InvalidArgumentException(
-                        sprintf(
+        foreach ($roles as $role) {
+            if (! in_array($role, $roleEnumClass::all())) {
+                throw new InvalidArgumentException(
+                    sprintf(
                             'The role "%s" does not exist on the "%s" enum class.',
                             $role,
                             $roleEnumClass
                         )
-                    );
-                }
-
-                if (in_array($role, $exitingRoles)) {
-                    // If the role already exists, we don't need to do anything.
-                    continue;
-                }
-
-                $bulkRolesToSave[] = new ModelRole([$this->getRoleColumnName() => $role]);
+                );
             }
 
-            // Bulk insert the new roles
-            $this->modelRoles()->saveMany($bulkRolesToSave ?? []);
+            if (in_array($role, $exitingRoles)) {
+                // If the role already exists, we don't need to do anything.
+                continue;
+            }
+
+            $bulkRolesToSave[] = new ModelRole([$this->getRoleColumnName() => $role]);
+        }
+
+        // Bulk insert the new roles
+        $this->modelRoles()->saveMany($bulkRolesToSave ?? []);
         DB::commit();
 
         return true;
