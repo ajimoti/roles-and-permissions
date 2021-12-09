@@ -25,7 +25,7 @@ class Check
      *
      * @return bool
      */
-    public function in(array $haystack): bool
+    public function existsIn(array $haystack): bool
     {
         return empty(array_diff($this->needle, $haystack));
     }

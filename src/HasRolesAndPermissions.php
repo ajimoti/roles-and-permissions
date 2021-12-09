@@ -17,9 +17,11 @@ trait HasRolesAndPermissions
 
     // protected $service;
 
-    // public function __construct()
+    // protected function __construct()
     // {
-    //     $this->service = new ModelService($this);
+    //     // $this->service = new ModelService($this);
+    //     $this->service = "new ModelService($this)";
+    //     dd($this->service);
     // }
 
     /**
@@ -58,15 +60,9 @@ trait HasRolesAndPermissions
      */
     public function has(...$permissions): bool
     {
-        $roleEnumClass = $this->getRoleEnumClass();
-
         $permissions = collect($permissions)->flatten()->all();
 
-        if ($role = $this->{$this->getRoleColumnName()}) {
-            return Check::all($permissions)->existsIn($roleEnumClass::getPermissions($role));
-        }
-
-        return false;
+        return Check::all($permissions)->existsIn($this->permissions());
     }
 
     /**
@@ -184,6 +180,5 @@ trait HasRolesAndPermissions
     protected function getRoles(): array
     {
         return $this->modelRoles()->pluck($this->getRoleColumnName())->all();
-        // return $this->{$this->getRoleColumnName()};
     }
 }

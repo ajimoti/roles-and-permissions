@@ -45,7 +45,7 @@ trait Authorizable
     abstract public function assign(...$roles): bool;
 
     /**
-     * Remove role from model
+     * Remove roles from model
      *
      * @param string|int|array $roles
      * @return bool
