@@ -110,10 +110,10 @@ trait HasRolesAndPermissions
             if (! in_array($role, $roleEnumClass::all())) {
                 throw new InvalidArgumentException(
                     sprintf(
-                            'The role "%s" does not exist on the "%s" enum class.',
-                            $role,
-                            $roleEnumClass
-                        )
+                        'The role "%s" does not exist on the "%s" enum class.',
+                        $role,
+                        $roleEnumClass
+                    )
                 );
             }
 
