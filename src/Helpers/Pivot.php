@@ -2,14 +2,17 @@
 
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
+use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationName;
 
 class Pivot
 {
+    use HasRoles;
+
     /**
      * The name of the "role" column on the pivot table.
      *
@@ -37,7 +40,7 @@ class Pivot
         protected Model $relatedModel,
         protected ?string $relationName = null,
     ) {
-        $this->roleColumnName = config('roles-and-permissions.pivot.role_column_name');
+        $this->roleColumnName = config('roles-and-permissions.pivot.column_name');
     }
 
     /**
@@ -103,7 +106,7 @@ class Pivot
      *
      * @return array
      */
-    public function roles(): array
+    public function getRoles(): array
     {
         foreach ($this->getRelatedModelsWithPivot() as $model) {
             $roles[] = $model->pivot->{$this->roleColumnName};
@@ -113,28 +116,11 @@ class Pivot
     }
 
     /**
-     * Get the permissions.
-     *
-     * @return array
-     */
-    public function permissions(): array
-    {
-        $roleEnumClass = $this->roleEnumClass();
-
-        $allPermissions = [];
-        foreach ($this->roles() as $role) {
-            $allPermissions = array_merge($allPermissions, $roleEnumClass::getPermissions($role));
-        }
-
-        return $allPermissions;
-    }
-
-    /**
      * Get the name of the "role" enum class.
      *
      * @return string
      */
-    public function roleEnumClass(): string
+    public function getRoleEnumClass(): string
     {
         $pivotTableName = $this->getPivotTableName();
 

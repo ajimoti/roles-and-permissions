@@ -58,7 +58,7 @@ class PivotHasRoleAndPermissions
         protected ?string $relationName = null
     ) {
         $this->pivot = new Pivot($localModel, $relatedModel, $relationName);
-        $this->roleColumnName = config('roles-and-permissions.pivot.role_column_name');
+        $this->roleColumnName = config('roles-and-permissions.pivot.column_name');
     }
 
     /**
@@ -96,7 +96,17 @@ class PivotHasRoleAndPermissions
     {
         $roles = collect($roles)->flatten()->all();
 
-        return Check::all($roles)->existsIn($this->pivot->roles());
+        return Check::all($roles)->existsIn($this->pivot->getRoles());
+    }
+
+    /**
+     * Get the model's roles.
+     *
+     * @return array
+     */
+    public function roles(): array
+    {
+        return $this->pivot->getRoles();
     }
 
     /**
@@ -131,7 +141,7 @@ class PivotHasRoleAndPermissions
     public function assign(...$roles): bool
     {
         $roles = collect($roles)->flatten()->all();
-        $roleEnumClass = $this->pivot->roleEnumClass();
+        $roleEnumClass = $this->pivot->getRoleEnumClass();
 
         DB::beginTransaction();
             foreach ($roles as $role) {
@@ -171,10 +181,10 @@ class PivotHasRoleAndPermissions
      * @param string|int|array $roles
      * @return bool
      */
-    public function removeRole(...$roles): bool
+    public function removeRoles(): bool
     {
-        $roles = collect($roles)->flatten()->all();
-        $roleEnumClass = $this->pivot->roleEnumClass();
+        $roles = empty(func_get_args()) ? $this->pivot->getRoles() : func_get_args();
+        $roleEnumClass = $this->pivot->getRoleEnumClass();
 
         $query = $this->pivot->relationshipInstanceAsQuery()
                     ->wherePivotIn($this->roleColumnName, $roles);

@@ -22,6 +22,12 @@ trait Authorizable
      */
     abstract public function hasRoles(...$roles): bool;
 
+    /**
+     * Get the model's roles.
+     *
+     * @return array
+     */
+    abstract public function roles(): array;
 
     /**
      * Get the model's permissions
@@ -44,7 +50,7 @@ trait Authorizable
      * @param string|int|array $roles
      * @return bool
      */
-    abstract public function removeRole(...$roles): bool;
+    abstract public function removeRoles(): bool;
 
     /**
      * Check if the model has a permission.

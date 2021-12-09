@@ -17,6 +17,8 @@ class RolesAndPermissionsServiceProvider extends PackageServiceProvider
             return new Check();
         });
 
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
         $package
             ->name('roles-and-permissions')
             ->hasConfigFile()
