@@ -3,36 +3,30 @@
 namespace Tarzancodes\RolesAndPermissions;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use InvalidArgumentException;
-use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
-use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
-use Tarzancodes\RolesAndPermissions\Facades\Check;
-use Tarzancodes\RolesAndPermissions\Helpers\PivotHasRoleAndPermissions;
 use Tarzancodes\RolesAndPermissions\Models\ModelRole;
+use Tarzancodes\RolesAndPermissions\Supports\ModelSupport;
+use Tarzancodes\RolesAndPermissions\Contracts\HasRolesContract;
+use Tarzancodes\RolesAndPermissions\Supports\PivotModelSupport;
 
 trait HasRolesAndPermissions
 {
-    use Authorizable;
-    use HasRoles;
+    private HasRolesContract $support;
 
-    // protected $service;
-
-    // protected function __construct()
-    // {
-    //     // $this->service = new ModelService($this);
-    //     $this->service = "new ModelService($this)";
-    //     dd($this->service);
-    // }
+    protected function __construct()
+    {
+        $this->support = new ModelSupport($this);
+    }
 
     /**
      * A model may have multiple roles.
      *
-     * @return Tarzancodes\RolesAndPermissions\Helpers\PivotHasRoleAndPermissions
+     * @return self
      */
-    public function of(Model $model, string $relationshipName = null): PivotHasRoleAndPermissions
+    public function of(Model $model, string $relationshipName = null): self
     {
-        return new PivotHasRoleAndPermissions($this, $model, $relationshipName);
+        $this->support = new PivotModelSupport($this, $model, $relationshipName);
+
+        return $this;
     }
 
     /**
@@ -44,13 +38,7 @@ trait HasRolesAndPermissions
      */
     public function can($permission, $arguments = [])
     {
-        $roleEnumClass = $this->getRoleEnumClass();
-
-        if ($role = $this->{$this->getRoleColumnName()}) {
-            return in_array($permission, $roleEnumClass::getPermissions($role));
-        }
-
-        return false;
+        return $this->support->can($permission, $arguments);
     }
 
     /**
@@ -61,9 +49,7 @@ trait HasRolesAndPermissions
      */
     public function has(...$permissions): bool
     {
-        $permissions = collect($permissions)->flatten()->all();
-
-        return Check::all($permissions)->existsIn($this->permissions());
+        return $this->support->has(...$permissions);
     }
 
     /**
@@ -74,9 +60,7 @@ trait HasRolesAndPermissions
      */
     public function hasRoles(...$roles): bool
     {
-        $roles = collect($roles)->flatten()->all();
-
-        return Check::all($roles)->existsIn($this->getRoles());
+        return $this->support->hasRoles(...$roles);
     }
 
     /**
@@ -86,7 +70,17 @@ trait HasRolesAndPermissions
      */
     public function roles(): array
     {
-        return $this->getRoles();
+        return $this->support->roles();
+    }
+
+    /**
+     * Get all the model's permissions.
+     *
+     * @return array
+     */
+    public function permissions(): array
+    {
+        return $this->support->permissions();
     }
 
     /**
@@ -97,39 +91,7 @@ trait HasRolesAndPermissions
      */
     public function assign(...$roles): bool
     {
-        $roles = collect($roles)->flatten()->all();
-        $roleEnumClass = $this->getRoleEnumClass();
-
-        $exitingRoles = $this->modelRoles()->whereIn($this->getRoleColumnName(), $roles)
-                            ->select(['id', 'model_id', 'model_type', $this->getRoleColumnName()])
-                            ->get()->pluck($this->getRoleColumnName())
-                            ->all();
-
-        DB::beginTransaction();
-        foreach ($roles as $role) {
-            if (! in_array($role, $roleEnumClass::all())) {
-                throw new InvalidArgumentException(
-                    sprintf(
-                            'The role "%s" does not exist on the "%s" enum class.',
-                            $role,
-                            $roleEnumClass
-                        )
-                );
-            }
-
-            if (in_array($role, $exitingRoles)) {
-                // If the role already exists, we don't need to do anything.
-                continue;
-            }
-
-            $bulkRolesToSave[] = new ModelRole([$this->getRoleColumnName() => $role]);
-        }
-
-        // Bulk insert the new roles
-        $this->modelRoles()->saveMany($bulkRolesToSave ?? []);
-        DB::commit();
-
-        return true;
+        return $this->support->assign(...$roles);
     }
 
     /**
@@ -140,46 +102,91 @@ trait HasRolesAndPermissions
      */
     public function removeRoles(): bool
     {
-        $roles = empty(func_get_args()) ? $this->getRoles() : func_get_args();
+        if (count(func_get_args())) {
+            return $this->support->removeRoles(func_get_args());
+        }
 
-        return $this->modelRoles()->whereIn($this->getRoleColumnName(), $roles)->delete();
+        return $this->support->removeRoles();
     }
 
     /**
-     * Get the name of the "role" column.
+     * Check if the model has a permission.
      *
-     * @return string
+     * @param string|int|array $permission
+     * @return bool
      */
-    private function getRoleColumnName(): string
+    public function authorize(...$permissions): bool
     {
-        return config('roles-and-permissions.pivot.column_name');
+        return $this->support->authorize(...$permissions);
     }
 
     /**
-     * Get the name of the "role" enum class.
+     * Check if the model has a role.
      *
-     * @return string
+     * @param string|int|array $role
+     * @return bool
      */
-    private function getRoleEnumClass(): string
+    public function authorizeRole(...$role): bool
     {
-        return config('roles-and-permissions.roles_enum.users');
+        return $this->support->authorizeRole(...$role);
     }
 
     /**
      * Get the modelRoles relationship.
      */
-    private function modelRoles()
+    public function modelRoles()
     {
         return $this->morphMany(ModelRole::class, 'model');
     }
 
     /**
-     * Get the model's roles
+     * Handle dynamic method calls into the model.
      *
-     * @return array
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
      */
-    protected function getRoles(): array
+    public function __call($method, $parameters)
     {
-        return $this->modelRoles()->pluck($this->getRoleColumnName())->all();
+        // If the model is a pivot relationship,
+        // we will call the magic method on the pivot model support
+        if ($this->support instanceof PivotModelSupport) {
+            $this->support->{$method}(...$parameters);
+
+            return $this;
+        }
+
+        // Use the model's magic method
+        return parent::__call($method, $parameters);
     }
+
+    // /**
+    //  * Get the name of the "role" column.
+    //  *
+    //  * @return string
+    //  */
+    // private function getRoleColumnName(): string
+    // {
+    //     return config('roles-and-permissions.pivot.column_name');
+    // }
+
+    // /**
+    //  * Get the name of the "role" enum class.
+    //  *
+    //  * @return string
+    //  */
+    // private function getRoleEnumClass(): string
+    // {
+    //     return config('roles-and-permissions.roles_enum.users');
+    // }
+
+    // /**
+    //  * Get the model's roles
+    //  *
+    //  * @return array
+    //  */
+    // protected function getRoles(): array
+    // {
+    //     return $this->modelRoles()->pluck($this->getRoleColumnName())->all();
+    // }
 }

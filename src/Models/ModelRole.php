@@ -14,7 +14,7 @@ class ModelRole extends Pivot
     /**
      * Get the modelable model that the role belongs to.
      */
-    public function modelable()
+    public function model()
     {
         return $this->morphTo();
     }

@@ -2,11 +2,14 @@
 
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Exception;
+use BadMethodCallException;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationName;
 
 class Pivot
@@ -87,9 +90,9 @@ class Pivot
                 return $relationshipInstance->withPivot($roleColumnName)->withTimestamps();
             }
 
-            throw new \InvalidArgumentException("The `{$relationName}` relation is not a BelongsToMany relation.");
-        } catch (\Exception $exception) {
-            if ($exception instanceof \BadMethodCallException) {
+            throw new InvalidArgumentException("The `{$relationName}` relation is not a BelongsToMany relation.");
+        } catch (Exception $exception) {
+            if ($exception instanceof BadMethodCallException) {
                 $message = "`{$relationName}` relation does not exist in model [" . $this->localModel::class . "].";
                 $message .= isset($this->relationName) ? " Ensure the right relation name was passed" :
                                 " Pass the right relation name as the second argument";

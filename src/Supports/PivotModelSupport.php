@@ -1,16 +1,19 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Helpers;
+namespace Tarzancodes\RolesAndPermissions\Supports;
 
 use BadMethodCallException;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Facades\Check;
+use Tarzancodes\RolesAndPermissions\Helpers\Pivot;
+use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
+use Tarzancodes\RolesAndPermissions\Contracts\HasPivotContract;
+use Tarzancodes\RolesAndPermissions\Contracts\HasRolesContract;
 
-class PivotHasRoleAndPermissions
+class PivotModelSupport implements HasRolesContract, HasPivotContract
 {
     use Authorizable;
 
@@ -120,19 +123,6 @@ class PivotHasRoleAndPermissions
     }
 
     /**
-     * Columns to set when assigning a role.
-     *
-     * @param array $columns
-     * @return self
-     */
-    public function withPivot(array $columns): self
-    {
-        $this->pivotData = $columns;
-
-        return $this;
-    }
-
-    /**
      * Assign the given role to the model.
      *
      * @param int|string $role
@@ -194,6 +184,19 @@ class PivotHasRoleAndPermissions
         }
 
         return $query->updateExistingPivot($this->relatedModel->id, [$this->roleColumnName => null]);
+    }
+
+    /**
+     * Columns to set when assigning a role.
+     *
+     * @param array $columns
+     * @return self
+     */
+    public function withPivot(array $columns): self
+    {
+        $this->pivotData = $columns;
+
+        return $this;
     }
 
     /**
