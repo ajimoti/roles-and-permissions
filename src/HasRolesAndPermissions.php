@@ -3,9 +3,9 @@
 namespace Tarzancodes\RolesAndPermissions;
 
 use Illuminate\Database\Eloquent\Model;
+use Tarzancodes\RolesAndPermissions\Contracts\HasRolesContract;
 use Tarzancodes\RolesAndPermissions\Models\ModelRole;
 use Tarzancodes\RolesAndPermissions\Supports\ModelSupport;
-use Tarzancodes\RolesAndPermissions\Contracts\HasRolesContract;
 use Tarzancodes\RolesAndPermissions\Supports\PivotModelSupport;
 
 trait HasRolesAndPermissions

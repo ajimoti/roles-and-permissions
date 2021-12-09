@@ -3,15 +3,15 @@
 namespace Tarzancodes\RolesAndPermissions\Supports;
 
 use BadMethodCallException;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\Facades\Check;
-use Tarzancodes\RolesAndPermissions\Helpers\Pivot;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
 use Tarzancodes\RolesAndPermissions\Contracts\HasPivotContract;
 use Tarzancodes\RolesAndPermissions\Contracts\HasRolesContract;
+use Tarzancodes\RolesAndPermissions\Facades\Check;
+use Tarzancodes\RolesAndPermissions\Helpers\Pivot;
 
 class PivotModelSupport implements HasRolesContract, HasPivotContract
 {
