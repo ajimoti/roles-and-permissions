@@ -26,5 +26,4 @@ interface HasPermissionsContract
      * @return bool
      */
     public function authorize(...$permissions): bool;
-
 }
