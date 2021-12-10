@@ -5,26 +5,38 @@ namespace Tarzancodes\RolesAndPermissions;
 use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 use Tarzancodes\RolesAndPermissions\Models\ModelRole;
-use Tarzancodes\RolesAndPermissions\Supports\ModelSupport;
-use Tarzancodes\RolesAndPermissions\Supports\PivotModelSupport;
+use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
+use Tarzancodes\RolesAndPermissions\Repositories\PivotModelRepository;
 
 trait HasRolesAndPermissions
 {
-    private RolesContract $support;
+    /**
+     * Holds the repository to use
+     *
+     * @var RolesContract
+     */
+    private RolesContract $repository;
 
+    /**
+     * Boot trait
+     * Set the repository to use
+     *
+     * @return void
+     */
     protected function __construct()
     {
-        $this->support = new ModelSupport($this);
+        $this->repository = new ModelRepository($this);
     }
 
     /**
-     * A model may have multiple roles.
+     *
+     * Change the repository used to the pivot model repository
      *
      * @return self
      */
     public function of(Model $model, string $relationshipName = null): self
     {
-        $this->support = new PivotModelSupport($this, $model, $relationshipName);
+        $this->repository = new PivotModelRepository($this, $model, $relationshipName);
 
         return $this;
     }
@@ -38,7 +50,7 @@ trait HasRolesAndPermissions
      */
     public function can($permission, $arguments = [])
     {
-        return $this->support->can($permission, $arguments);
+        return $this->repository->can($permission, $arguments);
     }
 
     /**
@@ -49,7 +61,7 @@ trait HasRolesAndPermissions
      */
     public function has(...$permissions): bool
     {
-        return $this->support->has(...$permissions);
+        return $this->repository->has(...$permissions);
     }
 
     /**
@@ -60,7 +72,7 @@ trait HasRolesAndPermissions
      */
     public function hasRoles(...$roles): bool
     {
-        return $this->support->hasRoles(...$roles);
+        return $this->repository->hasRoles(...$roles);
     }
 
     /**
@@ -70,7 +82,7 @@ trait HasRolesAndPermissions
      */
     public function roles(): array
     {
-        return $this->support->roles();
+        return $this->repository->roles();
     }
 
     /**
@@ -80,7 +92,7 @@ trait HasRolesAndPermissions
      */
     public function permissions(): array
     {
-        return $this->support->permissions();
+        return $this->repository->permissions();
     }
 
     /**
@@ -91,7 +103,7 @@ trait HasRolesAndPermissions
      */
     public function assign(...$roles): bool
     {
-        return $this->support->assign(...$roles);
+        return $this->repository->assign(...$roles);
     }
 
     /**
@@ -103,10 +115,10 @@ trait HasRolesAndPermissions
     public function removeRoles(): bool
     {
         if (count(func_get_args())) {
-            return $this->support->removeRoles(func_get_args());
+            return $this->repository->removeRoles(func_get_args());
         }
 
-        return $this->support->removeRoles();
+        return $this->repository->removeRoles();
     }
 
     /**
@@ -117,7 +129,7 @@ trait HasRolesAndPermissions
      */
     public function authorize(...$permissions): bool
     {
-        return $this->support->authorize(...$permissions);
+        return $this->repository->authorize(...$permissions);
     }
 
     /**
@@ -128,7 +140,7 @@ trait HasRolesAndPermissions
      */
     public function authorizeRole(...$role): bool
     {
-        return $this->support->authorizeRole(...$role);
+        return $this->repository->authorizeRole(...$role);
     }
 
     /**
@@ -150,8 +162,8 @@ trait HasRolesAndPermissions
     {
         // If the model is a pivot relationship,
         // we will call the magic method on the pivot model support
-        if ($this->support instanceof PivotModelSupport) {
-            $this->support->{$method}(...$parameters);
+        if ($this->repository instanceof PivotModelRepository) {
+            $this->repository->{$method}(...$parameters);
 
             return $this;
         }
@@ -159,34 +171,4 @@ trait HasRolesAndPermissions
         // Use the model's magic method
         return parent::__call($method, $parameters);
     }
-
-    // /**
-    //  * Get the name of the "role" column.
-    //  *
-    //  * @return string
-    //  */
-    // private function getRoleColumnName(): string
-    // {
-    //     return config('roles-and-permissions.pivot.column_name');
-    // }
-
-    // /**
-    //  * Get the name of the "role" enum class.
-    //  *
-    //  * @return string
-    //  */
-    // private function getRoleEnumClass(): string
-    // {
-    //     return config('roles-and-permissions.roles_enum.default');
-    // }
-
-    // /**
-    //  * Get the model's roles
-    //  *
-    //  * @return array
-    //  */
-    // protected function getRoles(): array
-    // {
-    //     return $this->modelRoles()->pluck($this->getRoleColumnName())->all();
-    // }
 }

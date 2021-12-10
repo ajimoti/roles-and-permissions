@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Supports;
+namespace Tarzancodes\RolesAndPermissions\Repositories;
 
 use BadMethodCallException;
 use Illuminate\Database\Eloquent\Model;
@@ -13,7 +13,7 @@ use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Helpers\Pivot;
 
-class PivotModelSupport implements RolesContract, PivotContract
+class PivotModelRepository implements RolesContract, PivotContract
 {
     use Authorizable;
 

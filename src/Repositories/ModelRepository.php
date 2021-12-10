@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Supports;
+namespace Tarzancodes\RolesAndPermissions\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +11,7 @@ use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Models\ModelRole;
 
-class ModelSupport implements RolesContract
+class ModelRepository implements RolesContract
 {
     use Authorizable, HasRoles;
 
