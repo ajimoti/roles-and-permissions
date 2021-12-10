@@ -13,13 +13,11 @@ use Tarzancodes\RolesAndPermissions\Models\ModelRole;
 
 class ModelRepository implements RolesContract
 {
-    use Authorizable;
-    use HasRoles;
+    use Authorizable, HasRoles;
 
     public function __construct(
         protected Model $model
-    ) {
-    }
+    ) {}
 
     /**
      * Checks if the model has the given permission.
