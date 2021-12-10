@@ -35,7 +35,8 @@ class Pivot
         protected Model $localModel,
         protected Model $relatedModel,
         protected ?string $relationName = null,
-    ) {}
+    ) {
+    }
 
     /**
      * Get the related models with pivot attributes.
