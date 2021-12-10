@@ -29,7 +29,6 @@ trait HasRolesAndPermissions
     }
 
     /**
-     *
      * Change the repository used to the pivot model repository
      *
      * @return self
