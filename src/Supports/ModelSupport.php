@@ -13,11 +13,13 @@ use Tarzancodes\RolesAndPermissions\Models\ModelRole;
 
 class ModelSupport implements RolesContract
 {
-    use Authorizable, HasRoles;
+    use Authorizable;
+    use HasRoles;
 
     public function __construct(
         protected Model $model
-    ) {}
+    ) {
+    }
 
     /**
      * Checks if the model has the given permission.
