@@ -17,13 +17,6 @@ class Pivot
     use HasRoles;
 
     /**
-     * The name of the "role" column on the pivot table.
-     *
-     * @var string
-     */
-    protected string $roleColumnName;
-
-    /**
      * Conditions for the "where" clause on the pivot table
      *
      * @var array
@@ -42,9 +35,7 @@ class Pivot
         protected Model $localModel,
         protected Model $relatedModel,
         protected ?string $relationName = null,
-    ) {
-        $this->roleColumnName = config('roles-and-permissions.pivot.column_name');
-    }
+    ) {}
 
     /**
      * Get the related models with pivot attributes.
@@ -81,7 +72,7 @@ class Pivot
      */
     public function relationshipInstance(): BelongsToMany
     {
-        $roleColumnName = $this->roleColumnName;
+        $roleColumnName = $this->getRoleColumnName();
         $relationName = $this->getRelationshipName();
 
         try {
@@ -112,7 +103,7 @@ class Pivot
     public function getRoles(): array
     {
         foreach ($this->getRelatedModelsWithPivot() as $model) {
-            $roles[] = $model->pivot->{$this->roleColumnName};
+            $roles[] = $model->pivot->{$this->getRoleColumnName()};
         }
 
         return $roles ?? [];
@@ -128,7 +119,7 @@ class Pivot
         $pivotTableName = $this->getPivotTableName();
 
         return config("roles-and-permissions.roles_enum.{$pivotTableName}") ??
-                config('roles-and-permissions.roles_enum.users');
+                config('roles-and-permissions.roles_enum.default');
     }
 
     /**

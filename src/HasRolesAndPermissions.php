@@ -3,14 +3,14 @@
 namespace Tarzancodes\RolesAndPermissions;
 
 use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\Contracts\HasRolesContract;
+use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 use Tarzancodes\RolesAndPermissions\Models\ModelRole;
 use Tarzancodes\RolesAndPermissions\Supports\ModelSupport;
 use Tarzancodes\RolesAndPermissions\Supports\PivotModelSupport;
 
 trait HasRolesAndPermissions
 {
-    private HasRolesContract $support;
+    private RolesContract $support;
 
     protected function __construct()
     {
@@ -177,7 +177,7 @@ trait HasRolesAndPermissions
     //  */
     // private function getRoleEnumClass(): string
     // {
-    //     return config('roles-and-permissions.roles_enum.users');
+    //     return config('roles-and-permissions.roles_enum.default');
     // }
 
     // /**

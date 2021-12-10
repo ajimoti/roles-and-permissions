@@ -34,4 +34,14 @@ trait HasRoles
 
         return array_unique($allPermissions);
     }
+
+    /**
+     * Get the name of the "role" column.
+     *
+     * @return string
+     */
+    protected function getRoleColumnName(): string
+    {
+        return config('roles-and-permissions.pivot.column_name');
+    }
 }

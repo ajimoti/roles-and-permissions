@@ -2,7 +2,7 @@
 
 namespace Tarzancodes\RolesAndPermissions\Contracts;
 
-interface HasRolesContract extends HasPermissionsContract
+interface RolesContract extends PermissionsContract
 {
     /**
      * Check if the model has a permission.

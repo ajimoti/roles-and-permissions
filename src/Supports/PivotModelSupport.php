@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
-use Tarzancodes\RolesAndPermissions\Contracts\HasPivotContract;
-use Tarzancodes\RolesAndPermissions\Contracts\HasRolesContract;
+use Tarzancodes\RolesAndPermissions\Contracts\PivotContract;
+use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Helpers\Pivot;
 
-class PivotModelSupport implements HasRolesContract, HasPivotContract
+class PivotModelSupport implements RolesContract, PivotContract
 {
     use Authorizable;
 
@@ -146,17 +146,17 @@ class PivotModelSupport implements HasRolesContract, HasPivotContract
             }
 
             $pivotTableData = array_merge([$this->roleColumnName => $role], $this->pivotData);
-            $roleExists = $this->pivot->relationshipInstanceAsQuery()->wherePivot($this->roleColumnName, $role)->exists();
+            $roleExists = $this->pivot->relationshipInstance()->wherePivot($this->roleColumnName, $role)->exists();
 
             // If the model is already assigned the role, and the pivot data isset,
             // we proceed to update the pivot table we the new data.
             if ($roleExists && ! empty($this->pivotData)) {
-                $this->pivot->relationshipInstanceAsQuery()->updateExistingPivot($this->relatedModel->id, $pivotTableData);
+                $this->pivot->relationshipInstance()->updateExistingPivot($this->relatedModel->getKey(), $pivotTableData);
             }
 
             if (! $roleExists) {
                 // Assign the role to the model, and attach the pivot data.
-                $this->pivot->relationshipInstance()->attach($this->relatedModel->id, $pivotTableData);
+                $this->pivot->relationshipInstance()->attach($this->relatedModel->getKey(), $pivotTableData);
             }
         }
 

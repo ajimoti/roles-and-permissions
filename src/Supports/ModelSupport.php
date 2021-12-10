@@ -7,19 +7,17 @@ use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
 use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
-use Tarzancodes\RolesAndPermissions\Contracts\HasRolesContract;
+use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Models\ModelRole;
 
-class ModelSupport implements HasRolesContract
+class ModelSupport implements RolesContract
 {
-    use Authorizable;
-    use HasRoles;
+    use Authorizable, HasRoles;
 
     public function __construct(
         protected Model $model
-    ) {
-    }
+    ) {}
 
     /**
      * Checks if the model has the given permission.
@@ -136,22 +134,15 @@ class ModelSupport implements HasRolesContract
     }
 
     /**
-     * Get the name of the "role" column.
-     *
-     * @return string
-     */
-    private function getRoleColumnName(): string
-    {
-        return config('roles-and-permissions.pivot.column_name');
-    }
-
-    /**
      * Get the name of the "role" enum class.
      *
      * @return string
      */
     private function getRoleEnumClass(): string
     {
-        return config('roles-and-permissions.roles_enum.users');
+        $tableName = $this->model->getTable();
+
+        return config("roles-and-permissions.roles_enum.{$tableName}") ??
+                config('roles-and-permissions.roles_enum.default');
     }
 }

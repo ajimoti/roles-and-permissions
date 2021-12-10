@@ -2,7 +2,7 @@
 
 namespace Tarzancodes\RolesAndPermissions\Contracts;
 
-interface HasPermissionsContract
+interface PermissionsContract
 {
     /**
      * Get the model's permissions

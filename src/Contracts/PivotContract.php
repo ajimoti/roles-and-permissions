@@ -2,7 +2,7 @@
 
 namespace Tarzancodes\RolesAndPermissions\Contracts;
 
-interface HasPivotContract
+interface PivotContract
 {
     /**
      * Set intermediate table (pivot table) columns when assigning a role.
