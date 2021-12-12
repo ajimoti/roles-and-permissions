@@ -34,29 +34,54 @@ abstract class BaseRole extends Enum
      * @param string|int $role
      * @return array
      */
-    final public static function getPermissions($role): array
+    final public static function getPermissions(...$roles): array
     {
         $rolesAndPermissions = static::permissions();
 
-        if (! array_key_exists($role, $rolesAndPermissions)) {
-            throw new \Exception("Invalid role `{$role}` supplied");
-        }
+        $allPermissions = [];
+        foreach ($roles as $role) {
+            if (isset($rolesAndPermissions[$role])) {
+                // Return the present role's permissions,
+                // and permissions of roles with index higher than this
+                if (self::usesHierarchy()) {
+                    $rolesInHierarchy = array_keys($rolesAndPermissions);
+                    $lowerRoles = collect($rolesInHierarchy)->splice(array_search($role, $rolesInHierarchy))->all();
 
-        // Return the present role's permissions,
-        // and permissions of roles with index higher than this
-        if (self::usesHierarchy()) {
-            $rolesInHierarchy = array_keys($rolesAndPermissions);
-            $lowerRoles = collect($rolesInHierarchy)->splice(array_search($role, $rolesInHierarchy))->all();
+                    $permissions = [];
+                    foreach ($lowerRoles as $lowerRole) {
+                        $permissions = array_merge($permissions, $rolesAndPermissions[$lowerRole]);
+                    }
 
-            $permissions = [];
-            foreach ($lowerRoles as $lowerRole) {
-                $permissions = array_merge($permissions, $rolesAndPermissions[$lowerRole]);
+                    $allPermissions = array_merge($allPermissions, $permissions);
+                } else {
+                    $allPermissions = array_merge($allPermissions, $rolesAndPermissions[$role]);
+                }
+            } else {
+                throw new \Exception("Invalid role `{$role}` supplied");
             }
-
-            return array_unique($permissions);
         }
 
-        return $rolesAndPermissions[$role];
+        return array_unique($allPermissions);
+
+        // if (! array_key_exists($role, $rolesAndPermissions)) {
+        //     throw new \Exception("Invalid role `{$role}` supplied");
+        // }
+
+        // // Return the present role's permissions,
+        // // and permissions of roles with index higher than this
+        // if (self::usesHierarchy()) {
+        //     $rolesInHierarchy = array_keys($rolesAndPermissions);
+        //     $lowerRoles = collect($rolesInHierarchy)->splice(array_search($role, $rolesInHierarchy))->all();
+
+        //     $permissions = [];
+        //     foreach ($lowerRoles as $lowerRole) {
+        //         $permissions = array_merge($permissions, $rolesAndPermissions[$lowerRole]);
+        //     }
+
+        //     return array_unique($permissions);
+        // }
+
+        // return $rolesAndPermissions[$role];
     }
 
     /**
@@ -84,7 +109,7 @@ abstract class BaseRole extends Enum
      *
      * @return bool
      */
-    final private static function usesHierarchy(): bool
+    private static function usesHierarchy(): bool
     {
         return static::$useHierarchy;
     }

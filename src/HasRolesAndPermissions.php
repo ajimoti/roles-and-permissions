@@ -35,11 +35,9 @@ trait HasRolesAndPermissions
      *
      * @return self
      */
-    public function of(Model $model, string $relationshipName = null): self
+    public function of(Model $model, string $relationshipName = null): PivotModelRepository
     {
-        $this->repository = new PivotModelRepository($this, $model, $relationshipName);
-
-        return $this;
+        return new PivotModelRepository($this, $model, $relationshipName);
     }
 
     /**
@@ -71,9 +69,9 @@ trait HasRolesAndPermissions
      * @param string $role
      * @return bool
      */
-    public function hasRoles(...$roles): bool
+    public function hasRole(...$roles): bool
     {
-        return $this->repository->hasRoles(...$roles);
+        return $this->repository->hasRole(...$roles);
     }
 
     /**
@@ -150,39 +148,5 @@ trait HasRolesAndPermissions
     public function modelRoles()
     {
         return $this->morphMany(ModelRole::class, 'model');
-    }
-
-    /**
-     * Get the present repository.
-     *
-     * This is used strictly for testing.
-     *
-     * Weird name?
-     * Doing this to avoid cases where this method also exists on the parent model.
-     */
-    public function getRepositoryForTestttt(): RolesContract
-    {
-        return $this->repository;
-    }
-
-    /**
-     * Handle dynamic method calls into the model.
-     *
-     * @param  string  $method
-     * @param  array  $parameters
-     * @return mixed
-     */
-    public function __call($method, $parameters)
-    {
-        // If the model is a pivot relationship,
-        // we will call the magic method on the pivot model repository
-        if ($this->repository instanceof PivotModelRepository) {
-            $this->repository->{$method}(...$parameters);
-
-            return $this;
-        }
-
-        // Use the model's magic method
-        return parent::__call($method, $parameters);
     }
 }

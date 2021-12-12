@@ -2,8 +2,9 @@
 
 namespace Tarzancodes\RolesAndPermissions\Tests;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
 use Tarzancodes\RolesAndPermissions\RolesAndPermissionsServiceProvider;
 
 class TestCase extends Orchestra
@@ -34,8 +35,14 @@ class TestCase extends Orchestra
             'prefix' => '',
         ]);
 
+        config()->set('roles-and-permissions.roles_enum.default', Role::class);
+
         include_once __DIR__ . '/Migrations/create_users_table.php.stub';
+        include_once __DIR__ . '/Migrations/create_merchants_table.php.stub';
+        include_once __DIR__ . '/Migrations/create_merchant_user_table.php.stub';
 
         (new \CreateUsersTable())->up();
+        (new \CreateMerchantsTable())->up();
+        (new \CreateMerchantUserTable())->up();
     }
 }

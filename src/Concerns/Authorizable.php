@@ -20,7 +20,7 @@ trait Authorizable
      * @param string|int|array $role
      * @return bool
      */
-    abstract public function hasRoles(...$roles): bool;
+    abstract public function hasRole(...$roles): bool;
 
     /**
      * Check if the model has a permission.
@@ -45,7 +45,7 @@ trait Authorizable
      */
     public function authorizeRole(...$role): bool
     {
-        if ($this->hasRoles(...$role)) {
+        if ($this->hasRole(...$role)) {
             return true;
         }
 

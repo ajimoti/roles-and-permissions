@@ -52,7 +52,7 @@ class ModelRepository implements RolesContract
      * @param string $role
      * @return bool
      */
-    public function hasRoles(...$roles): bool
+    public function hasRole(...$roles): bool
     {
         $roles = collect($roles)->flatten()->all();
 

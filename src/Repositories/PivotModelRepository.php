@@ -95,7 +95,7 @@ class PivotModelRepository implements RolesContract, PivotContract
      * @param string|int|array $role
      * @return bool
      */
-    public function hasRoles(...$roles): bool
+    public function hasRole(...$roles): bool
     {
         $roles = collect($roles)->flatten()->all();
 

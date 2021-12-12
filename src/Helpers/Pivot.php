@@ -57,7 +57,8 @@ class Pivot
     {
         $relationship = $this->relationshipInstance();
 
-        $query = $relationship->wherePivot($relationship->getRelatedPivotKeyName(), $this->relatedModel->getKey());
+        $query = $relationship->wherePivot($relationship->getRelatedPivotKeyName(), $this->relatedModel->getKey())
+            ->wherePivotNotNull($this->getRoleColumnName());
 
         foreach ($this->conditions as $condition) {
             $query->{$condition['method_name']}(...$condition['parameters']);

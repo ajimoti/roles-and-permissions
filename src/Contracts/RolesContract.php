@@ -18,7 +18,7 @@ interface RolesContract extends PermissionsContract
      * @param string|int|array $role
      * @return bool
      */
-    public function hasRoles(...$roles): bool;
+    public function hasRole(...$roles): bool;
 
     /**
      * Get the model's roles.

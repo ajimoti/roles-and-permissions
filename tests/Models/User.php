@@ -2,22 +2,16 @@
 
 namespace Tarzancodes\RolesAndPermissions\Tests\Models;
 
-use Illuminate\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tarzancodes\RolesAndPermissions\HasRolesAndPermissions;
 use Tarzancodes\RolesAndPermissions\Tests\Factories\UserFactory;
 
-class User extends Model implements AuthorizableContract, AuthenticatableContract
+class User extends Authenticatable
 {
-    // use HasFactory, Authenticatable, HasFactory, Authorizable;
-    use HasFactory;
-    use Authenticatable;
-    use HasFactory;
-    use HasRolesAndPermissions;
+    use HasFactory, Notifiable, HasRolesAndPermissions;
 
     protected $guarded = [];
 
@@ -26,5 +20,10 @@ class User extends Model implements AuthorizableContract, AuthenticatableContrac
     protected static function newFactory()
     {
         return UserFactory::new();
+    }
+
+    public function merchants()
+    {
+        return $this->belongsToMany(Merchant::class);
     }
 }
