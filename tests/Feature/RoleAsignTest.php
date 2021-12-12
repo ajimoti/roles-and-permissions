@@ -1,11 +1,11 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Facades\Check;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
 use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
+use Tarzancodes\RolesAndPermissions\Facades\Check;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
+use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
+use Tarzancodes\RolesAndPermissions\Tests\Models\User;
 
 beforeEach(function () {
     auth()->login(User::factory()->create());
@@ -28,7 +28,7 @@ test('user can be assigned a single role', function () {
     expect(auth()->user()->hasRole(Role::Customer))->toBeFalse();
     expect(auth()->user()->roles())->toContain(Role::SuperAdmin);
     expect(auth()->user()->authorizeRole(Role::SuperAdmin))->toBeTrue();
-    expect(fn() => auth()->user()->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => auth()->user()->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
 
 test('user can be assigned multiple roles', function () {
@@ -46,7 +46,7 @@ test('user can be assigned multiple roles', function () {
     expect(auth()->user()->authorizeRole(Role::Admin, Role::SuperAdmin))->toBeTrue();
     expect(auth()->user()->authorizeRole(Role::SuperAdmin, Role::Admin))->toBeTrue();
 
-    expect(fn() => auth()->user()->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => auth()->user()->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
 
 test('user can be assigned multiple roles as an array', function () {
@@ -66,10 +66,10 @@ test('user can be assigned multiple roles as an array', function () {
     expect(auth()->user()->authorizeRole(Role::Customer, Role::SuperAdmin))->toBeTrue();
     expect(auth()->user()->authorizeRole(Role::SuperAdmin, Role::Customer))->toBeTrue();
 
-    expect(fn() => auth()->user()->authorize(Role::getPermissions(Role::Admin)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => auth()->user()->authorize(Role::getPermissions(Role::Admin)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
 
-test('pivot model can be assigned a role', function (){
+test('pivot model can be assigned a role', function () {
     auth()->user()->of($this->merchant)->assign(Role::Admin);
 
     $this->assertCount(1, auth()->user()->of($this->merchant)->roles());
@@ -80,7 +80,7 @@ test('pivot model can be assigned a role', function (){
     expect(auth()->user()->of($this->merchant)->hasRole(Role::SuperAdmin))->toBeFalse();
 
     expect(auth()->user()->of($this->merchant)->authorizeRole(Role::Admin))->toBeTrue();
-    expect(fn() => auth()->user()->of($this->merchant)->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => auth()->user()->of($this->merchant)->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
 
 test('pivot model can be assigned multiple roles', function () {
@@ -99,8 +99,8 @@ test('pivot model can be assigned multiple roles', function () {
     expect(auth()->user()->of($this->merchant)->authorizeRole(Role::Admin))->toBeTrue();
     expect(auth()->user()->of($this->merchant)->authorizeRole(Role::SuperAdmin, Role::Admin))->toBeTrue();
 
-    expect(fn() => auth()->user()->of($this->merchant)->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
-    expect(fn() => auth()->user()->of($this->merchant)->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => auth()->user()->of($this->merchant)->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => auth()->user()->of($this->merchant)->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
 
 
