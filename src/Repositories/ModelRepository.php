@@ -86,27 +86,27 @@ class ModelRepository implements RolesContract
                             ->all();
 
         DB::beginTransaction();
-            foreach ($roles as $role) {
-                if (! in_array($role, $roleEnumClass::all())) {
-                    throw new InvalidArgumentException(
-                        sprintf(
+        foreach ($roles as $role) {
+            if (! in_array($role, $roleEnumClass::all())) {
+                throw new InvalidArgumentException(
+                    sprintf(
                             'The role "%s" does not exist on the "%s" enum class.',
                             $role,
                             $roleEnumClass
                         )
-                    );
-                }
-
-                if (in_array($role, $exitingRoles)) {
-                    // If the role already exists, we don't need to do anything.
-                    continue;
-                }
-
-                $bulkRolesToSave[] = new ModelRole([$this->getRoleColumnName() => $role]);
+                );
             }
 
-            // Bulk insert the new roles
-            $this->model->modelRoles()->saveMany($bulkRolesToSave ?? []);
+            if (in_array($role, $exitingRoles)) {
+                // If the role already exists, we don't need to do anything.
+                continue;
+            }
+
+            $bulkRolesToSave[] = new ModelRole([$this->getRoleColumnName() => $role]);
+        }
+
+        // Bulk insert the new roles
+        $this->model->modelRoles()->saveMany($bulkRolesToSave ?? []);
         DB::commit();
 
         return true;
