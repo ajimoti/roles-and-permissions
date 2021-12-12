@@ -23,8 +23,10 @@ trait HasRolesAndPermissions
      *
      * @return void
      */
-    protected function __construct()
+    public function __construct(array $attributes = [])
     {
+        parent::__construct($attributes);
+
         $this->repository = new ModelRepository($this);
     }
 
@@ -151,6 +153,19 @@ trait HasRolesAndPermissions
     }
 
     /**
+     * Get the present repository.
+     *
+     * This is used strictly for testing.
+     *
+     * Weird name?
+     * Doing this to avoid cases where this method also exists on the parent model.
+     */
+    public function getRepositoryForTestttt(): RolesContract
+    {
+        return $this->repository;
+    }
+
+    /**
      * Handle dynamic method calls into the model.
      *
      * @param  string  $method
@@ -160,7 +175,7 @@ trait HasRolesAndPermissions
     public function __call($method, $parameters)
     {
         // If the model is a pivot relationship,
-        // we will call the magic method on the pivot model support
+        // we will call the magic method on the pivot model repository
         if ($this->repository instanceof PivotModelRepository) {
             $this->repository->{$method}(...$parameters);
 

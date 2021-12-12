@@ -2,8 +2,8 @@
 
 namespace Tarzancodes\RolesAndPermissions\Tests;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Tarzancodes\RolesAndPermissions\RolesAndPermissionsServiceProvider;
 
 class TestCase extends Orchestra
@@ -13,7 +13,7 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Tarzancodes\\RolesAndPermissions\\Database\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'Tarzancodes\\RolesAndPermissions\\Tests\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 
@@ -28,9 +28,14 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
 
-        /*
-        $migration = include __DIR__.'/../database/migrations/create_roles-and-permissions_table.php.stub';
-        $migration->up();
-        */
+        config()->set('database.connections.sqlite', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
+
+        include_once __DIR__ . '/Migrations/create_users_table.php.stub';
+
+        (new \CreateUsersTable)->up();
     }
 }
