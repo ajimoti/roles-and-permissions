@@ -9,13 +9,13 @@ final class Permission extends BasePermission
     // Sample permissions, replace these permissions with what works for your application
 
     // Product permissions
-    const DeleteProduct = 'delete_product';
-    const MarkAsSoldOut = 'mark_as_sold_out';
-    const EditProduct = 'edit_product';
-    const CreateProduct = 'create_product';
-    const BuyProduct = 'buy_product';
+    public const DeleteProduct = 'delete_product';
+    public const MarkAsSoldOut = 'mark_as_sold_out';
+    public const EditProduct = 'edit_product';
+    public const CreateProduct = 'create_product';
+    public const BuyProduct = 'buy_product';
 
     // Transactions permissions
-    const DeleteTransaction = 'delete_transaction';
-    const ViewTransaction = 'view_transaction';
+    public const DeleteTransaction = 'delete_transaction';
+    public const ViewTransaction = 'view_transaction';
 }

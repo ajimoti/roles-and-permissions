@@ -7,9 +7,9 @@ use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
 final class Role extends BaseRole
 {
     // These are sample roles, replace these roles with what works for your application
-    const SuperAdmin = 'super_admin';
-    const Admin = 'admin';
-    const Customer = 'customer';
+    public const SuperAdmin = 'super_admin';
+    public const Admin = 'admin';
+    public const Customer = 'customer';
 
     /**
      * Set available roles and their permissions.
@@ -21,7 +21,7 @@ final class Role extends BaseRole
         return [
             self::SuperAdmin => [
                 // Super Admin permissions should be here
-                Permission::DeleteProduct, Permission::DeleteTransaction, Permission::ViewTransaction
+                Permission::DeleteProduct, Permission::DeleteTransaction, Permission::ViewTransaction,
             ],
 
             self::Admin => [
