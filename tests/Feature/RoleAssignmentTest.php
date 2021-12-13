@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
 use Tarzancodes\RolesAndPermissions\Tests\Models\User;
@@ -9,98 +10,142 @@ use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
 
 beforeEach(function () {
     auth()->login(User::factory()->create());
-
-    auth()->user()->merchants()->save(Merchant::factory()->create());
-
-    $this->merchant = auth()->user()->merchants()->first();
-
-    // Remove other roles
-    auth()->user()->removeRoles();
-    auth()->user()->of($this->merchant)->removeRoles();
+    $this->merchant = Merchant::factory()->create();
 });
 
 test('user can be assigned a single role', function () {
-    auth()->user()->assign(Role::SuperAdmin);
+    $role = Role::getRandomValue();
+
+    auth()->user()->assign($role);
 
     $this->assertCount(1, auth()->user()->roles());
 
-    expect(auth()->user()->hasRole(Role::SuperAdmin))->toBeTrue();
-    expect(auth()->user()->hasRole(Role::Customer))->toBeFalse();
-    expect(auth()->user()->roles())->toContain(Role::SuperAdmin);
-    expect(auth()->user()->authorizeRole(Role::SuperAdmin))->toBeTrue();
-    expect(fn() => auth()->user()->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(auth()->user()->hasRole($role))->toBeTrue();
+    expect(auth()->user()->roles())->toContain($role);
+
+    expect(
+        auth()->user()->modelRoles()->whereRole($role)->exists()
+    )->toBeTrue();
 });
 
 test('user can be assigned multiple roles', function () {
-    auth()->user()->assign(Role::SuperAdmin, Role::Admin);
+    $firstRole = Role::getRandomValue();
+
+    do {
+        $secondRole = Role::getRandomValue();
+    } while ($firstRole === $secondRole);
+
+    auth()->user()->assign($firstRole, $secondRole);
 
     $this->assertCount(2, auth()->user()->roles());
 
-    expect(auth()->user()->hasRole(Role::SuperAdmin))->toBeTrue();
-    expect(auth()->user()->hasRole(Role::Admin))->toBeTrue();
-    expect(auth()->user()->hasRole(Role::SuperAdmin, Role::Admin))->toBeTrue();
-    expect(auth()->user()->hasRole(Role::Customer))->toBeFalse();
-    expect(auth()->user()->roles())->toContain(Role::SuperAdmin, Role::Admin);
-    expect(auth()->user()->authorizeRole(Role::SuperAdmin))->toBeTrue();
-    expect(auth()->user()->authorizeRole(Role::Admin))->toBeTrue();
-    expect(auth()->user()->authorizeRole(Role::Admin, Role::SuperAdmin))->toBeTrue();
-    expect(auth()->user()->authorizeRole(Role::SuperAdmin, Role::Admin))->toBeTrue();
+    expect(auth()->user()->hasRole($firstRole))->toBeTrue();
+    expect(auth()->user()->hasRole($secondRole))->toBeTrue();
+    expect(auth()->user()->hasRole($firstRole, $secondRole))->toBeTrue();
+    expect(auth()->user()->hasRole($secondRole, $firstRole))->toBeTrue();
+    expect(auth()->user()->roles())->toContain($firstRole, $secondRole);
 
-    expect(fn() => auth()->user()->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(
+        auth()->user()->modelRoles()->whereRole($firstRole)->exists()
+    )->toBeTrue();
+
+    expect(
+        auth()->user()->modelRoles()->whereRole($secondRole)->exists()
+    )->toBeTrue();
 });
 
 test('user can be assigned multiple roles as an array', function () {
-    auth()->user()->assign([Role::SuperAdmin, Role::Customer]);
+    $firstRole = Role::getRandomValue();
+
+    do {
+        $secondRole = Role::getRandomValue();
+    } while ($firstRole === $secondRole);
+
+    auth()->user()->assign([$firstRole, $secondRole]);
 
     $this->assertCount(2, auth()->user()->roles());
 
-    expect(auth()->user()->roles())->toContain(Role::SuperAdmin, Role::Customer);
+    expect(auth()->user()->roles())->toContain($secondRole, $firstRole);
 
-    expect(auth()->user()->hasRole(Role::SuperAdmin))->toBeTrue();
-    expect(auth()->user()->hasRole(Role::Customer))->toBeTrue();
-    expect(auth()->user()->hasRole(Role::SuperAdmin, Role::Customer))->toBeTrue();
-    expect(auth()->user()->hasRole(Role::Admin))->toBeFalse();
+    expect(auth()->user()->hasRole([$firstRole]))->toBeTrue();
+    expect(auth()->user()->hasRole([$secondRole]))->toBeTrue();
+    expect(auth()->user()->hasRole([$firstRole, $secondRole]))->toBeTrue();
 
-    expect(auth()->user()->authorizeRole(Role::SuperAdmin))->toBeTrue();
-    expect(auth()->user()->authorizeRole(Role::Customer))->toBeTrue();
-    expect(auth()->user()->authorizeRole(Role::Customer, Role::SuperAdmin))->toBeTrue();
-    expect(auth()->user()->authorizeRole(Role::SuperAdmin, Role::Customer))->toBeTrue();
+    expect(
+        auth()->user()->modelRoles()->whereRole($firstRole)->exists()
+    )->toBeTrue();
 
-    expect(fn() => auth()->user()->authorize(Role::getPermissions(Role::Admin)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(
+        auth()->user()->modelRoles()->whereRole($secondRole)->exists()
+    )->toBeTrue();
 });
 
 test('pivot model can be assigned a role', function (){
-    auth()->user()->of($this->merchant)->assign(Role::Admin);
+    $role = Role::getRandomValue();
+
+    auth()->user()->of($this->merchant)->assign($role);
 
     $this->assertCount(1, auth()->user()->of($this->merchant)->roles());
 
-    expect(auth()->user()->of($this->merchant)->roles())->toContain(Role::Admin);
+    expect(auth()->user()->of($this->merchant)->roles())->toContain($role);
+    expect(auth()->user()->of($this->merchant)->hasRole($role))->toBeTrue();
 
-    expect(auth()->user()->of($this->merchant)->hasRole(Role::Admin))->toBeTrue();
-    expect(auth()->user()->of($this->merchant)->hasRole(Role::SuperAdmin))->toBeFalse();
-
-    expect(auth()->user()->of($this->merchant)->authorizeRole(Role::Admin))->toBeTrue();
-    expect(fn() => auth()->user()->of($this->merchant)->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(
+        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.pivot.column_name'), $role)->exists()
+    )->toBeTrue();
 });
 
 test('pivot model can be assigned multiple roles', function () {
-    auth()->user()->of($this->merchant)->assign(Role::SuperAdmin, Role::Admin);
+    $firstRole = Role::getRandomValue();
+    do {
+        $secondRole = Role::getRandomValue();
+    } while ($firstRole === $secondRole);
+
+    auth()->user()->of($this->merchant)->assign($firstRole, $secondRole);
 
     $this->assertCount(2, auth()->user()->of($this->merchant)->roles());
-    $this->assertEquals(auth()->user()->of($this->merchant)->permissions(), Role::getPermissions(Role::SuperAdmin, Role::Admin));
 
-    expect(auth()->user()->of($this->merchant)->hasRole(Role::Admin, Role::SuperAdmin))->toBeTrue();
-    expect(auth()->user()->of($this->merchant)->hasRole(Role::SuperAdmin, Role::Admin))->toBeTrue();
-    expect(auth()->user()->of($this->merchant)->hasRole(Role::Customer, Role::Admin))->toBeFalse();
+    expect(auth()->user()->of($this->merchant)->hasRole($firstRole, $secondRole))->toBeTrue();
+    expect(auth()->user()->of($this->merchant)->hasRole($secondRole, $firstRole))->toBeTrue();
 
-    expect(auth()->user()->of($this->merchant)->roles())->toContain(Role::Admin);
-    expect(auth()->user()->of($this->merchant)->roles())->toContain(Role::SuperAdmin, Role::Admin);
+    expect(auth()->user()->of($this->merchant)->roles())->toContain($firstRole);
+    expect(auth()->user()->of($this->merchant)->roles())->toContain($secondRole);
+    expect(auth()->user()->of($this->merchant)->roles())->toContain($secondRole, $firstRole);
 
-    expect(auth()->user()->of($this->merchant)->authorizeRole(Role::Admin))->toBeTrue();
-    expect(auth()->user()->of($this->merchant)->authorizeRole(Role::SuperAdmin, Role::Admin))->toBeTrue();
+    expect(
+        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.pivot.column_name'), $firstRole)->exists()
+    )->toBeTrue();
 
-    expect(fn() => auth()->user()->of($this->merchant)->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
-    expect(fn() => auth()->user()->of($this->merchant)->authorize(Role::getPermissions(Role::Customer)))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(
+        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.pivot.column_name'), $secondRole)->exists()
+    )->toBeTrue();
+});
+
+test('pivot model can be assigned multiple roles as an array', function () {
+    $firstRole = Role::getRandomValue();
+
+    do {
+        $secondRole = Role::getRandomValue();
+    } while ($firstRole === $secondRole);
+
+    auth()->user()->of($this->merchant)->assign([$firstRole, $secondRole]);
+
+    $this->assertCount(2, auth()->user()->of($this->merchant)->roles());
+
+    expect(auth()->user()->of($this->merchant)->hasRole([$firstRole, $secondRole]))->toBeTrue();
+    expect(auth()->user()->of($this->merchant)->hasRole([$secondRole, $secondRole]))->toBeTrue();
+
+    expect(auth()->user()->of($this->merchant)->roles())->toContain($firstRole);
+    expect(auth()->user()->of($this->merchant)->roles())->toContain($secondRole);
+    expect(auth()->user()->of($this->merchant)->roles())->toContain($secondRole, $firstRole);
+
+    expect(
+        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.pivot.column_name'), $firstRole)->exists()
+    )->toBeTrue();
+
+    expect(
+        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.pivot.column_name'), $secondRole)->exists()
+    )->toBeTrue();
 });
 
 

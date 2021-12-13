@@ -114,7 +114,7 @@ trait HasRolesAndPermissions
     public function removeRoles(): bool
     {
         if (count(func_get_args())) {
-            return $this->repository->removeRoles(func_get_args());
+            return $this->repository->removeRoles(...func_get_args());
         }
 
         return $this->repository->removeRoles();
@@ -148,5 +148,17 @@ trait HasRolesAndPermissions
     public function modelRoles()
     {
         return $this->morphMany(ModelRole::class, 'model');
+    }
+
+    /**
+     * Get current repository
+     *
+     * Used strictly for testing
+     *
+     * @return RolesContract
+     */
+    public function getRepository(): RolesContract
+    {
+        return $this->repository;
     }
 }
