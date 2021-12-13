@@ -1,9 +1,9 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
 use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
+use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
+use Tarzancodes\RolesAndPermissions\Tests\Models\User;
 
 // beforeEach(function () {
 //     auth()->login(User::factory()->create());
@@ -75,4 +75,3 @@ use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
 //     expect(auth()->user()->has(Role::getPermissions($this->role, $this->secondRole)))->toBeTrue();
 //     expect(auth()->user()->has(Role::getPermissions($this->secondRole, $this->role)))->toBeTrue();
 // });
-

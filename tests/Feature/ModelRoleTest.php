@@ -1,9 +1,9 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
 use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
+use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
+use Tarzancodes\RolesAndPermissions\Tests\Models\User;
 
 beforeEach(function () {
     auth()->login(User::factory()->create());
@@ -45,11 +45,11 @@ it('role authorization for other roles to throw exception', function () {
     foreach (Role::all() as $role) {
         if ($role != $this->role) {
             $otherRoles[] = $role;
-            expect(fn() => auth()->user()->authorizeRole($role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+            expect(fn () => auth()->user()->authorizeRole($role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
         }
     }
 
-    expect(fn() => auth()->user()->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => auth()->user()->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
 
 it('can be assigned new roles', function () {
@@ -89,11 +89,11 @@ it('role authorization for other unassigned roles to throw exception', function 
     foreach (Role::all() as $role) {
         if (! in_array($role, [$this->role, $this->secondRole])) {
             $otherRoles[] = $role;
-            expect(fn() => auth()->user()->authorizeRole($role, $this->role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+            expect(fn () => auth()->user()->authorizeRole($role, $this->role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
         }
     }
 
-    expect(fn() => auth()->user()->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => auth()->user()->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
 
 it('can remove specific role', function () {
@@ -125,5 +125,5 @@ it('can remove all roles', function () {
 
     expect(auth()->user()->hasRole($this->role, $this->secondRole))->toBeFalse();
 
-    expect(fn() => auth()->user()->authorizeRole($this->role, $this->secondRole))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => auth()->user()->authorizeRole($this->role, $this->secondRole))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
