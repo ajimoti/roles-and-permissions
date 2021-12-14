@@ -21,6 +21,8 @@ abstract class BaseRole extends Enum
     protected static $useHierarchy = false;
 
     /**
+     * This property is only used for pivot roles.
+     *
      * Indicates if the model should be deleted
      * when the role is removed from the model.
      *
@@ -89,7 +91,7 @@ abstract class BaseRole extends Enum
      *
      * @return bool
      */
-    private static function usesHierarchy(): bool
+    final public static function usesHierarchy(): bool
     {
         return static::$useHierarchy;
     }

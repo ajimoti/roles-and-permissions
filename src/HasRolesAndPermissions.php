@@ -113,11 +113,7 @@ trait HasRolesAndPermissions
      */
     public function removeRoles(): bool
     {
-        if (count(func_get_args())) {
-            return $this->repository->removeRoles(...func_get_args());
-        }
-
-        return $this->repository->removeRoles();
+        return $this->repository->removeRoles(...func_get_args());
     }
 
     /**

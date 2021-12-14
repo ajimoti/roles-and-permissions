@@ -7,8 +7,6 @@ use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
 
 beforeEach(function () {
     auth()->login(User::factory()->create());
-    $this->merchant = Merchant::factory()->create();
-
     $this->role = Role::getRandomValue();
 
     do {

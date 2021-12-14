@@ -5,74 +5,121 @@ use Tarzancodes\RolesAndPermissions\Tests\Models\User;
 use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
 use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
 
-// beforeEach(function () {
-//     auth()->login(User::factory()->create());
-//     $this->merchant = Merchant::factory()->create();
+beforeEach(function () {
+    auth()->login(User::factory()->create());
+    $this->merchant = Merchant::factory()->create();
+    $this->role = Role::getRandomValue();
 
-//     $this->role = Role::getRandomValue();
+    do {
+        $this->secondRole = Role::getRandomValue();
+    } while ($this->role == $this->secondRole);
 
-//     do {
-//         $this->secondRole = Role::getRandomValue();
-//     } while ($this->role == $this->secondRole);
+    auth()->user()->of($this->merchant)->assign($this->role);
+});
 
-//     auth()->user()->assign($this->role);
-// });
+it('has role permissions', function () {
+    expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($this->role)))->toBeTrue();
+});
 
-// test('user has role permissions', function () {
-//     expect(auth()->user()->has(Role::getPermissions($this->role)))->toBeTrue();
-// });
+it('can access every permission belonging to the given role', function () {
+    foreach (Role::getPermissions($this->role) as $permission) {
+        expect(auth()->user()->of($this->merchant)->can($permission))->toBeTrue();
+    }
+});
 
-// test('user can access every permission belonging to the given role', function () {
-//     foreach (Role::getPermissions($this->role) as $permission) {
-//         expect(auth()->user()->can($permission))->toBeTrue();
-//     }
-// });
+it('is not given other roles permissions', function () {
+    foreach (Role::all() as $role) {
+        if ($role != $this->role) {
+            expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($role)))->toBeFalse();
+        }
+    }
+});
 
-// test('user is not given other roles permissions', function () {
-//     foreach (Role::all() as $role) {
-//         if ($role != $this->role) {
-//             expect(auth()->user()->has(Role::getPermissions($role)))->toBeFalse();
-//         }
-//     }
-// });
+it('role authorization is valid', function () {
+    expect(auth()->user()->of($this->merchant)->authorizeRole($this->role))->toBeTrue();
+});
 
-// test('role authorization for specified role on user to be true', function () {
-//     expect(auth()->user()->authorizeRole($this->role))->toBeTrue();
-// });
+it('role authorization for other roles to throw exception', function () {
+    $otherRoles = [];
+    foreach (Role::all() as $role) {
+        if ($role != $this->role) {
+            $otherRoles[] = $role;
+            expect(fn() => auth()->user()->of($this->merchant)->authorizeRole($role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+        }
+    }
 
-// test('role authorization for other roles to throw exception', function () {
-//     foreach (Role::all() as $role) {
-//         if ($role != $this->role) {
-//             expect(fn() => auth()->user()->authorizeRole($role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
-//         }
-//     }
-// });
+    expect(fn() => auth()->user()->of($this->merchant)->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+});
 
-// test('user with existing role can be assigned other role', function () {
-//     auth()->user()->assign($this->secondRole);
+it('can be assigned new roles', function () {
+    auth()->user()->of($this->merchant)->assign($this->secondRole);
 
-//     expect(auth()->user()->hasRole($this->secondRole))->toBeTrue();
-// });
+    expect(auth()->user()->of($this->merchant)->hasRole($this->secondRole))->toBeTrue();
+});
 
-// test('user can perform permissions of new roles and older role', function () {
-//     auth()->user()->assign($this->secondRole);
+it('can perform permissions of new roles and previous roles', function () {
+    auth()->user()->of($this->merchant)->assign($this->secondRole);
 
-//     foreach (Role::getPermissions($this->secondRole) as $permission) {
-//         expect(auth()->user()->can($permission))->toBeTrue();
-//     }
+    foreach (Role::getPermissions($this->secondRole) as $permission) {
+        expect(auth()->user()->of($this->merchant)->can($permission))->toBeTrue();
+    }
 
-//     foreach (Role::getPermissions($this->role) as $permission) {
-//         expect(auth()->user()->can($permission))->toBeTrue();
-//     }
-// });
+    foreach (Role::getPermissions($this->role) as $permission) {
+        expect(auth()->user()->of($this->merchant)->can($permission))->toBeTrue();
+    }
+});
 
-// test('user has permissions of new roles and older role', function () {
-//     auth()->user()->assign($this->secondRole);
+it('has permissions of new roles and older role', function () {
+    auth()->user()->of($this->merchant)->assign($this->secondRole);
 
-//     expect(auth()->user()->has(Role::getPermissions($this->role)))->toBeTrue();
-//     expect(auth()->user()->has(Role::getPermissions($this->secondRole)))->toBeTrue();
+    expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($this->role)))->toBeTrue();
+    expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($this->secondRole)))->toBeTrue();
 
-//     expect(auth()->user()->has(Role::getPermissions($this->role, $this->secondRole)))->toBeTrue();
-//     expect(auth()->user()->has(Role::getPermissions($this->secondRole, $this->role)))->toBeTrue();
-// });
+    expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($this->role, $this->secondRole)))->toBeTrue();
+    expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($this->secondRole, $this->role)))->toBeTrue();
+});
 
+it('role authorization for multiple roles are valid', function () {
+    expect(auth()->user()->of($this->merchant)->authorizeRole($this->role, $this->role))->toBeTrue();
+});
+
+it('role authorization for other unassigned roles to throw exception', function () {
+    $otherRoles = [];
+    foreach (Role::all() as $role) {
+        if (! in_array($role, [$this->role, $this->secondRole])) {
+            $otherRoles[] = $role;
+            expect(fn() => auth()->user()->of($this->merchant)->authorizeRole($role, $this->role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+        }
+    }
+
+    expect(fn() => auth()->user()->of($this->merchant)->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+});
+
+it('can remove specific role', function () {
+    auth()->user()->of($this->merchant)->assign($this->secondRole);
+
+    auth()->user()->of($this->merchant)->removeRoles($this->secondRole);
+
+    expect(auth()->user()->of($this->merchant)->hasRole($this->secondRole))->toBeFalse();
+});
+
+it('can remove multiple roles', function () {
+    auth()->user()->of($this->merchant)->assign($this->secondRole);
+
+    auth()->user()->of($this->merchant)->removeRoles($this->secondRole, $this->role);
+
+    expect(auth()->user()->of($this->merchant)->hasRole($this->secondRole, $this->role))->toBeFalse();
+    expect(auth()->user()->of($this->merchant)->hasRole($this->role))->toBeFalse();
+    expect(auth()->user()->of($this->merchant)->hasRole($this->secondRole))->toBeFalse();
+});
+
+it('can remove all roles', function () {
+    auth()->user()->of($this->merchant)->assign($this->secondRole);
+
+    auth()->user()->of($this->merchant)->removeRoles();
+
+    expect(auth()->user()->of($this->merchant)->hasRole($this->role))->toBeFalse();
+    expect(auth()->user()->of($this->merchant)->hasRole($this->secondRole))->toBeFalse();
+    expect(auth()->user()->of($this->merchant)->hasRole($this->role, $this->secondRole))->toBeFalse();
+    expect(fn() => auth()->user()->of($this->merchant)->authorizeRole($this->role, $this->secondRole))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+});
