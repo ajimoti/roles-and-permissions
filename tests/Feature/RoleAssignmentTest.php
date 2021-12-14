@@ -67,7 +67,7 @@ test('user can be assigned multiple roles as an array', function () {
     )->toBeTrue();
 });
 
-test('pivot model can be assigned a role', function (){
+test('pivot model can be assigned a role', function () {
     $role = Role::getRandomValue();
 
     auth()->user()->of($this->merchant)->assign($role);
