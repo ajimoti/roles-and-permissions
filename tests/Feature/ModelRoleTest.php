@@ -2,7 +2,6 @@
 
 use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
 use Tarzancodes\RolesAndPermissions\Tests\Models\User;
 
 beforeEach(function () {

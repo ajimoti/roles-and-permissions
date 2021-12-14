@@ -44,11 +44,11 @@ it('role authorization for other roles to throw exception', function () {
     foreach (Role::all() as $role) {
         if ($role != $this->role) {
             $otherRoles[] = $role;
-            expect(fn() => auth()->user()->of($this->merchant)->authorizeRole($role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+            expect(fn () => auth()->user()->of($this->merchant)->authorizeRole($role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
         }
     }
 
-    expect(fn() => auth()->user()->of($this->merchant)->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => auth()->user()->of($this->merchant)->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
 
 it('can be assigned new roles', function () {
@@ -88,11 +88,11 @@ it('role authorization for other unassigned roles to throw exception', function 
     foreach (Role::all() as $role) {
         if (! in_array($role, [$this->role, $this->secondRole])) {
             $otherRoles[] = $role;
-            expect(fn() => auth()->user()->of($this->merchant)->authorizeRole($role, $this->role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+            expect(fn () => auth()->user()->of($this->merchant)->authorizeRole($role, $this->role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
         }
     }
 
-    expect(fn() => auth()->user()->of($this->merchant)->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => auth()->user()->of($this->merchant)->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
 
 it('can remove specific role', function () {
@@ -121,5 +121,5 @@ it('can remove all roles', function () {
     expect(auth()->user()->of($this->merchant)->hasRole($this->role))->toBeFalse();
     expect(auth()->user()->of($this->merchant)->hasRole($this->secondRole))->toBeFalse();
     expect(auth()->user()->of($this->merchant)->hasRole($this->role, $this->secondRole))->toBeFalse();
-    expect(fn() => auth()->user()->of($this->merchant)->authorizeRole($this->role, $this->secondRole))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => auth()->user()->of($this->merchant)->authorizeRole($this->role, $this->secondRole))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
