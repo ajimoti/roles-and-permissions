@@ -7,9 +7,9 @@ use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
 final class MerchantRole extends BaseRole
 {
     // These are sample roles, replace these roles with what works for your application
-    const Distributor = 1;
-    const RetailManager = 2;
-    const CustomerAttendant = 3;
+    public const Distributor = 1;
+    public const RetailManager = 2;
+    public const CustomerAttendant = 3;
 
     public $usesHierarchy = true;
 

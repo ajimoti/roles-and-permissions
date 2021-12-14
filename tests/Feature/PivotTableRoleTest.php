@@ -48,8 +48,8 @@ it('expect role authorization for other roles to throw exception', function () {
         }
     }
 
-    expect(fn() => auth()->user()->of($this->merchant)->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
-    expect(fn() => auth()->user()->of($this->merchant)->authorizeRole(...$otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => auth()->user()->of($this->merchant)->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => auth()->user()->of($this->merchant)->authorizeRole(...$otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
 
 it('can be assigned new roles', function () {
@@ -125,7 +125,7 @@ it('can remove all roles', function () {
     expect(fn () => auth()->user()->of($this->merchant)->authorizeRole($this->role, $this->secondRole))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
 
-it('record still exists after roles are removed', function() {
+it('record still exists after roles are removed', function () {
     auth()->user()->of($this->merchant)->assign($this->secondRole);
 
     auth()->user()->of($this->merchant)->removeRoles();
