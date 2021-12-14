@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 use Tarzancodes\RolesAndPermissions\Models\ModelRole;
 use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
-use Tarzancodes\RolesAndPermissions\Repositories\PivotModelRepository;
+use Tarzancodes\RolesAndPermissions\Repositories\PivotTableRepository;
 
 trait HasRolesAndPermissions
 {
@@ -31,13 +31,13 @@ trait HasRolesAndPermissions
     }
 
     /**
-     * Change the repository used to the pivot model repository
+     * Change the repository used to the pivot table repository
      *
      * @return self
      */
-    public function of(Model $model, string $relationshipName = null): PivotModelRepository
+    public function of(Model $model, string $relationshipName = null): PivotTableRepository
     {
-        return new PivotModelRepository($this, $model, $relationshipName);
+        return new PivotTableRepository($this, $model, $relationshipName);
     }
 
     /**

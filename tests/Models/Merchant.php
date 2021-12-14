@@ -18,4 +18,9 @@ class Merchant extends Model
     {
         return MerchantFactory::new();
     }
+
+    public function merchantUsers()
+    {
+        return $this->belongsToMany(User::class);
+    }
 }

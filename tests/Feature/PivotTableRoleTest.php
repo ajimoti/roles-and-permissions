@@ -21,13 +21,13 @@ it('has role permissions', function () {
     expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($this->role)))->toBeTrue();
 });
 
-it('can access every permission belonging to the given role', function () {
+it('can access every permission that belongs to the given role', function () {
     foreach (Role::getPermissions($this->role) as $permission) {
         expect(auth()->user()->of($this->merchant)->can($permission))->toBeTrue();
     }
 });
 
-it('is not given other roles permissions', function () {
+it('is not given other role permissions', function () {
     foreach (Role::all() as $role) {
         if ($role != $this->role) {
             expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($role)))->toBeFalse();
@@ -35,11 +35,11 @@ it('is not given other roles permissions', function () {
     }
 });
 
-it('role authorization is valid', function () {
+it('expect the role authorization to be valid', function () {
     expect(auth()->user()->of($this->merchant)->authorizeRole($this->role))->toBeTrue();
 });
 
-it('role authorization for other roles to throw exception', function () {
+it('expect role authorization for other roles to throw exception', function () {
     $otherRoles = [];
     foreach (Role::all() as $role) {
         if ($role != $this->role) {
@@ -49,6 +49,7 @@ it('role authorization for other roles to throw exception', function () {
     }
 
     expect(fn() => auth()->user()->of($this->merchant)->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn() => auth()->user()->of($this->merchant)->authorizeRole(...$otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
 
 it('can be assigned new roles', function () {
@@ -79,11 +80,11 @@ it('has permissions of new roles and older role', function () {
     expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($this->secondRole, $this->role)))->toBeTrue();
 });
 
-it('role authorization for multiple roles are valid', function () {
+it('expect role authorization for multiple roles are valid', function () {
     expect(auth()->user()->of($this->merchant)->authorizeRole($this->role, $this->role))->toBeTrue();
 });
 
-it('role authorization for other unassigned roles to throw exception', function () {
+it('expect role authorization for other unassigned roles to throw exception', function () {
     $otherRoles = [];
     foreach (Role::all() as $role) {
         if (! in_array($role, [$this->role, $this->secondRole])) {
@@ -122,4 +123,18 @@ it('can remove all roles', function () {
     expect(auth()->user()->of($this->merchant)->hasRole($this->secondRole))->toBeFalse();
     expect(auth()->user()->of($this->merchant)->hasRole($this->role, $this->secondRole))->toBeFalse();
     expect(fn() => auth()->user()->of($this->merchant)->authorizeRole($this->role, $this->secondRole))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+});
+
+it('record still exists after roles are removed', function() {
+    auth()->user()->of($this->merchant)->assign($this->secondRole);
+
+    auth()->user()->of($this->merchant)->removeRoles();
+
+    expect(
+        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->exists()
+    )->toBeTrue();
+
+    $this->assertCount(2, auth()->user()->merchants()->get());
+
+    expect(auth()->user()->of($this->merchant)->hasRole($this->role))->toBeFalse();
 });

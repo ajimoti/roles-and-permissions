@@ -13,7 +13,7 @@ use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Helpers\Pivot;
 
-class PivotModelRepository implements RolesContract, PivotContract
+class PivotTableRepository implements RolesContract, PivotContract
 {
     use Authorizable;
 
@@ -28,7 +28,7 @@ class PivotModelRepository implements RolesContract, PivotContract
     ];
 
     /**
-     * An instance of the pivot model helper
+     * An instance of the pivot table helper
      *
      * @var Pivot
      */

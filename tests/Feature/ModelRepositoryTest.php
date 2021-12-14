@@ -1,7 +1,7 @@
 <?php
 
 use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
-use Tarzancodes\RolesAndPermissions\Repositories\PivotModelRepository;
+use Tarzancodes\RolesAndPermissions\Repositories\PivotTableRepository;
 use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
 use Tarzancodes\RolesAndPermissions\Tests\Models\User;
 
@@ -12,5 +12,5 @@ it('uses the right repository', function () {
         ->toBeInstanceOf(ModelRepository::class);
 
     expect(auth()->user()->of(Merchant::factory()->create()))
-        ->toBeInstanceOf(PivotModelRepository::class);
+        ->toBeInstanceOf(PivotTableRepository::class);
 });
