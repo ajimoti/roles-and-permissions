@@ -3,6 +3,7 @@
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
 use BenSampo\Enum\Enum;
+use Tarzancodes\RolesAndPermissions\Helpers\Selectable;
 
 abstract class BaseRole extends Enum
 {
@@ -38,15 +39,16 @@ abstract class BaseRole extends Enum
      */
     final public static function getPermissions(...$roles): array
     {
+        $roles = collect($roles)->flatten()->all();
         $rolesAndPermissions = static::permissions();
+        $rolesInHierarchy = array_keys($rolesAndPermissions);
 
         $allPermissions = [];
         foreach ($roles as $role) {
             if (isset($rolesAndPermissions[$role])) {
                 // Return the present role's permissions,
-                // and permissions of roles with index higher than this
+                // and permissions of roles that are lower than this in the array. (i.e roles with lower indexes)
                 if (self::usesHierarchy()) {
-                    $rolesInHierarchy = array_keys($rolesAndPermissions);
                     $lowerRoles = collect($rolesInHierarchy)->splice(array_search($role, $rolesInHierarchy))->all();
 
                     $permissions = [];
@@ -59,6 +61,14 @@ abstract class BaseRole extends Enum
                     $allPermissions = array_merge($allPermissions, $rolesAndPermissions[$role]);
                 }
             } else {
+                // if (gettype($role) === 'string') {
+                //     dd($role, static::class, $roles);
+                // }
+
+                if (static::fromValue($role)) {
+                    continue;
+                }
+
                 throw new \Exception("Invalid role `{$role}` supplied");
             }
         }
@@ -94,5 +104,14 @@ abstract class BaseRole extends Enum
     final public static function usesHierarchy(): bool
     {
         return static::$useHierarchy;
+    }
+
+    public static function __callStatic($name, $arguments)
+    {
+        if ($name === 'select') {
+            return new Selectable(static::class, ...$arguments);
+        }
+
+        return parent::__callStatic($name, $arguments);
     }
 }

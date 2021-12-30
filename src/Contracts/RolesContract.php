@@ -49,5 +49,5 @@ interface RolesContract extends PermissionsContract
      * @param string|int $role
      * @return bool
      */
-    public function authorizeRole(string|int $role): bool;
+    public function authorizeRole(...$role): bool;
 }

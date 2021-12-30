@@ -87,7 +87,7 @@ it('expect role authorization for multiple roles are valid', function () {
 it('expect role authorization for other unassigned roles to throw exception', function () {
     $otherRoles = [];
     foreach (Role::all() as $role) {
-        if (! in_array($role, [$this->role, $this->secondRole])) {
+        if ($role !== $this->role) {
             $otherRoles[] = $role;
             expect(fn () => auth()->user()->of($this->merchant)->authorizeRole($role, $this->role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
         }

@@ -1,126 +1,202 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
 use Tarzancodes\RolesAndPermissions\Tests\Models\User;
+use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
+use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationName;
+use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
 
 beforeEach(function () {
-    auth()->login(User::factory()->create());
-    $this->role = Role::getRandomValue();
+    config()->set('roles-and-permissions.roles_enum.merchant_user', MerchantRole::class);
+
+    // In this test, we're going to ignore the MerchantRole::Customer role when picking random roles.
+    // Because it has zero permissions, and might alter the behavior of the test results
+    $this->model = Merchant::factory()->create();
+
+    $this->role = MerchantRole::getRandomValue();
 
     do {
-        $this->secondRole = Role::getRandomValue();
-    } while ($this->role == $this->secondRole);
+        $this->role = MerchantRole::getRandomValue();
+    } while ($this->role == MerchantRole::Customer);
 
-    auth()->user()->assign($this->role);
+    do {
+        $this->secondRole = MerchantRole::getRandomValue();
+    } while (in_array($this->secondRole, [$this->role, MerchantRole::Customer]));
+
+    $this->model->assign($this->role);
 });
 
 it('has role permissions', function () {
-    expect(auth()->user()->has(Role::getPermissions($this->role)))->toBeTrue();
+    expect($this->model->has(MerchantRole::getPermissions($this->role)))->toBeTrue();
 });
 
-it('can access every permission belonging to the given role', function () {
-    foreach (Role::getPermissions($this->role) as $permission) {
-        expect(auth()->user()->can($permission))->toBeTrue();
+it('has lower roles permissions', function () {
+    $lowerRoles = MerchantRole::select($this->role)->withPermissions()->getLowerRoles();
+
+    // When the role is the lowest role,
+    // it will not have any lower role
+    if (! empty($lowerRoles)) {
+        expect($this->model->hasRole($lowerRoles))->toBeFalse();
+    }
+
+    foreach ($lowerRoles as $role => $permissions) {
+        if (empty(MerchantRole::getPermissions($role)) && empty($permissions)) {
+            // Cases where MerchantRole::Customer is one of the lower roles
+            continue;
+        }
+
+        expect($this->model->has(MerchantRole::getPermissions($role)))->toBeTrue();
+        expect($this->model->has($permissions))->toBeTrue();
     }
 });
 
-it('is not given other roles permissions', function () {
-    foreach (Role::all() as $role) {
-        if ($role != $this->role) {
-            expect(auth()->user()->has(Role::getPermissions($role)))->toBeFalse();
+it('does not have higher roles permissions', function () {
+    $higherRoles = MerchantRole::select($this->role)->withPermissions()->getHigherRoles();
+
+    // Doing this to stop `pest` from complaining about zero assertions
+    // When the role is the top role, it will not have any higher role
+    if (empty($higherRoles)) {
+        expect(true)->toBeTrue();
+
+        return;
+    }
+
+    expect($this->model->hasRole($higherRoles))->toBeFalse();
+
+    foreach ($higherRoles as $role => $permissions) {
+        if (empty(MerchantRole::getPermissions($role)) && empty($permissions)) {
+            // Cases where MerchantRole::Customer is one of the higher roles
+            continue;
         }
+
+        expect($this->model->has(MerchantRole::getPermissions($role)))->toBeFalse();
+        expect($this->model->has($permissions))->toBeFalse();
+    }
+});
+
+it('relationship name can be passed for pivot relation', function () {
+    $user = User::factory()->create();
+    expect(fn () => $this->model->of($user)->assign($this->secondRole))->toThrow(InvalidRelationName::class);
+
+    expect($this->model->of($user, 'merchantUsers')->assign($this->secondRole))->toBeTrue();
+    expect($this->model->of($user, 'merchantUsers')->hasRole($this->secondRole))->toBeTrue();
+    expect($this->model->of($user, 'merchantUsers')->has(MerchantRole::getPermissions($this->secondRole)))->toBeTrue();
+});
+
+it('can access every permission that belongs to the given role', function () {
+    foreach (MerchantRole::getPermissions($this->role) as $permission) {
+        expect($this->model->can($permission))->toBeTrue();
     }
 });
 
 it('role authorization is valid', function () {
-    expect(auth()->user()->authorizeRole($this->role))->toBeTrue();
+    expect($this->model->authorizeRole($this->role))->toBeTrue();
 });
 
 it('role authorization for other roles to throw exception', function () {
     $otherRoles = [];
-    foreach (Role::all() as $role) {
+    foreach (MerchantRole::all() as $role) {
         if ($role != $this->role) {
             $otherRoles[] = $role;
-            expect(fn () => auth()->user()->authorizeRole($role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+            expect(fn () => $this->model->authorizeRole($role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
         }
     }
 
-    expect(fn () => auth()->user()->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => $this->model->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });
 
 it('can be assigned new roles', function () {
-    auth()->user()->assign($this->secondRole);
+    $this->model->assign($this->secondRole);
 
-    expect(auth()->user()->hasRole($this->secondRole))->toBeTrue();
+    expect($this->model->hasRole($this->secondRole))->toBeTrue();
 });
 
-it('can perform permissions of new roles and previous roles', function () {
-    auth()->user()->assign($this->secondRole);
+it('can perform permissions of newly assigned role and previous roles', function () {
+    $this->model->assign($this->secondRole);
 
-    foreach (Role::getPermissions($this->secondRole) as $permission) {
-        expect(auth()->user()->can($permission))->toBeTrue();
+    foreach (MerchantRole::getPermissions($this->secondRole) as $permission) {
+        expect($this->model->can($permission))->toBeTrue();
     }
 
-    foreach (Role::getPermissions($this->role) as $permission) {
-        expect(auth()->user()->can($permission))->toBeTrue();
+    foreach (MerchantRole::getPermissions($this->role) as $permission) {
+        expect($this->model->can($permission))->toBeTrue();
     }
 });
 
-it('has permissions of new roles and older role', function () {
-    auth()->user()->assign($this->secondRole);
+it('has permissions of a newly assigned role and older role', function () {
+    $this->model->assign($this->secondRole);
 
-    expect(auth()->user()->has(Role::getPermissions($this->role)))->toBeTrue();
-    expect(auth()->user()->has(Role::getPermissions($this->secondRole)))->toBeTrue();
+    expect($this->model->has(MerchantRole::getPermissions($this->role)))->toBeTrue();
+    expect($this->model->has(MerchantRole::getPermissions($this->secondRole)))->toBeTrue();
 
-    expect(auth()->user()->has(Role::getPermissions($this->role, $this->secondRole)))->toBeTrue();
-    expect(auth()->user()->has(Role::getPermissions($this->secondRole, $this->role)))->toBeTrue();
+    expect($this->model->has(MerchantRole::getPermissions($this->role, $this->secondRole)))->toBeTrue();
+    expect($this->model->has(MerchantRole::getPermissions($this->secondRole, $this->role)))->toBeTrue();
 });
 
 it('role authorization for multiple roles are valid', function () {
-    expect(auth()->user()->authorizeRole($this->role, $this->role))->toBeTrue();
+    $this->model->assign($this->secondRole);
+
+    expect($this->model->authorizeRole($this->role, $this->secondRole))->toBeTrue();
 });
 
 it('role authorization for other unassigned roles to throw exception', function () {
-    $otherRoles = [];
-    foreach (Role::all() as $role) {
+    $this->model->assign($this->secondRole);
+
+    $unassignedRoles = [];
+    foreach (MerchantRole::all() as $role) {
         if (! in_array($role, [$this->role, $this->secondRole])) {
-            $otherRoles[] = $role;
-            expect(fn () => auth()->user()->authorizeRole($role, $this->role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+            $unassignedRoles[] = $role;
+            expect(fn () => $this->model->authorizeRole($role, $this->role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
         }
     }
 
-    expect(fn () => auth()->user()->authorizeRole($otherRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => $this->model->authorizeRole($unassignedRoles))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+});
+
+it('can delete pivot record on role remove', function () {
+    $user = User::factory()->create();
+
+    $this->model->of($user, 'merchantUsers')->assign($this->secondRole);
+
+    expect(
+        $this->model->merchantUsers()->whereUserId($user->id)->whereRole($this->secondRole)->exists()
+    )->toBeTrue();
+
+    $this->model->of($user, 'merchantUsers')->removeRoles($this->secondRole);
+
+    expect(
+        $this->model->merchantUsers()->whereUserId($user->id)->whereRole($this->secondRole)->exists()
+    )->toBeFalse();
 });
 
 it('can remove specific role', function () {
-    auth()->user()->assign($this->secondRole);
+    $this->model->assign($this->secondRole);
 
-    auth()->user()->removeRoles($this->secondRole);
+    $this->model->removeRoles($this->secondRole);
 
-    expect(auth()->user()->hasRole($this->secondRole))->toBeFalse();
+    expect($this->model->hasRole($this->secondRole))->toBeFalse();
 });
 
 it('can remove multiple roles', function () {
-    auth()->user()->assign($this->secondRole);
+    $this->model->assign($this->secondRole);
 
-    auth()->user()->removeRoles($this->secondRole, $this->role);
+    $this->model->removeRoles($this->secondRole, $this->role);
 
-    expect(auth()->user()->hasRole($this->secondRole, $this->role))->toBeFalse();
-    expect(auth()->user()->hasRole($this->role))->toBeFalse();
-    expect(auth()->user()->hasRole($this->secondRole))->toBeFalse();
+    expect($this->model->hasRole($this->secondRole, $this->role))->toBeFalse();
+    expect($this->model->hasRole($this->role))->toBeFalse();
+    expect($this->model->hasRole($this->secondRole))->toBeFalse();
 });
 
 it('can remove all roles', function () {
-    auth()->user()->assign($this->secondRole);
+    $this->model->assign($this->secondRole);
 
-    auth()->user()->removeRoles();
+    $this->model->removeRoles();
 
-    expect(auth()->user()->hasRole($this->role))->toBeFalse();
+    expect($this->model->hasRole($this->role))->toBeFalse();
 
-    expect(auth()->user()->hasRole($this->secondRole))->toBeFalse();
+    expect($this->model->hasRole($this->secondRole))->toBeFalse();
 
-    expect(auth()->user()->hasRole($this->role, $this->secondRole))->toBeFalse();
+    expect($this->model->hasRole($this->role, $this->secondRole))->toBeFalse();
 
-    expect(fn () => auth()->user()->authorizeRole($this->role, $this->secondRole))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
+    expect(fn () => $this->model->authorizeRole($this->role, $this->secondRole))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
 });

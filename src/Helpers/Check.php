@@ -27,6 +27,10 @@ class Check
      */
     public function existsIn(array $haystack): bool
     {
+        if (empty($this->needle) || empty($haystack)) {
+            return false;
+        }
+
         return empty(array_diff($this->needle, $haystack));
     }
 }

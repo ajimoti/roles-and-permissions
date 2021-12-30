@@ -10,10 +10,11 @@ final class MerchantRole extends BaseRole
     const Distributor = 1;
     const RetailManager = 2;
     const CustomerAttendant = 3;
+    const Customer = 4;
 
-    public $usesHierarchy = true;
+    protected static $useHierarchy = true;
 
-    public $deletePivotOnRemove = true;
+    protected static $deletePivotOnRemove = true;
 
     /**
      * Set available roles and their permissions.
@@ -38,6 +39,7 @@ final class MerchantRole extends BaseRole
                 // Customer permissions should be here
                 MerchantPermission::SellProduct,
             ],
+
         ];
     }
 }

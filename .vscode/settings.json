@@ -3,6 +3,7 @@
         "Authorizable",
         "modelable",
         "reguard",
+        "Selectable",
         "Sampo",
         "Tarzancodes",
         "Testttt",

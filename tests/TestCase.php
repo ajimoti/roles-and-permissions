@@ -2,10 +2,11 @@
 
 namespace Tarzancodes\RolesAndPermissions\Tests;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Tarzancodes\RolesAndPermissions\RolesAndPermissionsServiceProvider;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
+use Tarzancodes\RolesAndPermissions\RolesAndPermissionsServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -29,14 +30,8 @@ class TestCase extends Orchestra
     {
         config()->set('database.default', 'testing');
 
-        config()->set('database.connections.sqlite', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
-
         config()->set('roles-and-permissions.roles_enum.default', Role::class);
-        config()->set('roles-and-permissions.roles_enum.merchants', Role::class);
+        config()->set('roles-and-permissions.roles_enum.merchants', MerchantRole::class);
         config()->set('roles-and-permissions.pivot.column_name', 'role');
 
         include_once __DIR__ . '/Migrations/create_users_table.php.stub';

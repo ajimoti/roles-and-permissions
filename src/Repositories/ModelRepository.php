@@ -81,7 +81,7 @@ class ModelRepository implements RolesContract
         $roleEnumClass = $this->getRoleEnumClass();
 
         $exitingRoles = $this->model->modelRoles()->whereIn($this->getRoleColumnName(), $roles)
-                            ->select(['id', 'model_id', 'model_type', $this->getRoleColumnName()])
+                            ->select($this->getRoleColumnName())
                             ->get()->pluck($this->getRoleColumnName())
                             ->all();
 
@@ -132,7 +132,18 @@ class ModelRepository implements RolesContract
      */
     protected function getRoles(): array
     {
-        return $this->model->modelRoles()->pluck($this->getRoleColumnName())->all();
+        $roles = $this->model->modelRoles()->pluck($this->getRoleColumnName())->all();
+
+        // Cast the roles to the correct type
+        foreach ($roles as $role) {
+            if (is_numeric($role)) {
+                $cleanRoles[] = (int) $role;
+            } else {
+                $cleanRoles[] = $role;
+            }
+        }
+
+        return $cleanRoles ?? [];
     }
 
     /**

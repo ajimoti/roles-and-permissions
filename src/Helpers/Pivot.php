@@ -86,7 +86,7 @@ class Pivot
             throw new InvalidArgumentException("The `{$relationName}` relation is not a BelongsToMany relation.");
         } catch (Exception $exception) {
             if ($exception instanceof BadMethodCallException) {
-                $message = "`{$relationName}` relation does not exist in model [" . $this->localModel::class . "].";
+                $message = "`{$relationName}` relationship does not exist in model [" . $this->localModel::class . "].";
                 $message .= isset($this->relationName) ? " Ensure the right relation name was passed" :
                                 " Pass the right relation name as the second argument";
 

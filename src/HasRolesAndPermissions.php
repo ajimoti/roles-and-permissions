@@ -3,10 +3,11 @@
 namespace Tarzancodes\RolesAndPermissions;
 
 use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 use Tarzancodes\RolesAndPermissions\Models\ModelRole;
+use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
 use Tarzancodes\RolesAndPermissions\Repositories\PivotTableRepository;
+use Tarzancodes\RolesAndPermissions\Exceptions\InvalidArgumentException;
 
 trait HasRolesAndPermissions
 {
@@ -49,6 +50,10 @@ trait HasRolesAndPermissions
      */
     public function can($permission, $arguments = [])
     {
+        if (empty($permission)) {
+            throw new InvalidArgumentException();
+        }
+
         return $this->repository->can($permission, $arguments);
     }
 
@@ -60,6 +65,10 @@ trait HasRolesAndPermissions
      */
     public function has(...$permissions): bool
     {
+        if (empty($permissions) || empty($permissions[0])) {
+            throw new InvalidArgumentException();
+        }
+
         return $this->repository->has(...$permissions);
     }
 
@@ -71,6 +80,10 @@ trait HasRolesAndPermissions
      */
     public function hasRole(...$roles): bool
     {
+        if (empty($roles) || empty($roles[0])) {
+            throw new InvalidArgumentException();
+        }
+
         return $this->repository->hasRole(...$roles);
     }
 
@@ -102,6 +115,10 @@ trait HasRolesAndPermissions
      */
     public function assign(...$roles): bool
     {
+        if (empty($roles) || empty($roles[0])) {
+            throw new InvalidArgumentException();
+        }
+
         return $this->repository->assign(...$roles);
     }
 
@@ -124,6 +141,10 @@ trait HasRolesAndPermissions
      */
     public function authorize(...$permissions): bool
     {
+        if (empty($permissions) || empty($permissions[0])) {
+            throw new InvalidArgumentException();
+        }
+
         return $this->repository->authorize(...$permissions);
     }
 
@@ -135,6 +156,10 @@ trait HasRolesAndPermissions
      */
     public function authorizeRole(...$role): bool
     {
+        if (empty($role) || empty($role[0])) {
+            throw new InvalidArgumentException();
+        }
+
         return $this->repository->authorizeRole(...$role);
     }
 
