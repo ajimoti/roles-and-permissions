@@ -2,11 +2,11 @@
 
 namespace Tarzancodes\RolesAndPermissions\Tests;
 
-use Orchestra\Testbench\TestCase as Orchestra;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
+use Orchestra\Testbench\TestCase as Orchestra;
 use Tarzancodes\RolesAndPermissions\RolesAndPermissionsServiceProvider;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
 
 class TestCase extends Orchestra
 {

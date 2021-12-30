@@ -3,7 +3,6 @@
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
 use BenSampo\Enum\Enum;
-use Tarzancodes\RolesAndPermissions\Helpers\Selectable;
 
 abstract class BaseRole extends Enum
 {
