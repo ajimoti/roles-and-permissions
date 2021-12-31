@@ -9,7 +9,7 @@ This package allows you to assign roles and permissions to any laravel model, or
 
 Below are samples of how to use the pacakge after installation. 
 
-### Model class
+### Basic Usage
 The example below is done on a `User` model, but will also work on any model class.
 
 **First step:** Import the `Tarzancodes\RolesAndPermissions\Tests\Enums\Role` and `Tarzancodes\RolesAndPermissions\Tests\Enums\Permission` class.
@@ -38,10 +38,13 @@ This demonstrates how to use the package on a `many to many` relationship.
  
 In this example, we assume we have a `merchant` relationship in our `User` model.  And this relationship returns an instance of Laravel's `BelongsToMany` class.
 
+**First step:** Import the `Tarzancodes\RolesAndPermissions\Tests\Enums\Role` and `Tarzancodes\RolesAndPermissions\Tests\Enums\Permission` class.
 ```
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
+```
 
+```
 // Sample merchant
 $merchant = Merchant::where('name', 'wallmart')->first();
 
@@ -56,14 +59,6 @@ $user->of($merchant)->can(Permission::DeleteTransactions);
 
 // Check if the user has multiple permissions on the selected merchant (wallmart)
 $user->of($merchant)->has(Permission::DeleteTransactions, Permission::BlockUsers);
-
-// Authorize permissions
-// Throws an exception if the user does not have these permissions on the selected merchant (wallmart)
-$user->of($merchant)->authorize(Permission::DeleteTransactions, Permission::BlockUsers);
-
-// Authorize role
-// Throws an exception if the user does not have the permissions on the selected merchant (wallmart)
-$user->of($merchant)->authorizeRole(Role::SuperAdmin);
 ```
 
 ##  Requirements
