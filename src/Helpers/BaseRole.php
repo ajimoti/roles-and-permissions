@@ -61,10 +61,6 @@ abstract class BaseRole extends Enum implements IsEnumContract
                     $allPermissions = array_merge($allPermissions, $rolesAndPermissions[$role]);
                 }
             } else {
-                // if (gettype($role) === 'string') {
-                //     dd($role, static::class, $roles);
-                // }
-
                 if (static::fromValue($role)) {
                     continue;
                 }

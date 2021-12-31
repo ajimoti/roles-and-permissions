@@ -11,7 +11,7 @@ class BasePermission extends Enum
      *
      * @return array
      */
-    public function all(): array
+    public static function all(): array
     {
         return static::getValues();
     }
