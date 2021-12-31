@@ -1,8 +1,8 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
 use Tarzancodes\RolesAndPermissions\Exceptions\InvalidArgumentException;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
+use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
 
 it('role with zero permissions should not throw errors', function () {
     $model = Merchant::factory()->create();
