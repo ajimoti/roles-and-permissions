@@ -3,8 +3,8 @@
 namespace Tarzancodes\RolesAndPermissions\Tests\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Tarzancodes\RolesAndPermissions\HasRoles;
 use Illuminate\Database\Eloquent\Model;
+use Tarzancodes\RolesAndPermissions\HasRoles;
 use Tarzancodes\RolesAndPermissions\Tests\Factories\MerchantFactory;
 
 class Merchant extends Model
