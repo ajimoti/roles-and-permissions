@@ -338,7 +338,8 @@ The following are required for the package to work correctly on a pivot table
 
 > For better understanding on how `many to many` relationship work, or `pivot_tables` visit [laravel many to many relationship](https://laravel.com/docs/8.x/eloquent-relationships#many-to-many)
 
-### Example
+### Sample
+---
 To better explain the implementation, let's assume we are building an application, and in this application, a user can be a member of many merchants, i.e a merchant can have many users.
 
 In this case, we assume we have a `merchant_user` pivot table used as an intermediate table to link users and merchants, and a `role` column to store the user's role in a merchant. 
@@ -388,12 +389,16 @@ The `of()` method returns an instance of `Tarzancodes\RolesAndPermissions\Reposi
 
 `assign()`, `has()`, `can()`, `hasRole()`, `authorize()`, `authorizeRole()`, and `removeRoles()` 
 
-### Assigning roles
 
+For the explanations below, we'd assume the variable `$merchant` is set to a merchant with name `wallmart` like so:
 ```
-// sample merchant
 $merchant = Merchant::where('name', 'wallmart')->first();
+```
 
+
+### Assigning roles
+---
+```
 // Give the user a super admin role
 $user->of($merchant)->assign(Role::SuperAdmin); // returns boolean
 ```
@@ -401,9 +406,6 @@ $user->of($merchant)->assign(Role::SuperAdmin); // returns boolean
 From the sample above, the `$user` has been assigned a `super admin` role at wallmart. To view the user's permission at wallmart use the code below:
 
 ```
-// sample merchant
-$merchant = Merchant::where('name', 'wallmart')->first();
-
 $user->of($merchant)->permissions(); // returns an array of the user's permissions at wallmart
 ```
 
@@ -416,4 +418,119 @@ $user->of($merchant)->assign(Role::SuperAdmin, Role::Admin); // returns boolean
 
 //or as an array
 $user->of($merchant)->assign([Role::SuperAdmin, Role::Admin]);
+```
+From the sample above, the `$user` has been assigned a `super admin` and `admin` role at wallmart.
+
+### Get roles
+
+```
+// Get ther user roles at the selected merchant (wallmart)
+$user->of($merchant)->roles(); // returns an array of the user's roles
+
+```
+
+### Get Permissions
+```
+// Get ther user permissions at the selected merchant (wallmart)
+$user->of($merchant)->permissions(); // returns an array of the user's permissions at 
+
+```
+### Has Role
+Check if a user has a specific role, or multiple roles
+
+```
+$user->of($merchant)->hasRole(Role::SuperAdmin); // returns boolean
+```
+
+Or check for multiple roles
+```
+// check if user has the provided roles at the selected merchant 
+$user->of($merchant)->hasRole(Role::SuperAdmin, Role::Customer); // returns boolean
+
+$user->of($merchant)->hasRole([Role::SuperAdmin, Role::Customer]); // returns boolean
+
+```
+
+When multiple roles are passed, the package will only return  `true`  when the  `$user`  model of the `$merchant` has been assigned all roles passed.
+
+
+### Has permissions
+
+Pivot records have permissions via roles. Therefore a record only has permissions that are associated with the roles they have been assigned.
+
+For instance, if a  `$user`  model has been assigned the  `SuperAdmin`  and  `Admin`  roles at a `merchant` , the user has all the permissions associated with both roles ONLY at this merchant. Calling the `has()` method directly on the `$user` model will return false.
+
+```
+// Check if the user has a permission
+$user->of($merchant)->has(Permission::DeleteProducts); // returns boolean
+
+```
+
+You can decide to check for multiple permissions at once
+
+```
+// Check if the user has any of the following permissions.
+$user->of($merchant)->has(Permission::DeleteProducts, Permission::DeleteTransactions); // returns boolean
+
+// OR as an array
+$user->of($merchant)->has([Permission::DeleteProducts, Permission::DeleteTransactions]); // returns boolean
+
+```
+
+The  `has()`  will only return  `true`  when the  `$user`  model has all the permissions passed at the `merchant`. If the user does not have one or more of the permissions passed, the method returns  `false`  .
+
+> Permissions of different roles can be passed to the  `has()`  method, the package will check if the user has been assigned the roles associated with the permissions passed, and returns the right boolean.
+
+### Authorize Permissions
+For cases where you want to throw an exception when a  `pivot record`  does not have permission, or multiple permissions, you can use the  `authorize()`  method to achieve this.
+
+```
+$user->of($merchant)->authorize(Permission::DeleteTransactions); // Throws a `PermissionDeniedException` if the user does not have this permission at the selected merchant
+```
+```
+// or authorize miltple permissions
+$user->of($merchant)->authorize(Permission::DeleteTransactions, Permission::BuyProducts);
+```
+```
+// as an array
+$user->of($merchant)->authorize([Permission::DeleteTransactions, Permission::BuyProducts]);
+```
+
+The  `authorize()`  method returns  `true`  if the user has the permission(s) passed at the `merchant`.
+
+> Permissions of different roles can be passed to the  `authorize()`  method, the package will check if the user has been assigned the roles associated with the permissions passed, and throw an exception if the  `$user`  does not have the role
+
+### Authorize Role
+For cases where you want to throw an exception when a  `pivot record`  does not have a role or multiple roles, you can use the  `authorizeRole()`  method to achieve this.
+
+```
+$user->of($merchant)->authorizeRole(Role::SuperAdmin); // throws a `PermissionDeniedException` exception if the user is not a super admin at the selected merchant
+```
+
+```
+// Or authorize multiple roles
+$user->of($merchant)->authorizeRole(Role::SuperAdmin, Role::SuperAdmin); // throws a `PermissionDeniedException` exception if the user is not a super admin at the selected merchant
+```
+
+The  `authorizeRole()`  method returns true if the  `$user`  model has the provided roles at the selected `merchant`.
+
+### Remove roles
+```
+// remove all pivot record roles at
+$user->of($merchant)->removeRoles(); // returns boolean
+
+```
+
+You can choose to specify the role(s) you want to remove
+
+```
+// a role can be removed from a user of the selected merchant
+$user->of($merchant)->removeRoles(Role::SuperAdmin); // returns boolean
+
+// or remove multiple roles
+$user->of($merchant)->removeRoles(Role::SuperAdmin, Role::Admin); // returns boolean
+
+// or as an array
+$user->of($merchant)->removeRoles([Role::SuperAdmin, Role::Admin]); // returns boolean
+
 ```
