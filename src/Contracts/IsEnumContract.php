@@ -10,5 +10,4 @@ interface IsEnumContract
      * @return array
      */
     public static function all(): array;
-
 }
