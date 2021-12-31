@@ -19,7 +19,7 @@ class RolesAndPermissionsCommand extends Command
      *
      * @var string
      */
-    public $description = 'Install the roles and permissions package';
+    public $description = 'Installs the roles and permissions package';
 
     public function handle(): int
     {

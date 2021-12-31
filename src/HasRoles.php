@@ -9,7 +9,7 @@ use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
 use Tarzancodes\RolesAndPermissions\Repositories\PivotTableRepository;
 use Tarzancodes\RolesAndPermissions\Exceptions\InvalidArgumentException;
 
-trait HasRolesAndPermissions
+trait HasRoles
 {
     /**
      * Holds the repository to use

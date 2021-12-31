@@ -5,14 +5,14 @@ namespace Tarzancodes\RolesAndPermissions\Tests\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Tarzancodes\RolesAndPermissions\HasRolesAndPermissions;
+use Tarzancodes\RolesAndPermissions\HasRoles;
 use Tarzancodes\RolesAndPermissions\Tests\Factories\UserFactory;
 
 class User extends Authenticatable
 {
     use HasFactory;
     use Notifiable;
-    use HasRolesAndPermissions;
+    use HasRoles;
 
     protected $guarded = [];
 

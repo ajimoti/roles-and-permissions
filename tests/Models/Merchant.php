@@ -4,13 +4,13 @@ namespace Tarzancodes\RolesAndPermissions\Tests\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Tarzancodes\RolesAndPermissions\HasRolesAndPermissions;
+use Tarzancodes\RolesAndPermissions\HasRoles;
 use Tarzancodes\RolesAndPermissions\Tests\Factories\MerchantFactory;
 
 class Merchant extends Model
 {
     use HasFactory;
-    use HasRolesAndPermissions;
+    use HasRoles;
 
     protected $guarded = [];
 
