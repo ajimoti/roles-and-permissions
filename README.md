@@ -12,7 +12,8 @@ Below are samples of how to use the pacakge after installation.
 ### Basic Usage
 The example below is done on a `User` model, but will also work on any model class.
 
-**First step:** Import the `Tarzancodes\RolesAndPermissions\Tests\Enums\Role` and `Tarzancodes\RolesAndPermissions\Tests\Enums\Permission` class.
+**First step:** 
+Import the `Tarzancodes\RolesAndPermissions\Tests\Enums\Role` and `Tarzancodes\RolesAndPermissions\Tests\Enums\Permission` class.
 ```
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
@@ -38,7 +39,8 @@ This demonstrates how to use the package on a `many to many` relationship.
  
 In this example, we assume we have a `merchant` relationship in our `User` model.  And this relationship returns an instance of Laravel's `BelongsToMany` class.
 
-**First step:** Import the `Tarzancodes\RolesAndPermissions\Tests\Enums\Role` and `Tarzancodes\RolesAndPermissions\Tests\Enums\Permission` class.
+**First step:** 
+Import the `Tarzancodes\RolesAndPermissions\Tests\Enums\Role` and `Tarzancodes\RolesAndPermissions\Tests\Enums\Permission` class.
 ```
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
@@ -534,3 +536,62 @@ $user->of($merchant)->removeRoles(Role::SuperAdmin, Role::Admin); // returns boo
 $user->of($merchant)->removeRoles([Role::SuperAdmin, Role::Admin]); // returns boolean
 
 ```
+
+>Note: Provided the model extends Laravel `
+Illuminate\Foundation\Auth\User
+`, these methods are also available to the authenticated user via the `Auth` facade's `user` method. i.e `auth()->user()->of($merchant)` will also return an instance of `Tarzancodes\RolesAndPermissions\Repositories\PivotTableRepository`
+
+
+## Pivot Usage with conditions (Advanced)
+In this section, we will explain how to conditionally use the package on a pivot record. 
+
+You can chain any of the following `belongsToMany` relationship query method to the `of()` method. 
+
+**Allowed methods**
+`wherePivot`, `wherePivotIn`, `wherePivotNotIn`, `wherePivotBetween`, `wherePivotNotBetween`, `wherePivotNull`, and `wherePivotNotNull`
+
+The package supports every method listed in the section of laravel's documentation: [Filtering Queries Via Intermediate Table Columns](https://laravel.com/docs/8.x/eloquent-relationships#filtering-queries-via-intermediate-table-columns)
+
+### Example of pivot with conditions
+Using the example in the [Pivot table usage](https:://blah.com) above. 
+
+But in this case:
+- Each merchant has `departments`
+- Users can belong to different `departments`
+- Users have different roles in different sections
+
+Below is a sample of the database structure we have:
+```
+users
+    id - integer
+    name - string
+
+merchant
+    id - integer
+    name - string
+
+merchant_user
+    merchant_id - integer
+    user_id - integer
+    role - string
+    department - string
+
+```
+
+
+### Set pivot column while assigning roles 
+
+When assigning roles, you can chain a `withPivot()` method to set the values of `pivot` columns.
+
+This is an example of how to assign a role, and also set a value to the `department` column. 
+```
+// Give the user a super admin role in the 'product' department of this merchant
+$user->of($merchant)
+	->withPivot(['department' => 'product'])
+	->assign(Role::SuperAdmin); // returns boolean
+
+```
+
+From the sample above, the  `$user`  has been assigned a  `super admin`  role at wallmart. To view the user’s permission at wallmart use the code below:
+
+# Advance Usage

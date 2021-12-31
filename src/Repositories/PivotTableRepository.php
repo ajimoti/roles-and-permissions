@@ -189,12 +189,12 @@ class PivotTableRepository implements RolesContract, PivotContract
     /**
      * Columns to set when assigning a role.
      *
-     * @param array $columns
+     * @param array $columnsAndValues
      * @return self
      */
-    public function withPivot(array $columns): self
+    public function withPivot(array $columnsAndValues): self
     {
-        $this->pivotData = $columns;
+        $this->pivotData = array_merge($this->pivotData, $columnsAndValues);
 
         return $this;
     }
