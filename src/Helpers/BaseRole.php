@@ -3,8 +3,9 @@
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
 use BenSampo\Enum\Enum;
+use Tarzancodes\RolesAndPermissions\Contracts\IsEnumContract;
 
-abstract class BaseRole extends Enum
+abstract class BaseRole extends Enum implements IsEnumContract
 {
     /**
      * Indicates if the roles should be considered
