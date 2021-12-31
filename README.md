@@ -11,19 +11,29 @@ Below are samples of how to use the pacakge after installation.
 
 ### Model class
 The example below is done on a `User` model, but will also work on any model class.
+
+**First step:** Import the `Tarzancodes\RolesAndPermissions\Tests\Enums\Role` and `Tarzancodes\RolesAndPermissions\Tests\Enums\Permission` class.
 ```
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
+```
 
+Then following can be done:
+```
 // Assign a 'Super Admin' role to this user
 $user->assign(Role::SuperAdmin);
-
+```
+```
 // Check if the user has the role
 $user->hasRole(Role::SuperAdmin); 
+```
 
+```
 // Check if the user can perform a operation
 $user->can(Permission::DeleteTransactions);
+```
 
+```
 // Check if the user has multiple permissions
 $user->has(Permission::DeleteTransactions, Permission::BlockUsers);
 ```
