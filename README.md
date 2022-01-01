@@ -5,6 +5,8 @@
 ## Introduction
 This package allows you to assign roles and permissions to any laravel model, or on a pivot table (`many to many relationship`).
 
+Written by [Ajimoti Ibukun](https://www.linkedin.com/in/ibukun-ajimoti-3420a786/)
+
 ## Quick Samples
 
 Below are samples of how to use the pacakge after installation. 
@@ -68,13 +70,24 @@ $user->of($merchant)->has(Permission::DeleteTransactions, Permission::BlockUsers
 - Laravel 8.0 or higher
 - Upon installation, the package publishes a `config/roles-and-permissions.php` file, ensure you do not have a file with the same name in your config directory.
 
+### Pros
+- The package can be used on any model, i.e any model can be assigned a role, and have the permissions associated with the role.
+- Models have permissions via roles.
+- Models can be assigned multiple roles.
+- A `many to many` relationship can be assigned roles. (i.e the package can be used on a pivot table)
+- Supports role hierarchy. (A higher level role can be configured to have the permissions of lower level roles).
+
+### Cons
+- Permissions cannot be assigned directly to a model
+
+
 ## Installation
 You can install the package via composer:
 ```bash
 composer require tarzan-codes/roles-and-permissions
 ```
 
-> *(Not compulsory)* If you have existing pivot tables that you want to apply the package to, you can add these table names to the `pivot > tables` array in the `config/roles-and-permissions.php` config file. This will add a `role` column to each of the tables. 
+> *(Not compulsory)* If you have existing pivot tables that you want to apply the package to, you can add these table names to the `pivot.tables` array in the `config/roles-and-permissions.php` config file. This will add a `role` column to each of the tables. 
 
 After successful installation, run the command below
 ```bash
@@ -850,3 +863,6 @@ $user->of($merchant)->assign(Role::SuperAdmin);
 $merchant->of($user)->assign(Role::SuperAdmin); 
 
 ```
+
+# Enum Library
+This package leverages on [BenSampo laravel enum](https://github.com/BenSampo/laravel-enum) package. You can explore the documentation to better understand how it works.
