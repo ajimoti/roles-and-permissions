@@ -19,10 +19,7 @@ Import the `App\Enums\Role` and `App\Enums\Permission` class.
 ```php
 use App\Enums\Role;
 use App\Enums\Permission;
-```
 
-Then following can be done:
-```php
 // Assign a 'Super Admin' role to this user
 $user->assign(Role::SuperAdmin);
 
