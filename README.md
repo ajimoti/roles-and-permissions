@@ -155,6 +155,7 @@ From the above class, the constants  `SuperAdmin`, `Admin` and `Customer` are th
 > It is considered good practice to use `strings` instead of `integers` for better readablity
 
 #### Using the Role class
+---
 **Get all roles**
 ```
 Use app\Enums\Role.php
