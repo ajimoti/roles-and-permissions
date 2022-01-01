@@ -90,7 +90,8 @@ The above command does the following:
 - Adds a `role` column to every pivot table listed in the `pivot > tables` array on the `config/roles-and-permissions.php` (if any).
 
 
-## The Role Class
+## Prerequisites 
+### The Role Class
 You define the roles in the `app\Enums\Role.php` class created as constants, and then assign `permissions` to them in the `permissions()` method that exists in the class.
 
 Below is a sample of a `app\Enums\Role.php` class:
@@ -153,7 +154,7 @@ From the above class, the constants  `SuperAdmin`, `Admin` and `Customer` are th
 
 > It is considered good practice to use `strings` instead of `integers` for better readablity
 
-### Using the Role class
+#### Using the Role class
 **Get all roles**
 ```
 Use app\Enums\Role.php
@@ -175,7 +176,7 @@ Use app\Enums\Role.php
 $roles = Role::getPermissions(Role::SuperAdmin); // returns every permissions available to the super admin role as an array
 ```
 
-## The Permission Class
+### The Permission Class
 The package also ships with a `app\Enums\Permission.php` class. The `Permission` class is a enum class where you should declare all the permissions required for app to work.
 
 Below is an example of what the class will look like:
