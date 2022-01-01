@@ -14,13 +14,13 @@ The example below is done on a `User` model, but will also work on any model cla
 
 **First step:** 
 Import the `Tarzancodes\RolesAndPermissions\Tests\Enums\Role` and `Tarzancodes\RolesAndPermissions\Tests\Enums\Permission` class.
-```
+```php
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
 ```
 
 Then following can be done:
-```
+```php
 // Assign a 'Super Admin' role to this user
 $user->assign(Role::SuperAdmin);
 
@@ -41,12 +41,12 @@ In this example, we assume we have a `merchant` relationship in our `User` model
 
 **First step:** 
 Import the `Tarzancodes\RolesAndPermissions\Tests\Enums\Role` and `Tarzancodes\RolesAndPermissions\Tests\Enums\Permission` class.
-```
+```php
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
 ```
 
-```
+```php
 // Sample merchant
 $merchant = Merchant::where('name', 'wallmart')->first();
 
@@ -70,14 +70,14 @@ $user->of($merchant)->has(Permission::DeleteTransactions, Permission::BlockUsers
 
 ## Installation
 You can install the package via composer:
-```
+```bash
 composer require tarzan-codes/roles-and-permissions
 ```
 
 > *(Not compulsory)* If you have existing pivot tables that you want to apply the package to, you can add these table names to the `pivot > tables` array in the `config/roles-and-permissions.php` config file. This will add a `role` column to each of the tables. 
 
 After successful installation, run the command below
-```
+```bash
 php artisan roles:install
 ```
 
@@ -99,7 +99,7 @@ You can decide to use multiple role classes in your application. Check the [conf
 
 Below is a sample of what a `app\Enums\Role.php` class can look like:
 
-```
+```php
 <?php
 
 namespace  App\Enums;
@@ -147,7 +147,7 @@ From the above class, the constants  `SuperAdmin`, `Admin` and `Customer` are th
 
 *You can decide to set the roles constants to an integer value. Like the example below:*
 
-```
+```php
 // ...
 	const SuperAdmin = 1;
 	const Admin = 2;
@@ -160,21 +160,21 @@ From the above class, the constants  `SuperAdmin`, `Admin` and `Customer` are th
 #### Using the Role class
 ---
 **Get all roles**
-```
+```php
 Use app\Enums\Role.php
 
 $roles = Role::all(); // returns an array of all roles
 ```
 
 **Get all roles and permissions**
-```
+```php
 Use app\Enums\Role.php 
 
 $roles = Role::permissions(); // returns a multidimensional array of all roles and permissions
 ```
 
 **Get permissions of a specific role**
-```
+```php
 Use app\Enums\Role.php
 
 $roles = Role::getPermissions(Role::SuperAdmin); // returns every permissions available to the super admin role as an array
@@ -185,7 +185,7 @@ The package also ships with a `app\Enums\Permission.php` class. The `Permission`
 
 Below is an example of what the class will look like:
 
-```
+```php
 <?php
 
 namespace  App\Enums;
@@ -206,7 +206,7 @@ final class Permission extends BasePermission
 As explained above, this class lists all the permissions available. You can use any case of your choice for the values, you are not required to use  the `snake_case`. You can set the permissions constants to an integer value.
 
 You can get all the available permissions:
-```
+```php
 use App\Enums\Permission;
 
 $permissions = Permission::all(); // returns an array of all the permissions
@@ -214,7 +214,7 @@ $permissions = Permission::all(); // returns an array of all the permissions
 
 You can decide to have your permissions in seperate files. 
 
-```
+```bash
 php artisan make:permission ExamplePermission
 ```
 
@@ -225,7 +225,7 @@ After installation, add the `Tarzancodes\RolesAndPermissions\HasRoles` trait  to
 Using the `User` model as an example:
 
 `app\Models\User.php`
-```
+```php
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tarzancodes\RolesAndPermissions\HasRoles;
 
@@ -239,7 +239,7 @@ class User extends Authenticatable
 An instance of a User class can now be assigned roles, and have the permissions associated with the roles they are assigned.
 
 ### Assigning roles
-```
+```php
 // give the user a super admin role
 $user->assign(Role::SuperAdmin); // returns boolean
 
@@ -248,13 +248,13 @@ $user->assign(Role::SuperAdmin, Role::Admin); // returns boolean
 ```
 
 ### Get roles
-```
+```php
 // Get user roles
 $user->roles(); // returns an array of the user's roles
 ```
 
 ### Get Permissions
-```
+```php
 // Get user permissions
 $user->permissions(); // returns an array of the user's permissions
 ```
@@ -263,7 +263,7 @@ $user->permissions(); // returns an array of the user's permissions
 
 ### Has Role
 Check if a model has a specific role, or multiple roles
-```
+```php
 $user->hasRole(Role::SuperAdmin); // returns boolean
 
 // Or
@@ -276,13 +276,13 @@ When multiple roles are passed, the package will only return `true` when the `$u
 Models have permissions via roles. Therefore a model only has the permissions that are associated with the roles they have been assigned.
 
 For instance, if a `$user` model has been assigned the `SuperAdmin` and `Admin` roles, the user has all the permissions associated with both roles.
-```
+```php
 // Check if the user has a permission
 $user->has(Permission::DeleteProducts); // returns boolean
 ```
 
 You can decide to check for multiple permissions at once
-```
+```php
 // Check if the user has any of the following permissions.
 $user->has(Permission::DeleteProducts, Permission::DeleteTransactions); // returns boolean
 
@@ -296,7 +296,7 @@ The `has()` will only return `true` when the `$user` model has all the permissio
 ### Authorize Permissions
 For cases where you want to throw an exception when a `model` does not have permission, or multiple permissios, you can use the `authorize()` method to achieve this.
 
-```
+```php
 $user->authorize(Permission::DeleteTransactions); // Throws a `PermissionDeniedException` if the user does not have this permission
 
 // or authorize miltple permissions
@@ -312,7 +312,7 @@ The `authorize()` method returns `true` if the user has the permission(s) passed
 ### Authorize Role
 For cases where you want to throw an exception when a `model` does not have a role or multiple roles, you can use the `authorizeRole()` method to achieve this.
 
-```
+```php
 $user->authorizeRole(Role::SuperAdmin); // throws a `PermissionDeniedException` exception if the user is not a super admin
 
 // Or authorize multiple roles
@@ -321,13 +321,13 @@ $user->authorizeRole(Role::SuperAdmin, Role::SuperAdmin); // throws a `Permissio
 The `authorizeRole()` method returns true if the `$user` model has the provided roles.
 
 ### Remove roles
-```
+```php
 // remove all user roles
 $user->removeRoles(); // returns boolean
 ```
 
 You can choose specify the role(s) you want to remove
-```
+```php
 // a role can be removed from a user
 $user->removeRoles(Role::SuperAdmin); // returns boolean
 
@@ -376,7 +376,7 @@ Alternatively, you can use any name of your choice, but ensure you set the new n
 From the above database structure, the content of the `app\Models\User.php` should look like the following:
 
 `app\Models\User.php`
-```
+```php
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tarzancodes\RolesAndPermissions\HasRoles;
 
@@ -404,28 +404,28 @@ The `of()` method returns an instance of `Tarzancodes\RolesAndPermissions\Reposi
 
 
 For the explanations below, we'd assume the variable `$merchant` is set to a merchant with name `wallmart` like so:
-```
+```php
 $merchant = Merchant::where('name', 'wallmart')->first();
 ```
 
 
 ### Assigning roles
 ---
-```
+```php
 // Give the user a super admin role
 $user->of($merchant)->assign(Role::SuperAdmin); // returns boolean
 ```
 
 From the sample above, the `$user` has been assigned a `super admin` role at wallmart. To view the user's permission at wallmart use the code below:
 
-```
+```php
 $user->of($merchant)->permissions(); // returns an array of the user's permissions at wallmart
 ```
 
 > Note: From the example above, `$user->permissions()` will return an empty array, as the user has not be given any direct permissions. `$user->of($anotherMerchant)->permissions()`  (where `$anotherMerchant` is not wallmart) will return an empty array as the user has not been assigned a role at `$anotherMerchant`
 
 **Multiple roles can also be assigned**
-```
+```php
 // give the user multiple roles on this merchant
 $user->of($merchant)->assign(Role::SuperAdmin, Role::Admin); // returns boolean
 
@@ -436,14 +436,14 @@ From the sample above, the `$user` has been assigned a `super admin` and `admin`
 
 ### Get roles
 
-```
+```php
 // Get ther user roles at the selected merchant (wallmart)
 $user->of($merchant)->roles(); // returns an array of the user's roles
 
 ```
 
 ### Get Permissions
-```
+```php
 // Get ther user permissions at the selected merchant (wallmart)
 $user->of($merchant)->permissions(); // returns an array of the user's permissions at 
 
@@ -451,12 +451,12 @@ $user->of($merchant)->permissions(); // returns an array of the user's permissio
 ### Has Role
 Check if a user has a specific role, or multiple roles
 
-```
+```php
 $user->of($merchant)->hasRole(Role::SuperAdmin); // returns boolean
 ```
 
 Or check for multiple roles
-```
+```php
 // check if user has the provided roles at the selected merchant 
 $user->of($merchant)->hasRole(Role::SuperAdmin, Role::Customer); // returns boolean
 
@@ -473,7 +473,7 @@ Pivot records have permissions via roles. Therefore a record only has permission
 
 For instance, if a  `$user`  model has been assigned the  `SuperAdmin`  and  `Admin`  roles at a `merchant` , the user has all the permissions associated with both roles ONLY at this merchant. Calling the `has()` method directly on the `$user` model will return false.
 
-```
+```php
 // Check if the user has a permission
 $user->of($merchant)->has(Permission::DeleteProducts); // returns boolean
 
@@ -481,7 +481,7 @@ $user->of($merchant)->has(Permission::DeleteProducts); // returns boolean
 
 You can decide to check for multiple permissions at once
 
-```
+```php
 // Check if the user has any of the following permissions.
 $user->of($merchant)->has(Permission::DeleteProducts, Permission::DeleteTransactions); // returns boolean
 
@@ -497,14 +497,14 @@ The  `has()`  will only return  `true`  when the  `$user`  model has all the per
 ### Authorize Permissions
 For cases where you want to throw an exception when a  `pivot record`  does not have permission, or multiple permissions, you can use the  `authorize()`  method to achieve this.
 
-```
+```php
 $user->of($merchant)->authorize(Permission::DeleteTransactions); // Throws a `PermissionDeniedException` if the user does not have this permission at the selected merchant
 ```
-```
+```php
 // or authorize miltple permissions
 $user->of($merchant)->authorize(Permission::DeleteTransactions, Permission::BuyProducts);
 ```
-```
+```php
 // as an array
 $user->of($merchant)->authorize([Permission::DeleteTransactions, Permission::BuyProducts]);
 ```
@@ -516,11 +516,11 @@ The  `authorize()`  method returns  `true`  if the user has the permission(s) pa
 ### Authorize Role
 For cases where you want to throw an exception when a  `pivot record`  does not have a role or multiple roles, you can use the  `authorizeRole()`  method to achieve this.
 
-```
+```php
 $user->of($merchant)->authorizeRole(Role::SuperAdmin); // throws a `PermissionDeniedException` exception if the user is not a super admin at the selected merchant
 ```
 
-```
+```php
 // Or authorize multiple roles
 $user->of($merchant)->authorizeRole(Role::SuperAdmin, Role::SuperAdmin); // throws a `PermissionDeniedException` exception if the user is not a super admin at the selected merchant
 ```
@@ -528,7 +528,7 @@ $user->of($merchant)->authorizeRole(Role::SuperAdmin, Role::SuperAdmin); // thro
 The  `authorizeRole()`  method returns true if the  `$user`  model has the provided roles at the selected `merchant`.
 
 ### Remove roles
-```
+```php
 // remove all pivot record roles at
 $user->of($merchant)->removeRoles(); // returns boolean
 
@@ -536,7 +536,7 @@ $user->of($merchant)->removeRoles(); // returns boolean
 
 You can choose to specify the role(s) you want to remove
 
-```
+```php
 // a role can be removed from a user of the selected merchant
 $user->of($merchant)->removeRoles(Role::SuperAdmin); // returns boolean
 
@@ -562,7 +562,7 @@ To achieve this, set the `$useHierarchy` property in your role enum class to `tr
 The roles are expected to be declared from higher level roles to lower level roles. 
 
 For example: 
-```
+```php
 <?php
 
 namespace  App\Enums;
@@ -607,7 +607,7 @@ It is important that the roles in the `permissions()` method appear in the same 
 ### Getting other roles
 There are times you want to get the lower or higher roles of a selected role. Explained below is how to achieve this:
 
-```
+```php
 Role::select(Role::SuperAdmin)->getLowerRoles(); // returns an array of roles lower roles the selected role; ['admin', 'customer']
 
 
@@ -616,12 +616,12 @@ Role::select(Role::Customer)->getHigherRoles(); // returns an array of roles hig
 
 You can use the `withPermissions()` method to get the roles and their respective permissions like so:
 
-```
+```php
 Role::select(Role::SuperAdmin)->withPermissions()->getLowerRoles();
 ```
 
 The above will return a multidimensional array of the roles as the key, and an array permissions as the values. Below is the response to expect:
-```
+```php
 [
 	'admin' => ['edit_products', 'buy_products'],
 	'customer' => ['buy_products']
@@ -663,7 +663,7 @@ When assigning roles, you can use the `withPivot()` method to set values for any
 
 **For example:** 
 If we decide to assign a `role`  to the `$user` of a `$merchant`'s `department` , below is an example of what the code will look like. 
-```
+```php
 // Give the user a super admin role in the 'product' department of this merchant
 $user->of($merchant)
 	->withPivot(['department' => 'product'])
@@ -674,7 +674,7 @@ From the sample above, the  `$user` model has been assigned a  `super admin`  ro
 
 You can decide to set multiple pivot columns by either chaining multiple `withPivot()` or set all values in the an array.
 
-```
+```php
 $user->of($merchant)
 	->withPivot(['department' => 'product'])
 	->withPivot(['created_at' => now()])
@@ -700,7 +700,7 @@ The package supports every method listed in the section of laravel's documentati
 **Examples**
 If you decide to check if the user has a role in a merchant's department, below is an example of what the code will look like:
 
-```
+```php
 $user->of($merchant)
 	->wherePivot('department', 'product')	
 	->hasRole(Role::SuperAdmin); // returns boolean
@@ -709,7 +709,7 @@ The above code will only return `true` if the user has been previously assigned 
 
 You can decide to chain as many filter method as possible, e.g:
 
-```
+```php
 $user->of($merchant)
 	->wherePivot('department', 'product')	
 	->wherePivotBetween('created_at', ['2021-12-05 00:00:00', '2021-12-08 00:00:00'])
@@ -731,7 +731,7 @@ To fix this, ensure you are following Laravel's naming convention for your relat
 Instead of following Laravel's naming convention, we declare the `merchants` relationship on the user model like below: 
 `app\Models\User.php`
 
-```
+```php
     // ...  
     public function userMerchants()
     {
@@ -744,7 +744,7 @@ Runing `$user->of($merchant)->assign(Role::SuperAdmin)` will throw the `InvalidR
 
 To fix this, you can pass your relationship name as the second argument of the `of()` method. So we have something like below
 
-```
+```php
 $user->of($merchant, 'userMerchants')->assign(Role::SuperAdmin);
 ```
 
@@ -777,7 +777,7 @@ You could be building an application that allows a user have any of the followin
 The right way to do this is to have two different enum files, have the general roles in one, and the merchant roles in another.  Since the package ships with a default Role class `app\Enums\Role.php`, we could decide to keep the general roles in this file like below:
 
 `app\Enums\Role.php`
-```
+```php
 <?php
 
 namespace App\Enums;
@@ -794,13 +794,13 @@ final class Role extends BaseRole
 
 Create another role enum class for the `merchant` to `user` relationship by running the command below:
 
-```
+```bash
 php aritsan make:role MerchantRole
 ```
 The command above will generate a `app\Enums\MerchantRole.php`. We can then update the content of the file to look like the snippet below:
 
 `app\Enums\MerchantRole.php`
-```
+```php
 <?php
 
 namespace App\Enums;
@@ -825,7 +825,7 @@ For `many to many` relationship, set the `pivot_table` name as the key, and the 
 
 Following our example above, below is what the config file should like:
 `config/role-and-permissions.php`
-```
+```php
 'roles_enum'  => [
 	'default'  => \App\Enums\Role::class,
 	'merchant_user' => \App\Enums\MerchantUserRole::class,
@@ -838,7 +838,7 @@ Following our example above, below is what the config file should like:
 Now whenever you try to check for roles and permissions on a `many to many` relationship between a `$user` model and a `$merchant` model, the `MerchantUserRole` class will be used to handle the check. 
 
 For example:
-```
+```php
 // The following will work fine
 $user->of($merchant)->assign(MerchantUserRole::SuperAdmin);
 $merchant->of($user)->assign(MerchantUserRole::SuperAdmin); 
