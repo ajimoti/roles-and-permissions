@@ -138,3 +138,46 @@ it('record still exists after roles are removed', function () {
 
     expect(auth()->user()->of($this->merchant)->hasRole($this->role))->toBeFalse();
 });
+
+
+it('can set extra columns on pivot table when assigning roles', function () {
+    auth()->user()->of($this->merchant)
+        ->withPivot(['department' => 'sales'])
+        ->assign($this->secondRole);
+
+    expect(auth()->user()->merchants()->wherePivot('department', 'sales')->exists())->toBeTrue();
+});
+
+it('can set multiple columns on pivot table when assigning roles', function () {
+    $manager = User::factory()->create();
+
+    auth()->user()->of($this->merchant)
+        ->withPivot([
+            'department' => 'sales',
+            'added_by' => $manager->id,
+        ])
+        ->assign($this->secondRole);
+
+    expect(
+        auth()->user()->merchants()
+            ->wherePivot('department', 'sales')
+            ->wherePivot('added_by', $manager->id)
+            ->exists()
+        )->toBeTrue();
+});
+
+it('can chain multiple `withPivot` method on pivot table when assigning roles', function () {
+    $manager = User::factory()->create();
+
+    auth()->user()->of($this->merchant)
+        ->withPivot(['department' => 'sales'])
+        ->withPivot(['added_by' =>  $manager->id])
+        ->assign($this->secondRole);
+
+    expect(
+        auth()->user()->merchants()
+            ->wherePivot('department', 'sales')
+            ->wherePivot('added_by', $manager->id)
+            ->exists()
+        )->toBeTrue();
+});

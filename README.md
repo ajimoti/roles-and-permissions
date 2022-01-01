@@ -92,9 +92,12 @@ The above command does the following:
 
 ## Prerequisites 
 ### The Role Class
-You define the roles in the `app\Enums\Role.php` class created as constants, and then assign `permissions` to them in the `permissions()` method that exists in the class.
+Roles are defined as constants in the `app\Enums\Role.php` class. You can assign `permissions` to each role in the `permissions()` method that exists in the `Role` enum class.
 
-Below is a sample of a `app\Enums\Role.php` class:
+>The package ships with a `app\Enums\Role.php` file, and uses this file to validate roles and permissions.
+You can decide to use multiple role classes in your application. Check the [configuration section](https://blah.com) to better understand how to achieve this.
+
+Below is a sample of what a `app\Enums\Role.php` class can look like:
 
 ```
 <?php
@@ -197,20 +200,24 @@ final class Permission extends BasePermission
 	const EditProducts = 'edit_products';
 	const MarkAsSoldOut = 'mark_as_sold_out';
 	const BuyProducts = 'buy_products';
-	
+}
 ```
 
-As explained above, this class lists all the permissions available. You can use any case of your choice for the values, you are not required to use  the `snake_case`.
+As explained above, this class lists all the permissions available. You can use any case of your choice for the values, you are not required to use  the `snake_case`. You can set the permissions constants to an integer value.
 
 You can get all the available permissions:
 ```
 use App\Enums\Permission;
 
 $permissions = Permission::all(); // returns an array of all the permissions
-
 ```
 
-*You can set the permissions constants to an integer value.*
+You can decide to have your permissions in seperate files. 
+
+```
+php artisan make:permission ExamplePermission
+```
+
 
 ## Basic Usage
 After installation, add the `Tarzancodes\RolesAndPermissions\HasRoles` trait  to the model you want to use the package on.
@@ -545,7 +552,84 @@ $user->of($merchant)->removeRoles([Role::SuperAdmin, Role::Admin]); // returns b
 Illuminate\Foundation\Auth\User
 `, these methods are also available to the authenticated user via the `Auth` facade's `user` method. i.e `auth()->user()->of($merchant)` will also return an instance of `Tarzancodes\RolesAndPermissions\Repositories\PivotTableRepository`
 
-## Working with other columns on the pivot table
+By default, when the `removeRoles()` method is called on a pivot record, the record is not deleted. Instead, the `role` column of that record is set to `null`. If you want the record to be deleted when `removeRoles()` is called, set the `$deletePivotOnRemove` property in your role enum class to `true`. 
+
+# Hierarchy
+In some cases, you might want to have your roles in hierarchy; meaning you want the higher roles to also have the permissions of the lower roles. 
+
+To achieve this, set the `$useHierarchy` property in your role enum class to `true`.  When set to `true` the package understands that the higher roles should also have the permissions of the lower roles. You can disable this by setting the`$useHierarchy` property to `false`.
+
+The roles are expected to be declared from higher level roles to lower level roles. 
+
+For example: 
+```
+<?php
+
+namespace  App\Enums;
+use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
+
+protected static $useHierarchy = true;
+
+final class Role extends BaseRole
+{
+	const SuperAdmin = 'super_admin';
+	const Admin = 'admin';
+	const Customer = 'customer';
+	// ----
+	
+	final  public  static  function  permissions():  array
+	{
+    	return [
+    		self::SuperAdmin  => [
+    			Permission::DeleteProducts, 
+    		],
+    	
+    		self::Admin  => [
+    			Permission::EditProducts, 
+    		],
+    
+    		self::Customer  => [
+    			Permission::BuyProducts,
+    		],
+    	];
+	}
+}
+```
+From the example above, the `SuperAdmin` role is know to be the highest level role because it is the first declared constant, while the `Customer` role is believed to be the lowest level role has it appears last.
+
+From the structure above, the following are true:
+- A `Customer` can only `buy products`
+- A `Admin` can `edit products` and `buy products` (inherits the `customer` permissions).
+- A `SuperAdmin` can `delete products`, `edit products` and `buy products` (inherits both `Admin` and `Customer` permissions).
+
+It is important that the roles in the `permissions()` method appear in the same order they are declared as constants. If not an `Tarzancodes\RolesAndPermissions\Exceptions\InvalidRoleHierarchyException` exception will be thrown. You can checkout the [exception section](https://blah.com) for better understanding.
+
+### Getting other roles
+There are times you want to get the lower or higher roles of a selected role. Explained below is how to achieve this:
+
+```
+Role::select(Role::SuperAdmin)->getLowerRoles(); // returns an array of roles lower roles the selected role; ['admin', 'customer']
+
+
+Role::select(Role::Customer)->getHigherRoles(); // returns an array of roles higher than the selected role; ['super_admin', 'admin']
+```
+
+You can use the `withPermissions()` method to get the roles and their respective permissions like so:
+
+```
+Role::select(Role::SuperAdmin)->withPermissions()->getLowerRoles();
+```
+
+The above will return a multidimensional array of the roles as the key, and an array permissions as the values. Below is the response to expect:
+```
+[
+	'admin' => ['edit_products', 'buy_products'],
+	'customer' => ['buy_products']
+]
+```
+
+
+# Working with other columns on the pivot table
 There are cases where you will have extra columns on your pivot table, and have to set values for the columns while assigning roles, or check for permissions based on the value of a column. This section explains how to go about this.
 
 ### Sample case
@@ -675,4 +759,94 @@ An instance of `Tarzancodes\RolesAndPermissions\Exceptions\InvalidRoleHierarchyE
 
 When setting the roles to be in hierarchy, it is important that the roles constants are arranged in the same order that they were declared in the `permissions()` array. If they are not arranged in the same order they were declared, the `InvalidRoleHierarchyException` is thrown.
 
-# Advance Usage
+# Configurations
+The package publishes a configuration file in your config directory. In this section, we will explain what each configuration does `config/role-and-permissions.php` file 
+
+| Key | Description |  
+| ----------- | ----------- |  
+| `pivot.column_name` | Sets the column name that will be used to store roles on every pivot table.  |  
+| `pivot.tables` | This configuration is only used when installating the package, for cases where you have existing pivot tables. It allows you set the `pivot table` names you'd like to use the package on. Upon installation, the package will add a `role` column _(or the custom name set in `pivot.column_name`)_   to the listed tables   |
+|`roles_enum.default` |Set the default role enum class to be used by the package. You can decided to create your own role enum class, and make use of that instead. |
+
+## Using custom role enum class
+In some cases, some models can have different roles, hence you will need different role enum classes for different models. 
+
+### Creating role enums 
+You could be building an application that allows a user have any of the following roles, `Owner`, `Marketer` and `Developer`, and at the same time, a user can belong to a merchant, and have any of the following roles in that merchant `SuperAdmin`, `Admin`, `Customer`. In this case, it is bad practice to have all six(6) roles in the same enum file, as they do not apply for the same scenarios.
+
+The right way to do this is to have two different enum files, have the general roles in one, and the merchant roles in another.  Since the package ships with a default Role class `app\Enums\Role.php`, we could decide to keep the general roles in this file like below:
+
+`app\Enums\Role.php`
+```
+<?php
+
+namespace App\Enums;
+use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
+
+final class Role extends BaseRole
+{
+	const Owner = 'owner';
+	const Marketer = 'marketer';
+	const Developer = 'developer';
+	// ...
+}
+```
+
+Create another role enum class for the `merchant` to `user` relationship by running the command below:
+
+```
+php aritsan make:role MerchantRole
+```
+The command above will generate a `app\Enums\MerchantRole.php`. We can then update the content of the file to look like the snippet below:
+
+`app\Enums\MerchantRole.php`
+```
+<?php
+
+namespace App\Enums;
+use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
+
+final class MerchantRole extends BaseRole
+{
+	const SuperAdmin = 'super_admin';
+	const Admin = 'admin';
+	const Customer = 'customer';
+	// ...
+}
+```
+>Note: After creating a role enum, you MUST map the newly created role to the model's table name before the package can work fine. Visit the next chapter to better understand
+
+### Mapping roles enum files to models
+After creating a role enum class, the next step is to map the model's table name to the newly created role enum. Without this step, the package will not know the right role file to use, and will always fallback to the default role class (`app\Enums\Role.php`).
+
+You can map the table names to the role enum class in the `roles_enum` array  of the `config/role-and-permissions.php` configuration file, where the model's `table_name` is the key, and the new role enum is set as the value.
+
+For `many to many` relationship, set the `pivot_table` name as the key, and the new role enum class as the value.
+
+Following our example above, below is what the config file should like:
+`config/role-and-permissions.php`
+```
+'roles_enum'  => [
+	'default'  => \App\Enums\Role::class,
+	'merchant_user' => \App\Enums\MerchantUserRole::class,
+
+	// if we decide to create a UserRole class instaed of using
+	// the default enum
+	// 'users' => \App\Enums\UserRole::class, 
+],
+```
+Now whenever you try to check for roles and permissions on a `many to many` relationship between a `$user` model and a `$merchant` model, the `MerchantUserRole` class will be used to handle the check. 
+
+For example:
+```
+// The following will work fine
+$user->of($merchant)->assign(MerchantUserRole::SuperAdmin);
+$merchant->of($user)->assign(MerchantUserRole::SuperAdmin); 
+
+// ------------
+
+// This will work NOT, as we are referencing the wrong role enum class
+$user->of($merchant)->assign(Role::SuperAdmin);
+$merchant->of($user)->assign(Role::SuperAdmin); 
+
+```
