@@ -15,10 +15,10 @@ Below are samples of how to use the pacakge after installation.
 The example below is done on a `User` model, but will also work on any model class.
 
 **First step:** 
-Import the `Tarzancodes\RolesAndPermissions\Tests\Enums\Role` and `Tarzancodes\RolesAndPermissions\Tests\Enums\Permission` class.
+Import the `App\Enums\Role` and `App\Enums\Permission` class.
 ```php
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
+use App\Enums\Role;
+use App\Enums\Permission;
 ```
 
 Then following can be done:
@@ -42,10 +42,10 @@ This demonstrates how to use the package on a `many to many` relationship.
 In this example, we assume we have a `merchant` relationship in our `User` model.  And this relationship returns an instance of Laravel's `BelongsToMany` class.
 
 **First step:** 
-Import the `Tarzancodes\RolesAndPermissions\Tests\Enums\Role` and `Tarzancodes\RolesAndPermissions\Tests\Enums\Permission` class.
+Import the `App\Enums\Role` and `App\Enums\Permission` class.
 ```php
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
+use App\Enums\Role;
+use App\Enums\Permission;
 ```
 
 ```php
