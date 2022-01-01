@@ -1,6 +1,6 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationName;
+use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationNameException;
 use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
 use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
 use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
@@ -76,7 +76,7 @@ it('does not have higher roles permissions', function () {
 
 it('relationship name can be passed for pivot relation', function () {
     $user = User::factory()->create();
-    expect(fn () => $this->model->of($user)->assign($this->secondRole))->toThrow(InvalidRelationName::class);
+    expect(fn () => $this->model->of($user)->assign($this->secondRole))->toThrow(InvalidRelationNameException::class);
 
     expect($this->model->of($user, 'merchantUsers')->assign($this->secondRole))->toBeTrue();
     expect($this->model->of($user, 'merchantUsers')->hasRole($this->secondRole))->toBeTrue();

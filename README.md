@@ -9,7 +9,7 @@ This package allows you to assign roles and permissions to any laravel model, or
 
 Below are samples of how to use the pacakge after installation. 
 
-### Basic Usage
+### Basic Usage (On any model)
 The example below is done on a `User` model, but will also work on any model class.
 
 **First step:** 
@@ -391,6 +391,8 @@ The `of()` method returns an instance of `Tarzancodes\RolesAndPermissions\Reposi
 
 `assign()`, `has()`, `can()`, `hasRole()`, `authorize()`, `authorizeRole()`, and `removeRoles()` 
 
+> When the `of()` method is chained to a model, the package will automatically use Laravel relationship naming convention to guess the relationship name. Alternatively you can pass the relationship name as the second argument.
+
 
 For the explanations below, we'd assume the variable `$merchant` is set to a merchant with name `wallmart` like so:
 ```
@@ -541,26 +543,17 @@ $user->of($merchant)->removeRoles([Role::SuperAdmin, Role::Admin]); // returns b
 Illuminate\Foundation\Auth\User
 `, these methods are also available to the authenticated user via the `Auth` facade's `user` method. i.e `auth()->user()->of($merchant)` will also return an instance of `Tarzancodes\RolesAndPermissions\Repositories\PivotTableRepository`
 
+## Working with other columns on the pivot table
+There are cases where you will have extra columns on your pivot table, and have to set values for the columns while assigning roles, or check for permissions based on the value of a column. This section explains how to go about this.
 
-## Pivot Usage with conditions (Advanced)
-In this section, we will explain how to conditionally use the package on a pivot record. 
+### Sample case
+Using the same `merchants` and `users`  example in the [Pivot table usage](https:://blah.com) section above, but in this case, the following rules applies:
 
-You can chain any of the following `belongsToMany` relationship query method to the `of()` method. 
-
-**Allowed methods**
-`wherePivot`, `wherePivotIn`, `wherePivotNotIn`, `wherePivotBetween`, `wherePivotNotBetween`, `wherePivotNull`, and `wherePivotNotNull`
-
-The package supports every method listed in the section of laravel's documentation: [Filtering Queries Via Intermediate Table Columns](https://laravel.com/docs/8.x/eloquent-relationships#filtering-queries-via-intermediate-table-columns)
-
-### Example of pivot with conditions
-Using the example in the [Pivot table usage](https:://blah.com) above. 
-
-But in this case:
 - Each merchant has `departments`
 - Users can belong to different `departments`
-- Users have different roles in different sections
+- Users have different roles in different `departments`
 
-Below is a sample of the database structure we have:
+Below is what our database structure will look like:
 ```
 users
     id - integer
@@ -578,12 +571,12 @@ merchant_user
 
 ```
 
+### Assign roles and set pivot column values
 
-### Set pivot column while assigning roles 
+When assigning roles, you can use the `withPivot()` method to set values for any other column on the pivot table.
 
-When assigning roles, you can chain a `withPivot()` method to set the values of `pivot` columns.
-
-This is an example of how to assign a role, and also set a value to the `department` column. 
+**For example:** 
+If we decide to assign a `role`  to the `$user` of a `$merchant`'s `department` , below is an example of what the code will look like. 
 ```
 // Give the user a super admin role in the 'product' department of this merchant
 $user->of($merchant)
@@ -591,7 +584,93 @@ $user->of($merchant)
 	->assign(Role::SuperAdmin); // returns boolean
 
 ```
+From the sample above, the  `$user` model has been assigned a  `super admin`  role at `product`  department of the provided `$merchant`.  In the background a record is created in the `merchant_user` pivot table, with the columns set to the correct values.
 
-From the sample above, the  `$user`  has been assigned a  `super admin`  role at wallmart. To view the user’s permission at wallmart use the code below:
+You can decide to set multiple pivot columns by either chaining multiple `withPivot()` or set all values in the an array.
+
+```
+$user->of($merchant)
+	->withPivot(['department' => 'product'])
+	->withPivot(['created_at' => now()])
+	->assign(Role::SuperAdmin); // returns boolean
+	
+//OR
+$user->of($merchant)
+	->withPivot([
+		'department' => 'product',
+		'created_at' => now()
+	])
+	->assign(Role::SuperAdmin); // returns boolean
+```
+
+### Roles and Permissions with conditions
+If you would like to conditionally select a pivot record before checking for the roles and permissions on it, you achieve this by chaining any of the `belongsToMany` relationship query method to the `of()` method. 
+
+**Allowed methods**
+`wherePivot`, `wherePivotIn`, `wherePivotNotIn`, `wherePivotBetween`, `wherePivotNotBetween`, `wherePivotNull`, and `wherePivotNotNull`
+
+The package supports every method listed in the section of laravel's documentation: [Filtering Queries Via Intermediate Table Columns](https://laravel.com/docs/8.x/eloquent-relationships#filtering-queries-via-intermediate-table-columns)
+
+**Examples**
+If you decide to check if the user has a role in a merchant's department, below is an example of what the code will look like:
+
+```
+$user->of($merchant)
+	->wherePivot('department', 'product')	
+	->hasRole(Role::SuperAdmin); // returns boolean
+```
+The above code will only return `true` if the user has been previously assigned a `super admin` role in the `product` department of the merchant provided. Otherwise the code returns false, even if the user has a `super admin` role in another department.
+
+You can decide to chain as many filter method as possible, e.g:
+
+```
+$user->of($merchant)
+	->wherePivot('department', 'product')	
+	->wherePivotBetween('created_at', ['2021-12-05 00:00:00', '2021-12-08 00:00:00'])
+	->wherePivotNull('updated_at')
+	->has(Permission::BuyProducts); // returns boolean
+```
+
+# Exceptions
+#### Invalid Relation Name Exception
+This exception is only applies when using the package on a pivot table.
+
+>An instance of `Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationNameExceptionException` is thrown whenever the package can not resolve the `belongsToMany` relationship name
+
+When the `of()` method is chained to a model, the package will automatically use Laravel relationship naming convention to guess the relationship name. If the package cannot find a method with the relationship name in your model class,  this exception is thrown.
+
+To fix this, ensure you are following Laravel's naming convention for your relationship names, alternatively you can pass the relationship name as the second argument.
+
+**For example:**
+Instead of following Laravel's naming convention, we declare the `merchants` relationship on the user model like below: 
+`app\Models\User.php`
+
+```
+    // ...  
+    public function userMerchants()
+    {
+        return  $this->belongsToMany(Merchant::class);
+    }
+    // ...  
+```
+
+Runing `$user->of($merchant)->assign(Role::SuperAdmin)` will throw the `InvalidRelationNameExceptionException` exception, as the will end up looking for a `merchants()` method instead of `userMerchants()`.
+
+To fix this, you can pass your relationship name as the second argument of the `of()` method. So we have something like below
+
+```
+$user->of($merchant, 'userMerchants')->assign(Role::SuperAdmin);
+```
+
+### Permission Denied Exception
+An instance of `Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException` is thrown when a provided `roles` or `permissions` are not assigned to the model.
+
+You will only experience these exceptions when using the `authorize()` or `authorizeRole()` method. If you do not want exceptions to be thrown, you should use the any of the other methods as they only return booleans e.g. `can()`, `has()`, `hasRole()`
+
+
+### Invalid Role Hierarchy Exception
+An instance of `Tarzancodes\RolesAndPermissions\Exceptions\InvalidRoleHierarchyException` is thrown when the `$useHierarchy` static property of a role enum class is set to true, and the roles in the `permissions()` method do NOT appear in the same order that they are declared as constants.
+
+When setting the roles to be in hierarchy, it is important that the roles constants are arranged in the same order that they were declared in the `permissions()` array. If they are not arranged in the same order they were declared, the `InvalidRoleHierarchyException` is thrown.
 
 # Advance Usage

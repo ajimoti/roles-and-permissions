@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
-use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationName;
+use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationNameException;
 
 class Pivot
 {
@@ -90,7 +90,7 @@ class Pivot
                 $message .= isset($this->relationName) ? " Ensure the right relation name was passed" :
                                 " Pass the right relation name as the second argument";
 
-                throw new InvalidRelationName($message);
+                throw new InvalidRelationNameException($message);
             }
 
             throw $exception;
