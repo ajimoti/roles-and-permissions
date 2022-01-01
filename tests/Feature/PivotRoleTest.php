@@ -163,7 +163,7 @@ it('can set multiple columns on pivot table when assigning roles', function () {
             ->wherePivot('department', 'sales')
             ->wherePivot('added_by', $manager->id)
             ->exists()
-        )->toBeTrue();
+    )->toBeTrue();
 });
 
 it('can chain multiple `withPivot` method on pivot table when assigning roles', function () {
@@ -171,7 +171,7 @@ it('can chain multiple `withPivot` method on pivot table when assigning roles', 
 
     auth()->user()->of($this->merchant)
         ->withPivot(['department' => 'sales'])
-        ->withPivot(['added_by' =>  $manager->id])
+        ->withPivot(['added_by' => $manager->id])
         ->assign($this->secondRole);
 
     expect(
@@ -179,5 +179,5 @@ it('can chain multiple `withPivot` method on pivot table when assigning roles', 
             ->wherePivot('department', 'sales')
             ->wherePivot('added_by', $manager->id)
             ->exists()
-        )->toBeTrue();
+    )->toBeTrue();
 });
