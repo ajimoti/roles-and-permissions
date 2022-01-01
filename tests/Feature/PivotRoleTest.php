@@ -139,7 +139,6 @@ it('record still exists after roles are removed', function () {
     expect(auth()->user()->of($this->merchant)->hasRole($this->role))->toBeFalse();
 });
 
-
 it('can set extra columns on pivot table when assigning roles', function () {
     auth()->user()->of($this->merchant)
         ->withPivot(['department' => 'sales'])
