@@ -174,6 +174,23 @@ $roles = Role::all() // returns an instance of Tarzancodes\RolesAndPermissions\C
 $roles->toArray(); // returns an array of all roles
 ```
 
+**Customising `$model->toArray()` behaviour**
+When using `toArray` (or returning model/models from your controller as a response) Laravel will call the toArray method on the role enum instance.
+
+By default, this will return only the `value` in its native type. You may want to have access to the another property instead of the `value` property (any of `permissions`, `key`, `description`).
+
+To customise this behaviour, you can override the toArray method in your role enum class.
+
+```php
+// ---
+    // will return the permissions when called
+    public function toArray()
+    {
+        return $this->permissions;
+    }
+// ---
+```
+
 **Get all roles and permissions**
 
 ```php
