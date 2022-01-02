@@ -1,13 +1,13 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
-use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
+use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
+use Tarzancodes\RolesAndPermissions\Tests\Models\User;
 
 test('permission collection has the right values', function () {
     $user = User::factory()->create();
@@ -57,7 +57,7 @@ test('can get collection of permissions from permission values', function () {
 
     expect($collection)->toBeInstanceOf(PermissionCollection::class);
 
-    foreach($collection as $permission) {
+    foreach ($collection as $permission) {
         expect($permission)->toBeInstanceOf(Permission::class);
         expect($permission)->toHaveProperties(['value', 'key', 'description']);
     }

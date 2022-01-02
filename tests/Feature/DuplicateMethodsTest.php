@@ -1,10 +1,7 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationNameException;
-use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
 use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
 use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
 
 beforeEach(function () {
     config()->set('roles-and-permissions.roles_enum.merchant_user', MerchantRole::class);

@@ -3,9 +3,9 @@
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
 use Illuminate\Support\Collection;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
 
 abstract class BaseRole extends BaseEnum
 {
@@ -87,14 +87,16 @@ abstract class BaseRole extends BaseEnum
 
                     foreach (static::hold($role)->getLowerRoles() as $lowerRole) {
                         $permissions = array_merge(
-                            $permissions, $permissionClass::getInstanceFromValues($rolesAndPermissions[$lowerRole] ?? [])
+                            $permissions,
+                            $permissionClass::getInstanceFromValues($rolesAndPermissions[$lowerRole] ?? [])
                         );
                     }
 
                     $allPermissions = array_merge($allPermissions, $permissions);
                 } else {
                     $allPermissions = array_merge(
-                        $allPermissions, $permissionClass::getInstanceFromValues($rolesAndPermissions[$role])
+                        $allPermissions,
+                        $permissionClass::getInstanceFromValues($rolesAndPermissions[$role])
                     );
                 }
             }
