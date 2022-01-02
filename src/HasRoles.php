@@ -3,12 +3,12 @@
 namespace Tarzancodes\RolesAndPermissions;
 
 use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\Models\ModelRole;
 use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
+use Tarzancodes\RolesAndPermissions\Exceptions\InvalidArgumentException;
+use Tarzancodes\RolesAndPermissions\Models\ModelRole;
 use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
 use Tarzancodes\RolesAndPermissions\Repositories\PivotTableRepository;
-use Tarzancodes\RolesAndPermissions\Exceptions\InvalidArgumentException;
 
 trait HasRoles
 {

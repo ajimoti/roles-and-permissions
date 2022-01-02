@@ -1,9 +1,9 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
 use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
+use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
+use Tarzancodes\RolesAndPermissions\Tests\Models\User;
 
 beforeEach(function () {
     auth()->login(User::factory()->create());
@@ -33,12 +33,12 @@ test('user can be assigned multiple roles', function () {
     } while ($firstRole === $secondRole);
 
     auth()->user()->assign($firstRole, $secondRole);
-// dd(auth()->user()->roles());
-// dd(auth()->user()->roles()->toArray());
+    // dd(auth()->user()->roles());
+    // dd(auth()->user()->roles()->toArray());
 
-// foreach (auth()->user()->roles() as $role) {
+    // foreach (auth()->user()->roles() as $role) {
 //     dd($role);
-// }
+    // }
     expect(auth()->user()->roles())->toBeInstanceOf(RoleCollection::class);
     $this->assertCount(2, auth()->user()->roles()->toArray());
 
