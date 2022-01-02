@@ -3,7 +3,6 @@
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
 use BenSampo\Enum\Enum;
-use Tarzancodes\RolesAndPermissions\Contracts\IsEnumContract;
 use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 
 abstract class BaseRole extends Enum
