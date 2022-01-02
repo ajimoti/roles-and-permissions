@@ -3,15 +3,16 @@
 namespace Tarzancodes\RolesAndPermissions\Repositories;
 
 use BadMethodCallException;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
-use Tarzancodes\RolesAndPermissions\Contracts\PivotContract;
-use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Helpers\Pivot;
+use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Tarzancodes\RolesAndPermissions\Contracts\PivotContract;
+use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 
 class PivotTableRepository implements RolesContract, PivotContract
 {
@@ -99,15 +100,15 @@ class PivotTableRepository implements RolesContract, PivotContract
     {
         $roles = collect($roles)->flatten()->all();
 
-        return Check::all($roles)->existsIn($this->pivot->getRoles());
+        return Check::all($roles)->existsIn($this->pivot->getRoles()->toArray());
     }
 
     /**
      * Get the model's roles.
      *
-     * @return array
+     * @return RoleCollection
      */
-    public function roles(): array
+    public function roles(): RoleCollection
     {
         return $this->pivot->getRoles();
     }
@@ -173,7 +174,7 @@ class PivotTableRepository implements RolesContract, PivotContract
      */
     public function removeRoles(): bool
     {
-        $roles = empty(func_get_args()) ? $this->pivot->getRoles() : func_get_args();
+        $roles = empty(func_get_args()) ? $this->pivot->getRoles()->toArray() : func_get_args();
         $roleEnumClass = $this->pivot->getRoleEnumClass();
 
         $query = $this->pivot->relationshipInstanceAsQuery()

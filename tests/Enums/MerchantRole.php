@@ -42,4 +42,18 @@ final class MerchantRole extends BaseRole
 
         ];
     }
+
+    /**
+     * Set a description for the roles
+     *
+     * @return string
+     */
+    public static function getDescription($value): string
+    {
+        return match ($value) {
+            self::Distributor => 'Distributes goods to customers',
+            self::RetailManager => 'Manages products',
+            default => parent::getDescription($value),
+        };
+    }
 }

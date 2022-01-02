@@ -2,14 +2,15 @@
 
 namespace Tarzancodes\RolesAndPermissions\Repositories;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
-use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
-use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
-use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Models\ModelRole;
+use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
+use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 
 class ModelRepository implements RolesContract
 {
@@ -56,15 +57,15 @@ class ModelRepository implements RolesContract
     {
         $roles = collect($roles)->flatten()->all();
 
-        return Check::all($roles)->existsIn($this->getRoles());
+        return Check::all($roles)->existsIn($this->getRoles()->toArray());
     }
 
     /**
      * Get the model's roles.
      *
-     * @return array
+     * @return RoleCollection
      */
-    public function roles(): array
+    public function roles(): RoleCollection
     {
         return $this->getRoles();
     }
@@ -120,7 +121,7 @@ class ModelRepository implements RolesContract
      */
     public function removeRoles(): bool
     {
-        $roles = empty(func_get_args()) ? $this->getRoles() : func_get_args();
+        $roles = empty(func_get_args()) ? $this->getRoles()->toArray() : func_get_args();
 
         return $this->model->modelRoles()->whereIn($this->getRoleColumnName(), $roles)->delete();
     }
@@ -128,22 +129,24 @@ class ModelRepository implements RolesContract
     /**
      * Get the model's roles
      *
-     * @return array
+     * @return RoleCollection
      */
-    protected function getRoles(): array
+    protected function getRoles(): RoleCollection
     {
+        $roleClass = $this->getRoleEnumClass();
         $roles = $this->model->modelRoles()->pluck($this->getRoleColumnName())->all();
 
-        // Cast the roles to the correct type
         foreach ($roles as $role) {
+            // Cast the roles to the correct type
+            // This is needed because the roles are stored as strings in the database
             if (is_numeric($role)) {
-                $cleanRoles[] = (int) $role;
-            } else {
-                $cleanRoles[] = $role;
+                $role = (int) $role;
             }
+
+            $cleanRoles[] = new $roleClass($role);
         }
 
-        return $cleanRoles ?? [];
+        return new RoleCollection($cleanRoles ?? []);
     }
 
     /**

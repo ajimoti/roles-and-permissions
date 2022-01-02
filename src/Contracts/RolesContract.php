@@ -2,6 +2,8 @@
 
 namespace Tarzancodes\RolesAndPermissions\Contracts;
 
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+
 interface RolesContract extends PermissionsContract
 {
     /**
@@ -23,9 +25,9 @@ interface RolesContract extends PermissionsContract
     /**
      * Get the model's roles.
      *
-     * @return array
+     * @return RoleCollection
      */
-    public function roles(): array;
+    public function roles(): RoleCollection;
 
     /**
      * Assign the given role to the model.

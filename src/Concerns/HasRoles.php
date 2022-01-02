@@ -2,14 +2,16 @@
 
 namespace Tarzancodes\RolesAndPermissions\Concerns;
 
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+
 trait HasRoles
 {
     /**
      * Get the roles.
      *
-     * @return array
+     * @return RoleCollection
      */
-    abstract public function getRoles(): array;
+    abstract public function getRoles(): RoleCollection;
 
     /**
      * Get the name of the "role" enum class.
@@ -28,7 +30,7 @@ trait HasRoles
         $roleEnumClass = $this->getRoleEnumClass();
 
         $allPermissions = [];
-        foreach ($this->getRoles() as $role) {
+        foreach ($this->getRoles()->toArray() as $role) {
             $allPermissions = array_merge($allPermissions, $roleEnumClass::getPermissions($role));
         }
 

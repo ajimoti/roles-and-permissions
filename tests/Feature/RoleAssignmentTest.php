@@ -1,8 +1,9 @@
 <?php
 
 use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
 use Tarzancodes\RolesAndPermissions\Tests\Models\User;
+use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 
 beforeEach(function () {
     auth()->login(User::factory()->create());
@@ -14,9 +15,10 @@ test('user can be assigned a single role', function () {
 
     auth()->user()->assign($role);
 
-    $this->assertCount(1, auth()->user()->roles());
+    expect(auth()->user()->roles())->toBeInstanceOf(RoleCollection::class);
+    $this->assertCount(1, auth()->user()->roles()->toArray());
 
-    expect(auth()->user()->roles())->toContain($role);
+    expect(auth()->user()->roles()->toArray())->toContain($role);
 
     expect(
         auth()->user()->modelRoles()->whereRole($role)->exists()
@@ -31,10 +33,16 @@ test('user can be assigned multiple roles', function () {
     } while ($firstRole === $secondRole);
 
     auth()->user()->assign($firstRole, $secondRole);
+// dd(auth()->user()->roles());
+// dd(auth()->user()->roles()->toArray());
 
-    $this->assertCount(2, auth()->user()->roles());
+// foreach (auth()->user()->roles() as $role) {
+//     dd($role);
+// }
+    expect(auth()->user()->roles())->toBeInstanceOf(RoleCollection::class);
+    $this->assertCount(2, auth()->user()->roles()->toArray());
 
-    expect(auth()->user()->roles())->toContain($firstRole, $secondRole);
+    expect(auth()->user()->roles()->toArray())->toContain($firstRole, $secondRole);
 
     expect(
         auth()->user()->modelRoles()->whereRole($firstRole)->exists()
@@ -54,9 +62,9 @@ test('user can be assigned multiple roles as an array', function () {
 
     auth()->user()->assign([$firstRole, $secondRole]);
 
-    $this->assertCount(2, auth()->user()->roles());
+    $this->assertCount(2, auth()->user()->roles()->toArray());
 
-    expect(auth()->user()->roles())->toContain($secondRole, $firstRole);
+    expect(auth()->user()->roles()->toArray())->toContain($secondRole, $firstRole);
 
     expect(
         auth()->user()->modelRoles()->whereRole($firstRole)->exists()
@@ -72,9 +80,11 @@ test('pivot table can be assigned a role', function () {
 
     auth()->user()->of($this->merchant)->assign($role);
 
-    $this->assertCount(1, auth()->user()->of($this->merchant)->roles());
+    expect(auth()->user()->of($this->merchant)->roles())->toBeInstanceOf(RoleCollection::class);
 
-    expect(auth()->user()->of($this->merchant)->roles())->toContain($role);
+    $this->assertCount(1, auth()->user()->of($this->merchant)->roles()->toArray());
+
+    expect(auth()->user()->of($this->merchant)->roles()->toArray())->toContain($role);
 
     expect(
         auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.pivot.column_name'), $role)->exists()
@@ -89,11 +99,12 @@ test('pivot table can be assigned multiple roles', function () {
 
     auth()->user()->of($this->merchant)->assign($firstRole, $secondRole);
 
-    $this->assertCount(2, auth()->user()->of($this->merchant)->roles());
+    expect(auth()->user()->of($this->merchant)->roles())->toBeInstanceOf(RoleCollection::class);
+    $this->assertCount(2, auth()->user()->of($this->merchant)->roles()->toArray());
 
-    expect(auth()->user()->of($this->merchant)->roles())->toContain($firstRole);
-    expect(auth()->user()->of($this->merchant)->roles())->toContain($secondRole);
-    expect(auth()->user()->of($this->merchant)->roles())->toContain($secondRole, $firstRole);
+    expect(auth()->user()->of($this->merchant)->roles()->toArray())->toContain($firstRole);
+    expect(auth()->user()->of($this->merchant)->roles()->toArray())->toContain($secondRole);
+    expect(auth()->user()->of($this->merchant)->roles()->toArray())->toContain($secondRole, $firstRole);
 
     expect(
         auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.pivot.column_name'), $firstRole)->exists()
@@ -113,11 +124,13 @@ test('pivot table can be assigned multiple roles as an array', function () {
 
     auth()->user()->of($this->merchant)->assign([$firstRole, $secondRole]);
 
-    $this->assertCount(2, auth()->user()->of($this->merchant)->roles());
+    expect(auth()->user()->of($this->merchant)->roles())->toBeInstanceOf(RoleCollection::class);
 
-    expect(auth()->user()->of($this->merchant)->roles())->toContain($firstRole);
-    expect(auth()->user()->of($this->merchant)->roles())->toContain($secondRole);
-    expect(auth()->user()->of($this->merchant)->roles())->toContain($secondRole, $firstRole);
+    $this->assertCount(2, auth()->user()->of($this->merchant)->roles()->toArray());
+
+    expect(auth()->user()->of($this->merchant)->roles()->toArray())->toContain($firstRole);
+    expect(auth()->user()->of($this->merchant)->roles()->toArray())->toContain($secondRole);
+    expect(auth()->user()->of($this->merchant)->roles()->toArray())->toContain($secondRole, $firstRole);
 
     expect(
         auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.pivot.column_name'), $firstRole)->exists()

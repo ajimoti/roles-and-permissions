@@ -7,6 +7,14 @@ use Tarzancodes\RolesAndPermissions\Contracts\IsEnumContract;
 
 abstract class BaseRole extends Enum implements IsEnumContract
 {
+
+    /**
+     * The permissions of the role passed in the constructor.
+     *
+     * @var array
+     */
+    public array $permissions = [];
+
     /**
      * Indicates if the roles should be considered
      * in the hierarchy of how they appear in
@@ -31,6 +39,13 @@ abstract class BaseRole extends Enum implements IsEnumContract
      */
     protected static $deletePivotOnRemove = false;
 
+    public function __construct($enumValue)
+    {
+        parent::__construct($enumValue);
+
+        $this->permissions = self::getPermissions($enumValue);
+    }
+
     /**
      * Get specific role permissions
      *
@@ -39,12 +54,11 @@ abstract class BaseRole extends Enum implements IsEnumContract
      */
     final public static function getPermissions(...$roles): array
     {
-        $roles = collect($roles)->flatten()->all();
         $rolesAndPermissions = static::permissions();
         $rolesInHierarchy = array_keys($rolesAndPermissions);
 
         $allPermissions = [];
-        foreach ($roles as $role) {
+        collect($roles)->flatten()->each(function ($role) use ($rolesAndPermissions, $rolesInHierarchy, &$allPermissions) {
             if (isset($rolesAndPermissions[$role])) {
                 // Return the present role's permissions,
                 // and permissions of roles that are lower than this in the array. (i.e roles with lower indexes)
@@ -61,13 +75,14 @@ abstract class BaseRole extends Enum implements IsEnumContract
                     $allPermissions = array_merge($allPermissions, $rolesAndPermissions[$role]);
                 }
             } else {
-                if (static::fromValue($role)) {
-                    continue;
+                if (in_array($role, static::all())) {
+                    // It's a valid enum value, but has not been added to the permissions array.
+                    return;
                 }
 
                 throw new \Exception("Invalid role `{$role}` supplied");
             }
-        }
+        });
 
         return array_unique($allPermissions);
     }
@@ -80,6 +95,16 @@ abstract class BaseRole extends Enum implements IsEnumContract
     final public static function all(): array
     {
         return static::getValues();
+    }
+
+    /**
+     * Set a description for the roles
+     *
+     * @return string
+     */
+    public static function getDescription($value): string
+    {
+        return parent::getDescription($value);
     }
 
     /**

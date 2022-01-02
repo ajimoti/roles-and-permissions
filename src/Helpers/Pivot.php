@@ -2,14 +2,15 @@
 
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
-use BadMethodCallException;
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use BadMethodCallException;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationNameException;
 
 class Pivot
@@ -100,15 +101,25 @@ class Pivot
     /**
      * Get the roles.
      *
-     * @return array
+     * @return RoleCollection
      */
-    public function getRoles(): array
+    public function getRoles(): RoleCollection
     {
+        $roleClass = $this->getRoleEnumClass();
+
         foreach ($this->getRelatedModelsWithPivot() as $model) {
-            $roles[] = $model->pivot->{$this->getRoleColumnName()};
+            $role = $model->pivot->{$this->getRoleColumnName()};
+
+            // Cast the roles to the correct type
+            // This is needed because the roles are stored as strings in the database
+            if (is_numeric($role)) {
+                $role = (int) $role;
+            }
+
+            $cleanRoles[] = new $roleClass($role);
         }
 
-        return $roles ?? [];
+        return new RoleCollection($cleanRoles ?? []);
     }
 
     /**
