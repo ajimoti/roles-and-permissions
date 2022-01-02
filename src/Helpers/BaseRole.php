@@ -7,7 +7,6 @@ use Tarzancodes\RolesAndPermissions\Contracts\IsEnumContract;
 
 abstract class BaseRole extends Enum implements IsEnumContract
 {
-
     /**
      * The permissions of the role passed in the constructor.
      *

@@ -3,16 +3,16 @@
 namespace Tarzancodes\RolesAndPermissions\Repositories;
 
 use BadMethodCallException;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\Facades\Check;
-use Tarzancodes\RolesAndPermissions\Helpers\Pivot;
-use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
 use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
 use Tarzancodes\RolesAndPermissions\Contracts\PivotContract;
 use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
+use Tarzancodes\RolesAndPermissions\Facades\Check;
+use Tarzancodes\RolesAndPermissions\Helpers\Pivot;
 
 class PivotTableRepository implements RolesContract, PivotContract
 {

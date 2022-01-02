@@ -1,10 +1,10 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
 use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
+use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
+use Tarzancodes\RolesAndPermissions\Tests\Models\User;
 
 test('role collection has the right values', function () {
     $user = User::factory()->create();

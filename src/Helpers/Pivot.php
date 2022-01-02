@@ -2,15 +2,15 @@
 
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
-use Exception;
 use BadMethodCallException;
+use Exception;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection;
-use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
 use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationNameException;
 
 class Pivot
