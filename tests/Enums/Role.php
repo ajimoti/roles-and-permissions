@@ -6,7 +6,6 @@ use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
 
 final class Role extends BaseRole
 {
-    // These are sample roles, replace these roles with what works for your application
     public const SuperAdmin = 'super_admin';
     public const Admin = 'admin';
     public const Customer = 'customer';
