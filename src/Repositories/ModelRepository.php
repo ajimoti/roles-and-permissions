@@ -88,7 +88,7 @@ class ModelRepository implements RolesContract
 
         DB::beginTransaction();
         foreach ($roles as $role) {
-            if (! in_array($role, $roleEnumClass::all())) {
+            if (! in_array($role, $roleEnumClass::all()->toArray())) {
                 throw new InvalidArgumentException(
                     sprintf(
                         'The role "%s" does not exist on the "%s" enum class.',

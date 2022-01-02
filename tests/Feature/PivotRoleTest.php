@@ -28,7 +28,7 @@ it('can access every permission that belongs to the given role', function () {
 });
 
 it('is not given other role permissions', function () {
-    foreach (Role::all() as $role) {
+    foreach (Role::all()->toArray() as $role) {
         if ($role != $this->role) {
             expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($role)))->toBeFalse();
         }
@@ -41,7 +41,7 @@ it('expect the role authorization to be valid', function () {
 
 it('expect role authorization for other roles to throw exception', function () {
     $otherRoles = [];
-    foreach (Role::all() as $role) {
+    foreach (Role::all()->toArray() as $role) {
         if ($role != $this->role) {
             $otherRoles[] = $role;
             expect(fn () => auth()->user()->of($this->merchant)->authorizeRole($role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
@@ -86,7 +86,7 @@ it('expect role authorization for multiple roles are valid', function () {
 
 it('expect role authorization for other unassigned roles to throw exception', function () {
     $otherRoles = [];
-    foreach (Role::all() as $role) {
+    foreach (Role::all()->toArray() as $role) {
         if ($role !== $this->role) {
             $otherRoles[] = $role;
             expect(fn () => auth()->user()->of($this->merchant)->authorizeRole($role, $this->role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');

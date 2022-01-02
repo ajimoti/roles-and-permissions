@@ -26,7 +26,7 @@ it('can access every permission that belongs to the given role', function () {
 });
 
 it('is not given other roles permissions', function () {
-    foreach (Role::all() as $role) {
+    foreach (Role::all()->toArray() as $role) {
         if ($role != $this->role) {
             expect(auth()->user()->has(Role::getPermissions($role)))->toBeFalse();
         }
@@ -39,7 +39,7 @@ it('role authorization is valid', function () {
 
 it('role authorization for other roles to throw exception', function () {
     $otherRoles = [];
-    foreach (Role::all() as $role) {
+    foreach (Role::all()->toArray() as $role) {
         if ($role != $this->role) {
             $otherRoles[] = $role;
             expect(fn () => auth()->user()->authorizeRole($role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
@@ -86,7 +86,7 @@ it('role authorization for other unassigned roles to throw exception', function 
     auth()->user()->assign($this->secondRole);
 
     $unassignedRoles = [];
-    foreach (Role::all() as $role) {
+    foreach (Role::all()->toArray() as $role) {
         if (! in_array($role, [$this->role, $this->secondRole])) {
             $unassignedRoles[] = $role;
             expect(fn () => auth()->user()->authorizeRole($role, $this->role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');

@@ -175,7 +175,8 @@ From the above class, the constants `SuperAdmin`, `Admin` and `Customer` are the
 ```php
 Use app\Enums\Role.php
 
-$roles = Role::all(); // returns an array of all roles
+$roles = Role::all() // returns an instance of Tarzancodes\RolesAndPermissions\Collections\RoleCollection
+$roles->toArray(); // returns an array of all roles
 ```
 
 **Get all roles and permissions**

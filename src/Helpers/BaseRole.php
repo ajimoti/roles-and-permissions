@@ -4,8 +4,9 @@ namespace Tarzancodes\RolesAndPermissions\Helpers;
 
 use BenSampo\Enum\Enum;
 use Tarzancodes\RolesAndPermissions\Contracts\IsEnumContract;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 
-abstract class BaseRole extends Enum implements IsEnumContract
+abstract class BaseRole extends Enum
 {
     /**
      * The permissions of the role passed in the constructor.
@@ -74,7 +75,7 @@ abstract class BaseRole extends Enum implements IsEnumContract
                     $allPermissions = array_merge($allPermissions, $rolesAndPermissions[$role]);
                 }
             } else {
-                if (in_array($role, static::all())) {
+                if (in_array($role, static::getValues())) {
                     // It's a valid enum value, but has not been added to the permissions array.
                     return;
                 }
@@ -89,11 +90,15 @@ abstract class BaseRole extends Enum implements IsEnumContract
     /**
      * Get all roles
      *
-     * @return array
+     * @return RoleCollection
      */
-    final public static function all(): array
+    final public static function all(): RoleCollection
     {
-        return static::getValues();
+        foreach (static::getValues() as $role) {
+            $roles[] = new static($role);
+        }
+
+        return new RoleCollection($roles ?? []);
     }
 
     /**

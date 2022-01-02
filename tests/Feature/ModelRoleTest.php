@@ -95,7 +95,7 @@ it('role authorization is valid', function () {
 
 it('role authorization for other roles to throw exception', function () {
     $otherRoles = [];
-    foreach (MerchantRole::all() as $role) {
+    foreach (MerchantRole::all()->toArray() as $role) {
         if ($role != $this->role) {
             $otherRoles[] = $role;
             expect(fn () => $this->model->authorizeRole($role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
@@ -143,7 +143,7 @@ it('role authorization for other unassigned roles to throw exception', function 
     $this->model->assign($this->secondRole);
 
     $unassignedRoles = [];
-    foreach (MerchantRole::all() as $role) {
+    foreach (MerchantRole::all()->toArray() as $role) {
         if (! in_array($role, [$this->role, $this->secondRole])) {
             $unassignedRoles[] = $role;
             expect(fn () => $this->model->authorizeRole($role, $this->role))->toThrow(PermissionDeniedException::class, 'You are not authorized to perform this action.');
