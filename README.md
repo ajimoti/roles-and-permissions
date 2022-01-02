@@ -77,9 +77,7 @@ $user->of($merchant)->has(Permission::DeleteTransactions, Permission::BlockUsers
 ## Installation
 You can install the package via composer:
 ```bash
-
 composer require tarzan-codes/roles-and-permissions
-
 ```
 
 > *(Not compulsory)* If you have existing pivot tables that you want to apply the package to, you can add these table names to the `pivot.tables` array in the `config/roles-and-permissions.php` config file. This will add a `role` column to each of the tables.
@@ -87,9 +85,7 @@ composer require tarzan-codes/roles-and-permissions
 After successful installation, run the command below
 
 ```bash
-
 php artisan roles:install
-
 ```
 The above command does the following:
 - Publishes a configuration file `config/roles-and-permissions.php`
@@ -143,7 +139,6 @@ final  class  Role  extends  BaseRole
         ];
     }
 }
-
 ```
 
 From the above class, the constants `SuperAdmin`, `Admin` and `Customer` are the declared roles, and their permissions are as follows:
@@ -192,7 +187,6 @@ $roles = Role::permissions(); // returns a multidimensional array of all roles a
 Use app\Enums\Role.php
 
 $roles = Role::getPermissions(Role::SuperAdmin); // returns every permissions available to the super admin role as an array
-
 ```
 #### Adding descriptions to roles (Optional)
 You can choose to write descriptions for each or some of the roles you have declared. By default, the package will return the `sentence case` version of the role constants as their description. 
@@ -200,19 +194,18 @@ You can choose to write descriptions for each or some of the roles you have decl
 To define custom descriptions for the roles, add a `getDescription($value)` method to your role enum class, then return a `match` like the below example:
 
 ```php
-	  
-	/**
-	* Set a description for the roles
-	*
-	* @return  string
-	*/
-	public  static  function  getDescription($value):  string
-	{
-		return  match ($value) {
-			self::SuperAdmin  =>  'Only company owners are given this role',
-			self::Admin  =>  "These are senior managers that oversee the company's operations",
-			default  =>  parent::getDescription($value),
-		};
+/**
+* Set a description for the roles
+*
+* @return  string
+*/
+public  static  function  getDescription($value):  string
+{
+	return  match ($value) {
+		self::SuperAdmin  =>  'Only company owners are given this role',
+		self::Admin  =>  "These are senior managers that oversee the company's operations",
+		default  =>  parent::getDescription($value),
+	};
 }
 ```
   
@@ -224,7 +217,6 @@ Below is an example of what the class will look like:
 
 ```php
 <?php
-
 namespace  App\Enums;
 
 use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
@@ -237,7 +229,6 @@ final  class  Permission  extends  BasePermission
     const EditProducts = 'edit_products';
     const MarkAsSoldOut = 'mark_as_sold_out';
     const BuyProducts = 'buy_products';
-
 }
 ```
 
@@ -269,7 +260,6 @@ use Tarzancodes\RolesAndPermissions\HasRoles;
 class  User  extends  Authenticatable
 {
     use  HasRoles;
-
     // ...
 }
 ```
@@ -613,7 +603,6 @@ The roles are expected to be declared from higher level roles to lower level rol
 For example:
 ```php
 <?php
-
 namespace  App\Enums;
 
 use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
@@ -819,18 +808,17 @@ The right way to do this is to have two different enum files, have the general r
 `app\Enums\Role.php`
 ```php
 <?php
-
 namespace  App\Enums;
 
 use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
 
-    final  class  Role  extends  BaseRole
-    {
-        const Owner = 'owner';
-        const Marketer = 'marketer';
-        const Developer = 'developer';
-        // ...
-    }
+final  class  Role  extends  BaseRole
+{
+    const Owner = 'owner';
+    const Marketer = 'marketer';
+    const Developer = 'developer';
+    // ...
+}
 ```
 
 Create another role enum class for the `merchant` to `user` relationship by running the command below:
@@ -843,18 +831,17 @@ The command above will generate a `app\Enums\MerchantRole.php`. We can then upda
 `app\Enums\MerchantRole.php`
 ```php
 <?php
-
 namespace  App\Enums;
 
 use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
 
-    final  class  MerchantRole  extends  BaseRole
-    {
-        const  SuperAdmin = 'super_admin';
-        const  Admin = 'admin';
-        const  Customer = 'customer';
-        // ...
-    }
+final  class  MerchantRole  extends  BaseRole
+{
+    const  SuperAdmin = 'super_admin';
+    const  Admin = 'admin';
+    const  Customer = 'customer';
+    // ...
+}
 ```
 >Note: After creating a role enum, you MUST map the newly created role to the model's table name before the package can work fine. Visit the next chapter to better understand
 
@@ -887,7 +874,7 @@ For example:
 $user->of($merchant)->assign(MerchantUserRole::SuperAdmin);
 $merchant->of($user)->assign(MerchantUserRole::SuperAdmin);
 
-// ------------
+// =============
 
 // This will work NOT, as we are referencing the wrong role enum class
 $user->of($merchant)->assign(Role::SuperAdmin);
