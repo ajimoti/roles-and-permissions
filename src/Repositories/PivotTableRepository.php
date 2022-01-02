@@ -3,16 +3,18 @@
 namespace Tarzancodes\RolesAndPermissions\Repositories;
 
 use BadMethodCallException;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
-use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
-use Tarzancodes\RolesAndPermissions\Contracts\PivotContract;
-use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Helpers\Pivot;
+use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
+use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
+use Tarzancodes\RolesAndPermissions\Contracts\PivotContract;
+use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
 
 class PivotTableRepository implements RolesContract, PivotContract
 {
@@ -62,7 +64,7 @@ class PivotTableRepository implements RolesContract, PivotContract
         protected ?string $relationName = null
     ) {
         $this->pivot = new Pivot($localModel, $relatedModel, $relationName);
-        $this->roleColumnName = config('roles-and-permissions.pivot.column_name');
+        $this->roleColumnName = config('roles-and-permissions.column_name');
     }
 
     /**
@@ -74,7 +76,11 @@ class PivotTableRepository implements RolesContract, PivotContract
      */
     public function can($permission, $arguments = [])
     {
-        return in_array($permission, $this->pivot->permissions());
+        if ($permission instanceof BasePermission) {
+            $permission = $permission->value;
+        }
+
+        return in_array($permission, $this->pivot->permissions()->toArray());
     }
 
     /**
@@ -85,9 +91,13 @@ class PivotTableRepository implements RolesContract, PivotContract
      */
     public function has(...$permissions): bool
     {
-        $permissions = collect($permissions)->flatten()->all();
+        $permissions = collect($permissions)->flatten()->toArray();
 
-        return Check::all($permissions)->existsIn($this->pivot->permissions());
+        if (empty($permissions) || empty($permissions[0])) {
+            throw new InvalidArgumentException();
+        }
+
+        return Check::all($permissions)->existsIn($this->pivot->permissions()->toArray());
     }
 
     /**
@@ -98,9 +108,20 @@ class PivotTableRepository implements RolesContract, PivotContract
      */
     public function hasRole(...$roles): bool
     {
-        $roles = collect($roles)->flatten()->all();
+        $roles = collect($roles)->flatten()->toArray();
 
         return Check::all($roles)->existsIn($this->pivot->getRoles()->toArray());
+    }
+
+    /**
+     * Checks if the model has all the given roles.
+     *
+     * @param string|int|array|RoleCollection $role
+     * @return bool
+     */
+    public function hasRoles(...$roles): bool
+    {
+        return $this->hasRole(...$roles);
     }
 
     /**
@@ -116,9 +137,9 @@ class PivotTableRepository implements RolesContract, PivotContract
     /**
      * Get all the model's permissions.
      *
-     * @return array
+     * @return PermissionCollection
      */
-    public function permissions(): array
+    public function permissions(): PermissionCollection
     {
         return $this->pivot->permissions();
     }
@@ -131,7 +152,7 @@ class PivotTableRepository implements RolesContract, PivotContract
      */
     public function assign(...$roles): bool
     {
-        $roles = collect($roles)->flatten()->all();
+        $roles = collect($roles)->flatten()->toArray();
         $roleEnumClass = $this->pivot->getRoleEnumClass();
 
         DB::beginTransaction();
@@ -185,6 +206,17 @@ class PivotTableRepository implements RolesContract, PivotContract
         }
 
         return $query->updateExistingPivot($this->relatedModel->id, [$this->roleColumnName => null]);
+    }
+
+    /**
+     * Remove the model's role.
+     *
+     * @param string|int|array $roles
+     * @return bool
+     */
+    public function removeRole(...$role): bool
+    {
+        return $this->removeRoles(...$role);
     }
 
     /**

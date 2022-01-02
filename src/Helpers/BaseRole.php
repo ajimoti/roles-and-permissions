@@ -2,17 +2,33 @@
 
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
-use BenSampo\Enum\Enum;
+use Illuminate\Support\Collection;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
 use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
 
-abstract class BaseRole extends Enum
+abstract class BaseRole extends BaseEnum
 {
     /**
      * The permissions of the role passed in the constructor.
      *
-     * @var array
+     * @var PermissionCollection
      */
-    public array $permissions = [];
+    public PermissionCollection $permissions;
+
+    /**
+     * The permission enum class used by this role.
+     *
+     * @var BasePermission
+     */
+    protected static $permissionClass = Permission::class;
+
+    /**
+     * The class used to wrap the values when the `collect()` method is called.
+     *
+     * @var Collection
+     */
+    protected static $collectionClass = RoleCollection::class;
 
     /**
      * Indicates if the roles should be considered
@@ -42,48 +58,49 @@ abstract class BaseRole extends Enum
     {
         parent::__construct($enumValue);
 
-        $this->permissions = self::getPermissions($enumValue);
+        $this->permissions = static::getPermissions($enumValue);
     }
 
     /**
      * Get specific role permissions
      *
      * @param string|int $role
-     * @return array
+     * @return PermissionCollection
      */
-    final public static function getPermissions(...$roles): array
+    final public static function getPermissions(...$roles): PermissionCollection
     {
         $rolesAndPermissions = static::permissions();
-        $rolesInHierarchy = array_keys($rolesAndPermissions);
+        $roles = collect($roles)->flatten()->all();
 
         $allPermissions = [];
-        collect($roles)->flatten()->each(function ($role) use ($rolesAndPermissions, $rolesInHierarchy, &$allPermissions) {
-            if (isset($rolesAndPermissions[$role])) {
-                // Return the present role's permissions,
-                // and permissions of roles that are lower than this in the array. (i.e roles with lower indexes)
-                if (self::usesHierarchy()) {
-                    $lowerRoles = collect($rolesInHierarchy)->splice(array_search($role, $rolesInHierarchy))->all();
+        foreach ($roles as $role) {
+            if (! in_array($role, static::getValues())) {
+                throw new \Exception("Invalid role `{$role}` supplied");
+            }
 
-                    $permissions = [];
-                    foreach ($lowerRoles as $lowerRole) {
-                        $permissions = array_merge($permissions, $rolesAndPermissions[$lowerRole]);
+            $permissionClass = static::$permissionClass;
+            if (isset($rolesAndPermissions[$role])) {
+                if (static::usesHierarchy()) {
+                    // Return the present role's permissions,
+                    // and permissions of roles that are lower than this in the array. (i.e roles with lower indexes)
+                    $permissions = $permissionClass::getInstanceFromValues($rolesAndPermissions[$role] ?? []);
+
+                    foreach (static::hold($role)->getLowerRoles() as $lowerRole) {
+                        $permissions = array_merge(
+                            $permissions, $permissionClass::getInstanceFromValues($rolesAndPermissions[$lowerRole] ?? [])
+                        );
                     }
 
                     $allPermissions = array_merge($allPermissions, $permissions);
                 } else {
-                    $allPermissions = array_merge($allPermissions, $rolesAndPermissions[$role]);
+                    $allPermissions = array_merge(
+                        $allPermissions, $permissionClass::getInstanceFromValues($rolesAndPermissions[$role])
+                    );
                 }
-            } else {
-                if (in_array($role, static::getValues())) {
-                    // It's a valid enum value, but has not been added to the permissions array.
-                    return;
-                }
-
-                throw new \Exception("Invalid role `{$role}` supplied");
             }
-        });
+        }
 
-        return array_unique($allPermissions);
+        return new PermissionCollection(array_values(array_unique($allPermissions)));
     }
 
     /**
@@ -93,11 +110,9 @@ abstract class BaseRole extends Enum
      */
     final public static function all(): RoleCollection
     {
-        foreach (static::getValues() as $role) {
-            $roles[] = new static($role);
-        }
-
-        return new RoleCollection($roles ?? []);
+        return new RoleCollection(
+            static::getInstanceFromValues(static::getValues())
+        );
     }
 
     /**
@@ -130,10 +145,29 @@ abstract class BaseRole extends Enum
         return static::$useHierarchy;
     }
 
+    /**
+     * Get the roles in the hierarchy they appear in.
+     *
+     * @return array
+     */
+    final public static function rolesInHierarchy(): array
+    {
+        return static::getValues();
+    }
+
+    /**
+     * Attempt to instantiate an enum by calling the enum key as a static method.
+     *
+     * This function defers to the macroable __callStatic function if a macro is found using the static method called.
+     *
+     * @param  string  $method
+     * @param  mixed  $parameters
+     * @return mixed
+     */
     public static function __callStatic($name, $arguments)
     {
-        if ($name === 'select') {
-            return new Selectable(static::class, ...$arguments);
+        if ($name === 'hold') {
+            return new Holdable(static::class, ...$arguments);
         }
 
         return parent::__callStatic($name, $arguments);

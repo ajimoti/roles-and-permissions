@@ -32,7 +32,7 @@ class TestCase extends Orchestra
 
         config()->set('roles-and-permissions.roles_enum.default', Role::class);
         config()->set('roles-and-permissions.roles_enum.merchants', MerchantRole::class);
-        config()->set('roles-and-permissions.pivot.column_name', 'role');
+        config()->set('roles-and-permissions.column_name', 'role');
 
         include_once __DIR__ . '/Migrations/create_users_table.php.stub';
         include_once __DIR__ . '/Migrations/create_merchants_table.php.stub';

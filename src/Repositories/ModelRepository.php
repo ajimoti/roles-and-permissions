@@ -31,7 +31,7 @@ class ModelRepository implements RolesContract
      */
     public function can($permission, $arguments = [])
     {
-        return in_array($permission, $this->permissions());
+        return in_array($permission, $this->permissions()->toArray());
     }
 
     /**
@@ -44,7 +44,7 @@ class ModelRepository implements RolesContract
     {
         $permissions = collect($permissions)->flatten()->all();
 
-        return Check::all($permissions)->existsIn($this->permissions());
+        return Check::all($permissions)->existsIn($this->permissions()->toArray());
     }
 
     /**

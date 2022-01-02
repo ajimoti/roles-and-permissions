@@ -2,14 +2,16 @@
 
 namespace Tarzancodes\RolesAndPermissions\Contracts;
 
+use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
+
 interface PermissionsContract
 {
     /**
      * Get the model's permissions
      *
-     * @return array
+     * @return PermissionCollection
      */
-    public function permissions(): array;
+    public function permissions(): PermissionCollection;
 
     /**
      * Check if the model has the permissions

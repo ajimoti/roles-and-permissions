@@ -3,12 +3,14 @@
 namespace Tarzancodes\RolesAndPermissions;
 
 use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
-use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
-use Tarzancodes\RolesAndPermissions\Exceptions\InvalidArgumentException;
 use Tarzancodes\RolesAndPermissions\Models\ModelRole;
+use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
+use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
+use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
 use Tarzancodes\RolesAndPermissions\Repositories\PivotTableRepository;
+use Tarzancodes\RolesAndPermissions\Exceptions\InvalidArgumentException;
 
 trait HasRoles
 {
@@ -51,8 +53,8 @@ trait HasRoles
      */
     public function can($permission, $arguments = [])
     {
-        if (empty($permission)) {
-            throw new InvalidArgumentException();
+        if ($permission instanceof BasePermission) {
+            $permission = $permission->value;
         }
 
         return $this->repository->can($permission, $arguments);
@@ -61,11 +63,13 @@ trait HasRoles
     /**
      * Checks if the model has all the given permissions.
      *
-     * @param string $permissions
+     * @param string|int|array|PermissionCollection $permissions
      * @return bool
      */
     public function has(...$permissions): bool
     {
+        $permissions = collect($permissions)->flatten()->toArray();
+
         if (empty($permissions) || empty($permissions[0])) {
             throw new InvalidArgumentException();
         }
@@ -76,16 +80,25 @@ trait HasRoles
     /**
      * Checks if the model has all the given roles.
      *
-     * @param string $role
+     * @param string|int|array|RoleCollection $role
      * @return bool
      */
     public function hasRole(...$roles): bool
     {
-        if (empty($roles) || empty($roles[0])) {
-            throw new InvalidArgumentException();
-        }
+        $roles = collect($roles)->flatten()->toArray();
 
         return $this->repository->hasRole(...$roles);
+    }
+
+    /**
+     * Checks if the model has all the given roles.
+     *
+     * @param string|int|array|RoleCollection $role
+     * @return bool
+     */
+    public function hasRoles(...$roles): bool
+    {
+        return $this->hasRole(...$roles);
     }
 
     /**
@@ -101,9 +114,9 @@ trait HasRoles
     /**
      * Get all the model's permissions.
      *
-     * @return array
+     * @return PermissionCollection
      */
-    public function permissions(): array
+    public function permissions(): PermissionCollection
     {
         return $this->repository->permissions();
     }
@@ -116,7 +129,9 @@ trait HasRoles
      */
     public function assign(...$roles): bool
     {
-        if (empty($roles) || empty($roles[0])) {
+        $roles = collect($roles)->flatten()->toArray();
+
+        if (empty($roles)) {
             throw new InvalidArgumentException();
         }
 
@@ -132,6 +147,17 @@ trait HasRoles
     public function removeRoles(): bool
     {
         return $this->repository->removeRoles(...func_get_args());
+    }
+
+    /**
+     * Remove the model's role.
+     *
+     * @param string|int|array $roles
+     * @return bool
+     */
+    public function removeRole(...$role): bool
+    {
+        return $this->removeRoles(...$role);
     }
 
     /**

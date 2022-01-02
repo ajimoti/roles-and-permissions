@@ -27,7 +27,7 @@ class AddRoleColumnToPivotTables extends Migration
     public function __construct()
     {
         $this->table = config('roles-and-permissions.pivot.tables');
-        $this->roleColumnName = config('roles-and-permissions.pivot.column_name');
+        $this->roleColumnName = config('roles-and-permissions.column_name');
     }
 
     /**

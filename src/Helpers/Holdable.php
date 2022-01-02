@@ -4,7 +4,7 @@ namespace Tarzancodes\RolesAndPermissions\Helpers;
 
 use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRoleHierarchyException;
 
-class Selectable
+class Holdable
 {
     /**
      * Indicates that the permissions should be included in the result

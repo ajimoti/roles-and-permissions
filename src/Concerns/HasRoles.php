@@ -3,6 +3,7 @@
 namespace Tarzancodes\RolesAndPermissions\Concerns;
 
 use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
 
 trait HasRoles
 {
@@ -23,18 +24,13 @@ trait HasRoles
     /**
      * Get the permissions.
      *
-     * @return array
+     * @return PermissionCollection
      */
-    public function permissions(): array
+    public function permissions(): PermissionCollection
     {
-        $roleEnumClass = $this->getRoleEnumClass();
-
-        $allPermissions = [];
-        foreach ($this->getRoles()->toArray() as $role) {
-            $allPermissions = array_merge($allPermissions, $roleEnumClass::getPermissions($role));
-        }
-
-        return array_unique($allPermissions);
+        return new PermissionCollection(
+            $this->getRoles()->pluck('permissions')->flatten()->unique()->all()
+        );
     }
 
     /**
@@ -44,6 +40,6 @@ trait HasRoles
      */
     protected function getRoleColumnName(): string
     {
-        return config('roles-and-permissions.pivot.column_name');
+        return config('roles-and-permissions.column_name');
     }
 }

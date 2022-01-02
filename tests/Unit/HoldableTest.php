@@ -7,27 +7,27 @@ beforeEach(function () {
 });
 
 it('active role is not returned with lower roles', function () {
-    $lowerRoles = MerchantRole::select($this->activeRole)->getLowerRoles();
+    $lowerRoles = MerchantRole::hold($this->activeRole)->getLowerRoles();
 
     expect(! in_array($this->activeRole, $lowerRoles))->toBeTrue();
-});
+
+})->group('holdable');
 
 it('active role is not returned with higher roles', function () {
-    $higherRoles = MerchantRole::select($this->activeRole)->getHigherRoles();
+    $higherRoles = MerchantRole::hold($this->activeRole)->getHigherRoles();
 
     expect(! in_array($this->activeRole, $higherRoles))->toBeTrue();
-});
+})->group('holdable');
 
 it('roles are in hierarchy', function () {
-    $lowerRoles = MerchantRole::select($this->activeRole)->getLowerRoles();
-    $higherRoles = MerchantRole::select($this->activeRole)->getHigherRoles();
+    $lowerRoles = MerchantRole::hold($this->activeRole)->getLowerRoles();
+    $higherRoles = MerchantRole::hold($this->activeRole)->getHigherRoles();
 
     expect($lowerRoles)->toContain(MerchantRole::RetailManager, MerchantRole::CustomerAttendant, MerchantRole::Customer);
     expect($higherRoles)->toBeEmpty();
 
-
-    $lowerRoles = MerchantRole::select(MerchantRole::RetailManager)->getLowerRoles();
-    $higherRoles = MerchantRole::select(MerchantRole::RetailManager)->getHigherRoles();
+    $lowerRoles = MerchantRole::hold(MerchantRole::RetailManager)->getLowerRoles();
+    $higherRoles = MerchantRole::hold(MerchantRole::RetailManager)->getHigherRoles();
     expect($lowerRoles)->toContain(MerchantRole::CustomerAttendant, MerchantRole::Customer);
     expect($higherRoles)->toContain(MerchantRole::Distributor);
-});
+})->group('holdable');

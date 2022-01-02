@@ -255,13 +255,20 @@ You can get all the available permissions:
 ```php
 use App\Enums\Permission;
 
-$permissions = Permission::all(); // returns an array of all the permissions
+$permissions = Permission::all(); // returns an instance of Tarzancodes\RolesAndPermissions\Collections\PermissionCollection
 ```
 
-You can decide to have your permissions in separate files.
+You can decide to have your permissions in separate files. To do this run the command below, then make sure to the `protected static $permissionClass` property on your role enum class to the newly generated permission file.
 
 ```bash
 php artisan make:permission ExamplePermission
+```
+
+`app\Enums\Role.php`
+```php
+use App\Enums\ExamplePermission;
+
+protected static $permissionClass = ExamplePermission::class
 ```
 
 ## Basic Usage
@@ -662,14 +669,14 @@ It is important that the roles in the `permissions()` method appear in the same 
 There are times you want to get the lower or higher roles of a selected role. Explained below is how to achieve this:
 
 ```php
-Role::select(Role::SuperAdmin)->getLowerRoles(); // returns an array of roles lower roles the selected role; ['admin', 'customer']
+Role::hold(Role::SuperAdmin)->getLowerRoles(); // returns an array of roles lower roles the selected role; ['admin', 'customer']
 
-Role::select(Role::Customer)->getHigherRoles(); // returns an array of roles higher than the selected role; ['super_admin', 'admin']
+Role::hold(Role::Customer)->getHigherRoles(); // returns an array of roles higher than the selected role; ['super_admin', 'admin']
 ```
 You can use the `withPermissions()` method to get the roles and their respective permissions like so:
 
 ```php
-Role::select(Role::SuperAdmin)->withPermissions()->getLowerRoles();
+Role::hold(Role::SuperAdmin)->withPermissions()->getLowerRoles();
 ```
 
 The above will return a multidimensional array of the roles as the key, and an array permissions as the values. Below is the response to expect:
@@ -810,8 +817,8 @@ The package publishes a configuration file in your config directory. In this sec
 
 | Key | Description |
 | ----------- | ----------- |
-| `pivot.column_name` | Sets the column name that will be used to store roles on every pivot table. |
-| `pivot.tables` | This configuration is only used when installating the package, for cases where you have existing pivot tables. It allows you set the `pivot table` names you'd like to use the package on. Upon installation, the package will add a `role` column _(or the custom name set in `pivot.column_name`)_ to the listed tables |
+| `column_name` | Sets the column name that will be used to store roles on every pivot table. |
+| `pivot.tables` | This configuration is only used when installating the package, for cases where you have existing pivot tables. It allows you set the `pivot table` names you'd like to use the package on. Upon installation, the package will add a `role` column _(or the custom name set in `column_name`)_ to the listed tables |
 |`roles_enum.default` |Set the default role enum class to be used by the package. You can decided to create your own role enum class, and make use of that instead. |
 
 ## Using custom role enum class

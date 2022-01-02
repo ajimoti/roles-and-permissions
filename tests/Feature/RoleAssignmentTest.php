@@ -82,7 +82,7 @@ test('pivot table can be assigned a role', function () {
     expect(auth()->user()->of($this->merchant)->roles()->toArray())->toContain($role);
 
     expect(
-        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.pivot.column_name'), $role)->exists()
+        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.column_name'), $role)->exists()
     )->toBeTrue();
 });
 
@@ -102,11 +102,11 @@ test('pivot table can be assigned multiple roles', function () {
     expect(auth()->user()->of($this->merchant)->roles()->toArray())->toContain($secondRole, $firstRole);
 
     expect(
-        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.pivot.column_name'), $firstRole)->exists()
+        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.column_name'), $firstRole)->exists()
     )->toBeTrue();
 
     expect(
-        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.pivot.column_name'), $secondRole)->exists()
+        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.column_name'), $secondRole)->exists()
     )->toBeTrue();
 });
 
@@ -128,10 +128,10 @@ test('pivot table can be assigned multiple roles as an array', function () {
     expect(auth()->user()->of($this->merchant)->roles()->toArray())->toContain($secondRole, $firstRole);
 
     expect(
-        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.pivot.column_name'), $firstRole)->exists()
+        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.column_name'), $firstRole)->exists()
     )->toBeTrue();
 
     expect(
-        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.pivot.column_name'), $secondRole)->exists()
+        auth()->user()->merchants()->wherePivot('merchant_id', $this->merchant->id)->wherePivot(config('roles-and-permissions.column_name'), $secondRole)->exists()
     )->toBeTrue();
 });

@@ -13,4 +13,4 @@ it('uses the right repository', function () {
 
     expect(auth()->user()->of(Merchant::factory()->create()))
         ->toBeInstanceOf(PivotTableRepository::class);
-});
+})->group('repository');

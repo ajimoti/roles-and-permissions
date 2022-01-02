@@ -27,11 +27,11 @@ beforeEach(function () {
 });
 
 it('has role permissions', function () {
-    expect($this->model->has(MerchantRole::getPermissions($this->role)))->toBeTrue();
+    expect($this->model->has(MerchantRole::getPermissions($this->role)->toArray()))->toBeTrue();
 });
 
 it('has lower roles permissions', function () {
-    $lowerRoles = MerchantRole::select($this->role)->withPermissions()->getLowerRoles();
+    $lowerRoles = MerchantRole::hold($this->role)->withPermissions()->getLowerRoles();
 
     // When the role is the lowest role,
     // it will not have any lower role
@@ -40,7 +40,7 @@ it('has lower roles permissions', function () {
     }
 
     foreach ($lowerRoles as $role => $permissions) {
-        if (empty(MerchantRole::getPermissions($role)) && empty($permissions)) {
+        if (MerchantRole::getPermissions($role)->isEmpty() && empty($permissions)) {
             // Cases where MerchantRole::Customer is one of the lower roles
             continue;
         }
@@ -51,7 +51,7 @@ it('has lower roles permissions', function () {
 });
 
 it('does not have higher roles permissions', function () {
-    $higherRoles = MerchantRole::select($this->role)->withPermissions()->getHigherRoles();
+    $higherRoles = MerchantRole::hold($this->role)->withPermissions()->getHigherRoles();
 
     // Doing this to stop `pest` from complaining about zero assertions
     // When the role is the top role, it will not have any higher role

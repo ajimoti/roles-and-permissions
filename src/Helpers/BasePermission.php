@@ -2,10 +2,18 @@
 
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
-use BenSampo\Enum\Enum;
+use Illuminate\Support\Collection;
+use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
 
-class BasePermission extends Enum
+abstract class BasePermission extends BaseEnum
 {
+    /**
+     * The class used to wrap the values when the `collect()` method is called.
+     *
+     * @var Collection
+     */
+    protected static $collectionClass = PermissionCollection::class;
+
     /**
      * Get all permissions
      *
