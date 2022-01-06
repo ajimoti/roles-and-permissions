@@ -1,11 +1,11 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
+use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
+use Tarzancodes\RolesAndPermissions\Tests\Models\User;
 
 test('role collection has the right values', function () {
     $user = User::factory()->create();
@@ -19,7 +19,6 @@ test('role collection has the right values', function () {
         expect($role->permissions)->toBeInstanceOf(PermissionCollection::class);
 
         if ($role->value === Role::SuperAdmin) {
-
             expect($role->value)->toBe(Role::SuperAdmin);
             expect($role->key)->toBe('SuperAdmin');
             expect($role->description)->toBe('Super admin');
@@ -68,7 +67,7 @@ test('can get collection of roles from role values', function () {
 
     expect($collection)->toBeInstanceOf(RoleCollection::class);
 
-    foreach($collection as $role) {
+    foreach ($collection as $role) {
         expect($role)->toBeInstanceOf(MerchantRole::class);
         expect($role)->toHaveProperties(['value', 'key', 'description', 'permissions', 'title']);
     }

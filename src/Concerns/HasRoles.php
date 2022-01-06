@@ -2,8 +2,8 @@
 
 namespace Tarzancodes\RolesAndPermissions\Concerns;
 
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 
 trait HasRoles
 {

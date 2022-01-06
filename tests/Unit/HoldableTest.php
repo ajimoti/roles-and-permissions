@@ -10,7 +10,6 @@ it('active role is not returned with lower roles', function () {
     $lowerRoles = MerchantRole::hold($this->activeRole)->getLowerRoles();
 
     expect(! in_array($this->activeRole, $lowerRoles))->toBeTrue();
-
 })->group('holdable');
 
 it('active role is not returned with higher roles', function () {
