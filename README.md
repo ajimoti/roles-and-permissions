@@ -30,7 +30,7 @@ $user->hasRole(Role::SuperAdmin);
 $user->can(Permission::DeleteTransactions);
 
 // Check if the user has multiple permissions
-$user->has(Permission::DeleteTransactions, Permission::BlockUsers);
+$user->holds(Permission::DeleteTransactions, Permission::BlockUsers);
 ```
 
 ### Pivot table (many to many relationship)
@@ -56,7 +56,7 @@ $user->of($merchant)->hasRole(Role::SuperAdmin);
 $user->of($merchant)->can(Permission::DeleteTransactions);
 
 // Check if the user has multiple permissions on the selected merchant (wallmart)
-$user->of($merchant)->has(Permission::DeleteTransactions, Permission::BlockUsers);
+$user->of($merchant)->holds(Permission::DeleteTransactions, Permission::BlockUsers);
 ```
 
 ## Requirements
@@ -357,20 +357,20 @@ Models have permissions via roles. Therefore a model only has the permissions th
 For instance, if a `$user` model has been assigned the `SuperAdmin` and `Admin` roles, the user has all the permissions associated with both roles.
 ```php
 // Check if the user has a permission
-$user->has(Permission::DeleteProducts); // returns boolean
+$user->holds(Permission::DeleteProducts); // returns boolean
 ```
 
 You can decide to check for multiple permissions at once
 ```php
 // Check if the user has any of the following permissions.
-$user->has(Permission::DeleteProducts, Permission::DeleteTransactions); // returns boolean
+$user->holds(Permission::DeleteProducts, Permission::DeleteTransactions); // returns boolean
 
 // OR as an array
-$user->has([Permission::DeleteProducts, Permission::DeleteTransactions]); // returns boolean
+$user->holds([Permission::DeleteProducts, Permission::DeleteTransactions]); // returns boolean
 ```
-The `has()` will only return `true` when the `$user` model has all the permissions passed. If the user does not have one of the permissions passed, the method returns `false` .
+The `holds()` will only return `true` when the `$user` model has all the permissions passed. If the user does not have one of the permissions passed, the method returns `false` .
 
->Permissions of different roles can be passed to the `has()` method, the package will check if the user has been assigned the roles associated with the permissions passed, and returns the right boolean.
+>Permissions of different roles can be passed to the `holds()` method, the package will check if the user has been assigned the roles associated with the permissions passed, and returns the right boolean.
 
 ### Authorize Permissions
 For cases where you want to throw an exception when a `model` does not have permission, or multiple permissions, you can use the `authorize()` method to achieve this.
@@ -472,9 +472,9 @@ By importing the `Tarzancodes\RolesAndPermissions\HasRoles` trait and having the
 
 After doing the above, the package provides a `of()` method that will be used to perform roles and permissions related logic on the pivot record.
 
-The `of()` method returns an instance of `Tarzancodes\RolesAndPermissions\Repositories\PivotTableRepository` class, which has the same methods used in the [Basic usage section](https://blah.com)
+The `of()` method returns an instance of `Tarzancodes\RolesAndPermissions\Repositories\BelongsToManyRepository` class, which has the same methods used in the [Basic usage section](https://blah.com)
 
-`assign()`, `has()`, `can()`, `hasRole()`, `authorize()`, `authorizeRole()`, and `removeRoles()`
+`assign()`, `holds()`, `can()`, `hasRole()`, `authorize()`, `authorizeRole()`, and `removeRoles()`
 
 > When the `of()` method is chained to a model, the package will automatically use Laravel relationship naming convention to guess the relationship name. Alternatively you can pass the relationship name as the second argument.
 
@@ -539,25 +539,25 @@ When multiple roles are passed, the package will only return `true` when the `$u
 
 Pivot records have permissions via roles. Therefore a record only has permissions that are associated with the roles they have been assigned.
 
-For instance, if a `$user` model has been assigned the `SuperAdmin` and `Admin` roles at a `merchant` , the user has all the permissions associated with both roles ONLY at this merchant. Calling the `has()` method directly on the `$user` model will return false.
+For instance, if a `$user` model has been assigned the `SuperAdmin` and `Admin` roles at a `merchant` , the user has all the permissions associated with both roles ONLY at this merchant. Calling the `holds()` method directly on the `$user` model will return false.
 
 ```php
 // Check if the user has a permission
-$user->of($merchant)->has(Permission::DeleteProducts); // returns boolean
+$user->of($merchant)->holds(Permission::DeleteProducts); // returns boolean
 ```
 You can decide to check for multiple permissions at once
 
 ```php
 // Check if the user has any of the following permissions.
-$user->of($merchant)->has(Permission::DeleteProducts, Permission::DeleteTransactions); // returns boolean
+$user->of($merchant)->holds(Permission::DeleteProducts, Permission::DeleteTransactions); // returns boolean
 
 // OR as an array
-$user->of($merchant)->has([Permission::DeleteProducts, Permission::DeleteTransactions]); // returns boolean
+$user->of($merchant)->holds([Permission::DeleteProducts, Permission::DeleteTransactions]); // returns boolean
 ```
 
-The `has()` will only return `true` when the `$user` model has all the permissions passed at the `merchant`. If the user does not have one or more of the permissions passed, the method returns `false` .
+The `holds()` will only return `true` when the `$user` model has all the permissions passed at the `merchant`. If the user does not have one or more of the permissions passed, the method returns `false` .
 
-> Permissions of different roles can be passed to the `has()` method, the package will check if the user has been assigned the roles associated with the permissions passed, and returns the right boolean.
+> Permissions of different roles can be passed to the `holds()` method, the package will check if the user has been assigned the roles associated with the permissions passed, and returns the right boolean.
 
 ### Authorize Permissions
 For cases where you want to throw an exception when a `pivot record` does not have permission, or multiple permissions, you can use the `authorize()` method to achieve this.
@@ -613,7 +613,7 @@ $user->of($merchant)->removeRoles([Role::SuperAdmin, Role::Admin]); // returns b
 ```
 
 >Note: Provided the model extends Laravel `
-Illuminate\Foundation\Auth\User`, these methods are also available to the authenticated user via the `Auth` facade's `user` method. i.e `auth()->user()->of($merchant)` will also return an instance of `Tarzancodes\RolesAndPermissions\Repositories\PivotTableRepository`
+Illuminate\Foundation\Auth\User`, these methods are also available to the authenticated user via the `Auth` facade's `user` method. i.e `auth()->user()->of($merchant)` will also return an instance of `Tarzancodes\RolesAndPermissions\Repositories\BelongsToManyRepository`
 
 By default, when the `removeRoles()` method is called on a pivot record, the record is not deleted. Instead, the `role` column of that record is set to `null`. If you want the record to be deleted when `removeRoles()` is called, set the `$deletePivotOnRemove` property in your role enum class to `true`.
 
@@ -770,7 +770,7 @@ $user->of($merchant)
     ->wherePivot('department', 'product')
     ->wherePivotBetween('created_at', ['2021-12-05 00:00:00', '2021-12-08 00:00:00'])
     ->wherePivotNull('updated_at')
-    ->has(Permission::BuyProducts); // returns boolean
+    ->holds(Permission::BuyProducts); // returns boolean
 
 ```
 # Exceptions
@@ -805,7 +805,7 @@ $user->of($merchant, 'userMerchants')->assign(Role::SuperAdmin);
 ### Permission Denied Exception
 An instance of `Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException` is thrown when a provided `roles` or `permissions` are not assigned to the model.
 
-You will only experience these exceptions when using the `authorize()` or `authorizeRole()` method. If you do not want exceptions to be thrown, you should use the any of the other methods as they only return booleans e.g. `can()`, `has()`, `hasRole()`
+You will only experience these exceptions when using the `authorize()` or `authorizeRole()` method. If you do not want exceptions to be thrown, you should use the any of the other methods as they only return booleans e.g. `can()`, `holds()`, `hasRole()`
 
 ### Invalid Role Hierarchy Exception
 An instance of `Tarzancodes\RolesAndPermissions\Exceptions\InvalidRoleHierarchyException` is thrown when the `$useHierarchy` static property of a role enum class is set to true, and the roles in the `permissions()` method do NOT appear in the same order that they are declared as constants.

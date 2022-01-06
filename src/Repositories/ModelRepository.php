@@ -40,7 +40,7 @@ class ModelRepository implements RolesContract
      * @param string $permissions
      * @return bool
      */
-    public function has(...$permissions): bool
+    public function holds(...$permissions): bool
     {
         $permissions = collect($permissions)->flatten()->all();
 

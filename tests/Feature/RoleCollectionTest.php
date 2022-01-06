@@ -70,6 +70,6 @@ test('can get collection of roles from role values', function () {
 
     foreach($collection as $role) {
         expect($role)->toBeInstanceOf(MerchantRole::class);
-        expect($role)->toHaveProperties(['value', 'key', 'description', 'permissions']);
+        expect($role)->toHaveProperties(['value', 'key', 'description', 'permissions', 'title']);
     }
 })->group('roleCollection');

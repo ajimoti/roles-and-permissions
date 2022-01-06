@@ -16,7 +16,7 @@ beforeEach(function () {
 });
 
 it('has role permissions', function () {
-    expect(auth()->user()->has(Role::getPermissions($this->role)))->toBeTrue();
+    expect(auth()->user()->holds(Role::getPermissions($this->role)))->toBeTrue();
 });
 
 it('can access every permission that belongs to the given role', function () {
@@ -28,7 +28,7 @@ it('can access every permission that belongs to the given role', function () {
 it('is not given other roles permissions', function () {
     foreach (Role::all()->toArray() as $role) {
         if ($role != $this->role) {
-            expect(auth()->user()->has(Role::getPermissions($role)))->toBeFalse();
+            expect(auth()->user()->holds(Role::getPermissions($role)))->toBeFalse();
         }
     }
 });
@@ -70,11 +70,11 @@ it('can perform permissions of new roles and previous roles', function () {
 it('has permissions of new roles and older role', function () {
     auth()->user()->assign($this->secondRole);
 
-    expect(auth()->user()->has(Role::getPermissions($this->role)))->toBeTrue();
-    expect(auth()->user()->has(Role::getPermissions($this->secondRole)))->toBeTrue();
+    expect(auth()->user()->holds(Role::getPermissions($this->role)))->toBeTrue();
+    expect(auth()->user()->holds(Role::getPermissions($this->secondRole)))->toBeTrue();
 
-    expect(auth()->user()->has(Role::getPermissions($this->role, $this->secondRole)))->toBeTrue();
-    expect(auth()->user()->has(Role::getPermissions($this->secondRole, $this->role)))->toBeTrue();
+    expect(auth()->user()->holds(Role::getPermissions($this->role, $this->secondRole)))->toBeTrue();
+    expect(auth()->user()->holds(Role::getPermissions($this->secondRole, $this->role)))->toBeTrue();
 });
 
 it('role authorization for multiple roles are valid', function () {

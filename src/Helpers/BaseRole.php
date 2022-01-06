@@ -3,7 +3,6 @@
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
 use Illuminate\Support\Collection;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
 use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
 
@@ -21,7 +20,7 @@ abstract class BaseRole extends BaseEnum
      *
      * @var BasePermission
      */
-    protected static $permissionClass = Permission::class;
+    protected static $permissionClass = 'App\Enums\Permission';
 
     /**
      * The class used to wrap the values when the `collect()` method is called.
@@ -54,11 +53,11 @@ abstract class BaseRole extends BaseEnum
      */
     protected static $deletePivotOnRemove = false;
 
-    public function __construct($enumValue)
+    public function __construct($roleValue)
     {
-        parent::__construct($enumValue);
+        parent::__construct($roleValue);
 
-        $this->permissions = static::getPermissions($enumValue);
+        $this->permissions = static::getPermissions($roleValue);
     }
 
     /**

@@ -18,7 +18,7 @@ beforeEach(function () {
 });
 
 it('has role permissions', function () {
-    expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($this->role)))->toBeTrue();
+    expect(auth()->user()->of($this->merchant)->holds(Role::getPermissions($this->role)))->toBeTrue();
 });
 
 it('can access every permission that belongs to the given role', function () {
@@ -30,7 +30,7 @@ it('can access every permission that belongs to the given role', function () {
 it('is not given other role permissions', function () {
     foreach (Role::all()->toArray() as $role) {
         if ($role != $this->role) {
-            expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($role)))->toBeFalse();
+            expect(auth()->user()->of($this->merchant)->holds(Role::getPermissions($role)))->toBeFalse();
         }
     }
 });
@@ -73,11 +73,11 @@ it('can perform permissions of new roles and previous roles', function () {
 it('has permissions of new roles and older role', function () {
     auth()->user()->of($this->merchant)->assign($this->secondRole);
 
-    expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($this->role)))->toBeTrue();
-    expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($this->secondRole)))->toBeTrue();
+    expect(auth()->user()->of($this->merchant)->holds(Role::getPermissions($this->role)))->toBeTrue();
+    expect(auth()->user()->of($this->merchant)->holds(Role::getPermissions($this->secondRole)))->toBeTrue();
 
-    expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($this->role, $this->secondRole)))->toBeTrue();
-    expect(auth()->user()->of($this->merchant)->has(Role::getPermissions($this->secondRole, $this->role)))->toBeTrue();
+    expect(auth()->user()->of($this->merchant)->holds(Role::getPermissions($this->role, $this->secondRole)))->toBeTrue();
+    expect(auth()->user()->of($this->merchant)->holds(Role::getPermissions($this->secondRole, $this->role)))->toBeTrue();
 });
 
 it('expect role authorization for multiple roles are valid', function () {

@@ -23,4 +23,14 @@ abstract class BasePermission extends BaseEnum
     {
         return static::getValues();
     }
+
+    /**
+     * Set a description for the permissions
+     *
+     * @return string
+     */
+    public static function getDescription($value): string
+    {
+        return 'Can ' . strtolower(parent::getDescription($value));
+    }
 }

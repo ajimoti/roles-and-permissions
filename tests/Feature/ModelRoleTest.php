@@ -27,7 +27,7 @@ beforeEach(function () {
 });
 
 it('has role permissions', function () {
-    expect($this->model->has(MerchantRole::getPermissions($this->role)->toArray()))->toBeTrue();
+    expect($this->model->holds(MerchantRole::getPermissions($this->role)->toArray()))->toBeTrue();
 });
 
 it('has lower roles permissions', function () {
@@ -45,8 +45,8 @@ it('has lower roles permissions', function () {
             continue;
         }
 
-        expect($this->model->has(MerchantRole::getPermissions($role)))->toBeTrue();
-        expect($this->model->has($permissions))->toBeTrue();
+        expect($this->model->holds(MerchantRole::getPermissions($role)))->toBeTrue();
+        expect($this->model->holds($permissions))->toBeTrue();
     }
 });
 
@@ -69,8 +69,8 @@ it('does not have higher roles permissions', function () {
             continue;
         }
 
-        expect($this->model->has(MerchantRole::getPermissions($role)))->toBeFalse();
-        expect($this->model->has($permissions))->toBeFalse();
+        expect($this->model->holds(MerchantRole::getPermissions($role)))->toBeFalse();
+        expect($this->model->holds($permissions))->toBeFalse();
     }
 });
 
@@ -80,7 +80,7 @@ it('relationship name can be passed for pivot relation', function () {
 
     expect($this->model->of($user, 'merchantUsers')->assign($this->secondRole))->toBeTrue();
     expect($this->model->of($user, 'merchantUsers')->hasRole($this->secondRole))->toBeTrue();
-    expect($this->model->of($user, 'merchantUsers')->has(MerchantRole::getPermissions($this->secondRole)))->toBeTrue();
+    expect($this->model->of($user, 'merchantUsers')->holds(MerchantRole::getPermissions($this->secondRole)))->toBeTrue();
 });
 
 it('can access every permission that belongs to the given role', function () {
@@ -126,11 +126,11 @@ it('can perform permissions of newly assigned role and previous roles', function
 it('has permissions of a newly assigned role and older role', function () {
     $this->model->assign($this->secondRole);
 
-    expect($this->model->has(MerchantRole::getPermissions($this->role)))->toBeTrue();
-    expect($this->model->has(MerchantRole::getPermissions($this->secondRole)))->toBeTrue();
+    expect($this->model->holds(MerchantRole::getPermissions($this->role)))->toBeTrue();
+    expect($this->model->holds(MerchantRole::getPermissions($this->secondRole)))->toBeTrue();
 
-    expect($this->model->has(MerchantRole::getPermissions($this->role, $this->secondRole)))->toBeTrue();
-    expect($this->model->has(MerchantRole::getPermissions($this->secondRole, $this->role)))->toBeTrue();
+    expect($this->model->holds(MerchantRole::getPermissions($this->role, $this->secondRole)))->toBeTrue();
+    expect($this->model->holds(MerchantRole::getPermissions($this->secondRole, $this->role)))->toBeTrue();
 });
 
 it('role authorization for multiple roles are valid', function () {

@@ -9,7 +9,7 @@ use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
 use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
-use Tarzancodes\RolesAndPermissions\Repositories\PivotTableRepository;
+use Tarzancodes\RolesAndPermissions\Repositories\BelongsToManyRepository;
 use Tarzancodes\RolesAndPermissions\Exceptions\InvalidArgumentException;
 
 trait HasRoles
@@ -39,9 +39,9 @@ trait HasRoles
      *
      * @return self
      */
-    public function of(Model $model, string $relationshipName = null): PivotTableRepository
+    public function of(Model $model, string $relationshipName = null): BelongsToManyRepository
     {
-        return new PivotTableRepository($this, $model, $relationshipName);
+        return new BelongsToManyRepository($this, $model, $relationshipName);
     }
 
     /**
@@ -66,7 +66,7 @@ trait HasRoles
      * @param string|int|array|PermissionCollection $permissions
      * @return bool
      */
-    public function has(...$permissions): bool
+    public function holds(...$permissions): bool
     {
         $permissions = collect($permissions)->flatten()->toArray();
 
@@ -74,7 +74,7 @@ trait HasRoles
             throw new InvalidArgumentException();
         }
 
-        return $this->repository->has(...$permissions);
+        return $this->repository->holds(...$permissions);
     }
 
     /**
@@ -181,13 +181,24 @@ trait HasRoles
      * @param string|int|array $role
      * @return bool
      */
-    public function authorizeRole(...$role): bool
+    public function authorizeRoles(...$role): bool
     {
         if (empty($role) || empty($role[0])) {
             throw new InvalidArgumentException();
         }
 
         return $this->repository->authorizeRole(...$role);
+    }
+
+    /**
+     * Check if the model has a role.
+     *
+     * @param string|int|array $role
+     * @return bool
+     */
+    public function authorizeRole(...$role): bool
+    {
+        return $this->authorizeRoles(...$role);
     }
 
     /**

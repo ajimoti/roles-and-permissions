@@ -19,7 +19,7 @@ interface PermissionsContract
      * @param string|int|array $permissions
      * @return bool
      */
-    public function has(...$permissions): bool;
+    public function holds(...$permissions): bool;
 
     /**
      * Check if the model has a permission.

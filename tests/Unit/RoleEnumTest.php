@@ -10,7 +10,7 @@ it('role with zero permissions should not throw errors', function () {
 
     $model->assign($role);
 
-    expect(fn () => $model->has(MerchantRole::getPermissions($role)))->toThrow(InvalidArgumentException::class, 'expects at least one parameter');
+    expect(fn () => $model->holds(MerchantRole::getPermissions($role)))->toThrow(InvalidArgumentException::class, 'expects at least one parameter');
 })->group('role');
 
 it('can get role instance from values', function () {

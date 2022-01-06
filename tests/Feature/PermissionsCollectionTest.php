@@ -59,6 +59,6 @@ test('can get collection of permissions from permission values', function () {
 
     foreach($collection as $permission) {
         expect($permission)->toBeInstanceOf(Permission::class);
-        expect($permission)->toHaveProperties(['value', 'key', 'description']);
+        expect($permission)->toHaveProperties(['value', 'key', 'description', 'title']);
     }
 })->group('permissionCollection');
