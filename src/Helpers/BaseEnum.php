@@ -65,7 +65,7 @@ abstract class BaseEnum extends Enum
      */
     public static function asSelectArray(): array
     {
-        foreach(static::getInstances() as $instance) {
+        foreach (static::getInstances() as $instance) {
             $array[$instance->value] = $instance->title;
         }
 
