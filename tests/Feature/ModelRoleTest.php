@@ -1,5 +1,6 @@
 <?php
 
+use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
 use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationNameException;
 use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
 use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
@@ -31,7 +32,7 @@ it('has role permissions', function () {
 });
 
 it('has lower roles permissions', function () {
-    $lowerRoles = MerchantRole::hold($this->role)->withPermissions()->getLowerRoles();
+    $lowerRoles = MerchantRole::hold($this->role)->getLowerRoles();
 
     // When the role is the lowest role,
     // it will not have any lower role
@@ -39,19 +40,19 @@ it('has lower roles permissions', function () {
         expect($this->model->hasRole($lowerRoles))->toBeFalse();
     }
 
-    foreach ($lowerRoles as $role => $permissions) {
-        if (MerchantRole::getPermissions($role)->isEmpty() && empty($permissions)) {
+    foreach ($lowerRoles as $role) {
+        if ($role->permissions->isEmpty()) {
             // Cases where MerchantRole::Customer is one of the lower roles
             continue;
         }
 
-        expect($this->model->holds(MerchantRole::getPermissions($role)))->toBeTrue();
-        expect($this->model->holds($permissions))->toBeTrue();
+        expect($role->permissions)->toBeInstanceOf(PermissionCollection::class);
+        expect($this->model->holds($role->permissions))->toBeTrue();
     }
 });
 
 it('does not have higher roles permissions', function () {
-    $higherRoles = MerchantRole::hold($this->role)->withPermissions()->getHigherRoles();
+    $higherRoles = MerchantRole::hold($this->role)->getHigherRoles();
 
     // Doing this to stop `pest` from complaining about zero assertions
     // When the role is the top role, it will not have any higher role
@@ -63,14 +64,13 @@ it('does not have higher roles permissions', function () {
 
     expect($this->model->hasRole($higherRoles))->toBeFalse();
 
-    foreach ($higherRoles as $role => $permissions) {
-        if (empty(MerchantRole::getPermissions($role)) && empty($permissions)) {
+    foreach ($higherRoles as $role) {
+        if ($role->permissions->isEmpty()) {
             // Cases where MerchantRole::Customer is one of the higher roles
             continue;
         }
 
-        expect($this->model->holds(MerchantRole::getPermissions($role)))->toBeFalse();
-        expect($this->model->holds($permissions))->toBeFalse();
+        expect($this->model->holds($role->permissions))->toBeFalse();
     }
 });
 

@@ -35,7 +35,6 @@ abstract class BaseRole extends BaseEnum
      * in the hierarchy of how they appear in
      * the permissions() method.
      *
-     *
      * Meaning if this is set to true,
      * a role will have the default permissions assigned to it,
      * and the permissions of the roles below them.
@@ -85,7 +84,7 @@ abstract class BaseRole extends BaseEnum
                     // and permissions of roles that are lower than this in the array. (i.e roles with lower indexes)
                     $permissions = $permissionClass::getInstanceFromValues($rolesAndPermissions[$role] ?? []);
 
-                    foreach (static::hold($role)->getLowerRoles() as $lowerRole) {
+                    foreach (static::hold($role)->getLowerRoles()->toArray() as $lowerRole) {
                         $permissions = array_merge(
                             $permissions,
                             $permissionClass::getInstanceFromValues($rolesAndPermissions[$lowerRole] ?? [])
@@ -103,28 +102,6 @@ abstract class BaseRole extends BaseEnum
         }
 
         return new PermissionCollection(array_values(array_unique($allPermissions)));
-    }
-
-    /**
-     * Get all roles
-     *
-     * @return RoleCollection
-     */
-    final public static function all(): RoleCollection
-    {
-        return new RoleCollection(
-            static::getInstanceFromValues(static::getValues())
-        );
-    }
-
-    /**
-     * Set a description for the roles
-     *
-     * @return string
-     */
-    public static function getDescription($value): string
-    {
-        return parent::getDescription($value);
     }
 
     /**

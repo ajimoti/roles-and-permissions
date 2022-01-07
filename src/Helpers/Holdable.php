@@ -2,17 +2,11 @@
 
 namespace Tarzancodes\RolesAndPermissions\Helpers;
 
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRoleHierarchyException;
 
 class Holdable
 {
-    /**
-     * Indicates that the permissions should be included in the result
-     *
-     * @var bool
-     */
-    protected $withPermissions = false;
-
     /**
      * Initialize class
      *
@@ -26,85 +20,39 @@ class Holdable
     }
 
     /**
-     * Indicates that the permissions should be included in the result
-     *
-     * @return self
-     */
-    public function withPermissions()
-    {
-        $this->withPermissions = true;
-
-        return $this;
-    }
-
-    /**
      * Get the roles that are lower than the provided role
      *
-     * When 'withPermissions' is set to true, we'd return a multidimensional array of the roles and permissions
-     * the roles will be set as the key, and the permissions will be set as the value.
-     *
-     * Otherwise we just return an array of the roles.
-     *
-     * @return array
+     * @return RoleCollection
      */
-    public function getLowerRoles(): array
+    public function getLowerRoles(): RoleCollection
     {
         // Only enum classes that uses hierarchy can have lower roles
         if (! $this->roleClass::usesHierarchy()) {
             return [];
         }
 
-        $allRolesAndPermissions = $this->roleClass::permissions();
         $roles = collect($this->roleClass::getValues());
-
         $lowerRoles = $roles->splice(array_search($this->role, $roles->all()) + 1)->all();
 
-        if ($this->withPermissions) {
-            $rolesAndPermissions = [];
-
-            foreach ($lowerRoles as $role) {
-                $rolesAndPermissions[$role] = $allRolesAndPermissions[$role] ?? [];
-            }
-
-            return $rolesAndPermissions;
-        }
-
-        return $lowerRoles;
+        return $this->roleClass::collect($lowerRoles);
     }
 
     /**
      * Get the roles that are higher than the provided role
      *
-     * When 'withPermissions' is set to true, we'd return a multidimensional array of the roles and permissions
-     * the roles will be set as the key, and the permissions will be set as the value
-     *
-     * Otherwise we just return an array of the roles.
-     *
-     * @return array
+     * @return RoleCollection
      */
-    public function getHigherRoles()
+    public function getHigherRoles(): RoleCollection
     {
         // Only enum classes that uses hierarchy can have higher roles
         if (! $this->roleClass::usesHierarchy()) {
             return [];
         }
 
-        $allRolesAndPermissions = $this->roleClass::permissions();
         $roles = collect($this->roleClass::getValues());
-
         $higherRoles = $roles->splice(0, array_search($this->role, $roles->all()))->all();
 
-        if ($this->withPermissions) {
-            $rolesAndPermissions = [];
-
-            foreach ($higherRoles as $role) {
-                $rolesAndPermissions[$role] = $allRolesAndPermissions[$role] ?? [];
-            }
-
-            return $rolesAndPermissions;
-        }
-
-        return $higherRoles;
+        return $this->roleClass::collect($higherRoles);
     }
 
     /**

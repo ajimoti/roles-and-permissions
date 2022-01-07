@@ -15,16 +15,6 @@ abstract class BasePermission extends BaseEnum
     protected static $collectionClass = PermissionCollection::class;
 
     /**
-     * Get all permissions
-     *
-     * @return array
-     */
-    public static function all(): array
-    {
-        return static::getValues();
-    }
-
-    /**
      * Set a description for the permissions
      *
      * @return string

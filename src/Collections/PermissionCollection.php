@@ -12,7 +12,7 @@ class PermissionCollection extends Collection
      * @return array
      */
     public function __construct(
-        private array $permissions,
+        private array $permissions = [],
     ) {
         parent::__construct($permissions);
     }

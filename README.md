@@ -676,7 +676,7 @@ Role::hold(Role::Customer)->getHigherRoles(); // returns an array of roles highe
 You can use the `withPermissions()` method to get the roles and their respective permissions like so:
 
 ```php
-Role::hold(Role::SuperAdmin)->withPermissions()->getLowerRoles();
+Role::hold(Role::SuperAdmin)->getLowerRoles();
 ```
 
 The above will return a multidimensional array of the roles as the key, and an array permissions as the values. Below is the response to expect:
