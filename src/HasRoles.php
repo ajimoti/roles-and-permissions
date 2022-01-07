@@ -9,8 +9,8 @@ use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 use Tarzancodes\RolesAndPermissions\Exceptions\InvalidArgumentException;
 use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
 use Tarzancodes\RolesAndPermissions\Models\ModelRole;
-use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
 use Tarzancodes\RolesAndPermissions\Repositories\BelongsToManyRepository;
+use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
 
 trait HasRoles
 {

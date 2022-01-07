@@ -1,7 +1,7 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
 use Tarzancodes\RolesAndPermissions\Repositories\BelongsToManyRepository;
+use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
 use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
 use Tarzancodes\RolesAndPermissions\Tests\Models\User;
 
