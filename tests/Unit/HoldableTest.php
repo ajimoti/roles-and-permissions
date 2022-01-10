@@ -23,7 +23,6 @@ it('active role is not returned with higher roles', function () {
     expect($higherRoles->contains(function ($value, $key) {
         return $value->value === $this->activeRole;
     }))->toBeFalse();
-
 })->group('holdable');
 
 it('roles are in hierarchy', function () {

@@ -28,7 +28,6 @@ abstract class BaseEnum extends Enum
         $this->title = static::getTitle($enumValue);
     }
 
-
     /**
      * Get all enum instances.
      *
