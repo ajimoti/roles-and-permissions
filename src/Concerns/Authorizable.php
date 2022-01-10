@@ -51,4 +51,15 @@ trait Authorizable
 
         throw new PermissionDeniedException('You are not authorized to perform this action.');
     }
+
+    /**
+     * Check if the model has roles.
+     *
+     * @param string|int|array $role
+     * @return bool
+     */
+    public function authorizeRoles(...$role): bool
+    {
+        return $this->authorizeRole(...$role);
+    }
 }

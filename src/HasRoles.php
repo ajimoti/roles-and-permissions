@@ -3,23 +3,24 @@
 namespace Tarzancodes\RolesAndPermissions;
 
 use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
-use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
-use Tarzancodes\RolesAndPermissions\Exceptions\InvalidArgumentException;
-use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
 use Tarzancodes\RolesAndPermissions\Models\ModelRole;
-use Tarzancodes\RolesAndPermissions\Repositories\BelongsToManyRepository;
+use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
+use Tarzancodes\RolesAndPermissions\Models\ModelPermission;
+use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
+use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
+use Tarzancodes\RolesAndPermissions\Exceptions\InvalidArgumentException;
+use Tarzancodes\RolesAndPermissions\Repositories\BelongsToManyRepository;
 
 trait HasRoles
 {
     /**
      * Holds the repository to use
      *
-     * @var RolesContract
+     * @var ModelRepository
      */
-    private RolesContract $repository;
+    private ModelRepository $repository;
 
     /**
      * Boot trait
@@ -98,7 +99,9 @@ trait HasRoles
      */
     public function hasRoles(...$roles): bool
     {
-        return $this->hasRole(...$roles);
+        $roles = collect($roles)->flatten()->toArray();
+
+        return $this->repository->hasRoles(...$roles);
     }
 
     /**
@@ -157,7 +160,9 @@ trait HasRoles
      */
     public function removeRole(...$role): bool
     {
-        return $this->removeRoles(...$role);
+        $role = collect($role)->flatten()->toArray();
+
+        return $this->repository->removeRole(...$role);
     }
 
     /**
@@ -198,7 +203,35 @@ trait HasRoles
      */
     public function authorizeRole(...$role): bool
     {
-        return $this->authorizeRoles(...$role);
+        $role = collect($role)->flatten()->toArray();
+
+        return $this->repository->authorizeRole($role);
+    }
+
+    /**
+     * Give a model direct permissions.
+     *
+     * @param string|int|array $permissions
+     * @return bool
+     */
+    public function give(...$permissions)
+    {
+        $permissions = collect($permissions)->flatten()->toArray();
+
+        return $this->repository->give(...$permissions);
+    }
+
+    /**
+     * Revoke a model permissions.
+     *
+     * @param string|int|array $permissions
+     * @return bool
+     */
+    public function revoke()
+    {
+        $permissions = collect(func_get_args())->flatten()->toArray();
+
+        return $this->repository->revoke(...$permissions);
     }
 
     /**
@@ -210,9 +243,17 @@ trait HasRoles
     }
 
     /**
+     * Get the modelPermissions relationship.
+     */
+    public function modelPermissions()
+    {
+        return $this->morphMany(ModelPermission::class, 'model');
+    }
+
+    /**
      * Get current repository
      *
-     * Used strictly for testing
+     * Used for testing
      *
      * @return RolesContract
      */

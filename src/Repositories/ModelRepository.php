@@ -2,20 +2,25 @@
 
 namespace Tarzancodes\RolesAndPermissions\Repositories;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
-use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
-use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
-use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Facades\Check;
 use Tarzancodes\RolesAndPermissions\Models\ModelRole;
+use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
+use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
+use Tarzancodes\RolesAndPermissions\Models\ModelPermission;
+use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
+use Tarzancodes\RolesAndPermissions\Contracts\DirectPermissionsContract;
 
-class ModelRepository implements RolesContract
+class ModelRepository implements RolesContract, DirectPermissionsContract
 {
     use Authorizable;
-    use HasRoles;
+    use HasRoles {
+        permissions as rolesPermissions;
+    }
 
     public function __construct(
         protected Model $model
@@ -44,7 +49,9 @@ class ModelRepository implements RolesContract
     {
         $permissions = collect($permissions)->flatten()->all();
 
-        return Check::all($permissions)->existsIn($this->permissions()->toArray());
+        return Check::all($permissions)->existsIn(
+            $this->permissions()->merge($this->directPermissions())->toArray()
+        );
     }
 
     /**
@@ -58,6 +65,17 @@ class ModelRepository implements RolesContract
         $roles = collect($roles)->flatten()->all();
 
         return Check::all($roles)->existsIn($this->getRoles()->toArray());
+    }
+
+    /**
+     * Checks if the model has all the given roles.
+     *
+     * @param string $role
+     * @return bool
+     */
+    public function hasRoles(...$roles): bool
+    {
+        return $this->hasRole(collect($roles)->flatten()->all());
     }
 
     /**
@@ -127,6 +145,17 @@ class ModelRepository implements RolesContract
     }
 
     /**
+     * Remove the model's role.
+     *
+     * @param string|int|array $roles
+     * @return bool
+     */
+    public function removeRole(...$roles): bool
+    {
+        return $this->removeRoles(...$roles);
+    }
+
+    /**
      * Get the model's roles
      *
      * @return RoleCollection
@@ -147,6 +176,83 @@ class ModelRepository implements RolesContract
         }
 
         return new RoleCollection($cleanRoles ?? []);
+    }
+
+    public function give(...$permissions): bool
+    {
+        $permissions = collect($permissions)->flatten()->all();
+        $roleEnumClass = $this->getRoleEnumClass();
+
+        $exitingPermissions = $this->model->modelPermissions()->whereIn('permission', $permissions)
+                            ->get()->pluck('permission')
+                            ->all();
+
+        DB::beginTransaction();
+        foreach ($permissions as $permission) {
+            if (! in_array($permission, $roleEnumClass::$permissionClass::all()->toArray())) {
+                throw new InvalidArgumentException(
+                    sprintf(
+                        'The permission "%s" does not exist on the "%s" enum class.',
+                        $permission,
+                        $roleEnumClass::$permissionClass
+                    )
+                );
+            }
+
+            if (in_array($permission, $exitingPermissions)) {
+                // If the permission already exists, we don't need to do anything.
+                continue;
+            }
+
+            $bulkRolesToSave[] = new ModelPermission(['permission' => $permission]);
+        }
+
+        // Bulk insert the new permissions
+        $this->model->modelPermissions()->saveMany($bulkRolesToSave ?? []);
+        DB::commit();
+
+        return true;
+    }
+
+    /**
+     * Get the permissions.
+     *
+     * @return PermissionCollection
+     */
+    public function permissions(): PermissionCollection
+    {
+        return $this->rolesPermissions()->merge($this->directPermissions())->unique();
+    }
+
+    /**
+     * Get the direct permissions.
+     *
+     * Permissions that are assigned to the model directly.
+     *
+     * @return PermissionCollection
+     */
+    public function directPermissions(): PermissionCollection
+    {
+        $roleEnumClass = $this->getRoleEnumClass();
+
+        return $roleEnumClass::$permissionClass::collect(
+            $this->model->modelPermissions->pluck('permission')->all()
+        );
+    }
+
+    /**
+     * Revoke permissions that were directly assigned to the model.
+     *
+     * @return bool
+     */
+    public function revoke(...$permissions): bool
+    {
+        if (empty($permissions)) {
+            // Delete every permission if none are specified
+            return $this->model->modelPermissions()->delete();
+        }
+
+        return $this->model->modelPermissions()->whereIn('permission', $permissions)->delete();
     }
 
     /**

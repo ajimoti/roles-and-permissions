@@ -23,6 +23,14 @@ interface RolesContract extends PermissionsContract
     public function hasRole(...$roles): bool;
 
     /**
+     * Check if the model has a role.
+     *
+     * @param string|int|array $role
+     * @return bool
+     */
+    public function hasRoles(...$roles): bool;
+
+    /**
      * Get the model's roles.
      *
      * @return RoleCollection
@@ -46,10 +54,26 @@ interface RolesContract extends PermissionsContract
     public function removeRoles(): bool;
 
     /**
+     * Remove roles from model
+     *
+     * @param string|int|array $roles
+     * @return bool
+     */
+    public function removeRole(): bool;
+
+    /**
      * Check if the model has a role.
      *
      * @param string|int $role
      * @return bool
      */
     public function authorizeRole(...$role): bool;
+
+    /**
+     * Check if the model has a role.
+     *
+     * @param string|int $role
+     * @return bool
+     */
+    public function authorizeRoles(...$role): bool;
 }

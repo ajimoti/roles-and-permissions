@@ -4,7 +4,7 @@ namespace Tarzancodes\RolesAndPermissions\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class ModelRole extends Pivot
+class ModelPermission extends Pivot
 {
     protected $guarded = [];
 

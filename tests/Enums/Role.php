@@ -10,13 +10,12 @@ final class Role extends BaseRole
     public const Admin = 'admin';
     public const Customer = 'customer';
 
-
     /**
      * The permission enum class used by this role.
      *
      * @var BasePermission
      */
-    protected static $permissionClass = Permission::class;
+    public static $permissionClass = Permission::class;
 
     /**
      * Set available roles and their permissions.

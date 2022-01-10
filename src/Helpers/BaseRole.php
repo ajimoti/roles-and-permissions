@@ -21,14 +21,14 @@ abstract class BaseRole extends BaseEnum
      *
      * @var BasePermission
      */
-    protected static $permissionClass = 'App\Enums\Permission';
+    public static $permissionClass = 'App\Enums\Permission';
 
     /**
      * The class used to wrap the values when the `collect()` method is called.
      *
      * @var Collection
      */
-    protected static $collectionClass = RoleCollection::class;
+    public static $collectionClass = RoleCollection::class;
 
     /**
      * Indicates if the roles should be considered

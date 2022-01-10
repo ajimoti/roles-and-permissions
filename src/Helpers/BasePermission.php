@@ -12,7 +12,7 @@ abstract class BasePermission extends BaseEnum
      *
      * @var Collection
      */
-    protected static $collectionClass = PermissionCollection::class;
+    public static $collectionClass = PermissionCollection::class;
 
     /**
      * Set a description for the permissions

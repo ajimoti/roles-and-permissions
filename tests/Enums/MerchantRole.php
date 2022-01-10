@@ -16,7 +16,7 @@ final class MerchantRole extends BaseRole
 
     protected static $deletePivotOnRemove = true;
 
-    protected static $permissionClass = MerchantPermission::class;
+    public static $permissionClass = MerchantPermission::class;
 
     /**
      * Set available roles and their permissions.

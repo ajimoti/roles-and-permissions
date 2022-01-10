@@ -19,7 +19,7 @@ abstract class BaseEnum extends Enum
      *
      * @var Collection
      */
-    protected static $collectionClass = Collection::class;
+    public static $collectionClass = Collection::class;
 
     public function __construct($enumValue)
     {
@@ -84,6 +84,11 @@ abstract class BaseEnum extends Enum
         return $array ?? [];
     }
 
+    /**
+     * Get the title of the enum.
+     *
+     * @return string
+     */
     public static function getTitle($value): string
     {
         return static::getFriendlyKeyName(static::getKey($value));
