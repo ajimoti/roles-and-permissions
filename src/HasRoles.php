@@ -3,15 +3,15 @@
 namespace Tarzancodes\RolesAndPermissions;
 
 use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\Models\ModelRole;
+use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
+use Tarzancodes\RolesAndPermissions\Exceptions\InvalidArgumentException;
 use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
 use Tarzancodes\RolesAndPermissions\Models\ModelPermission;
-use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
-use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
-use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
-use Tarzancodes\RolesAndPermissions\Exceptions\InvalidArgumentException;
+use Tarzancodes\RolesAndPermissions\Models\ModelRole;
 use Tarzancodes\RolesAndPermissions\Repositories\BelongsToManyRepository;
+use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
 
 trait HasRoles
 {

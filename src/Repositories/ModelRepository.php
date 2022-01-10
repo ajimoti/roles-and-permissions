@@ -2,18 +2,18 @@
 
 namespace Tarzancodes\RolesAndPermissions\Repositories;
 
-use InvalidArgumentException;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\Facades\Check;
-use Tarzancodes\RolesAndPermissions\Models\ModelRole;
-use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
-use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
-use Tarzancodes\RolesAndPermissions\Models\ModelPermission;
-use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
+use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
+use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
 use Tarzancodes\RolesAndPermissions\Contracts\DirectPermissionsContract;
+use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
+use Tarzancodes\RolesAndPermissions\Facades\Check;
+use Tarzancodes\RolesAndPermissions\Models\ModelPermission;
+use Tarzancodes\RolesAndPermissions\Models\ModelRole;
 
 class ModelRepository implements RolesContract, DirectPermissionsContract
 {
