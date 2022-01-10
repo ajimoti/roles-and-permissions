@@ -8,7 +8,7 @@ use Tarzancodes\RolesAndPermissions\Tests\Models\User;
 beforeEach(fn () => auth()->login(User::factory()->create()));
 
 it('uses the right repository', function () {
-    expect(auth()->user()->getRepository())
+    expect(auth()->user()->repository())
         ->toBeInstanceOf(ModelRepository::class);
 
     expect(auth()->user()->of(Merchant::factory()->create()))

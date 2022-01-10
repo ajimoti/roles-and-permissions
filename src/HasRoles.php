@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Tarzancodes\RolesAndPermissions\Models\ModelRole;
 use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
 use Tarzancodes\RolesAndPermissions\Models\ModelPermission;
-use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
 use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
 use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
 use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
@@ -15,26 +14,6 @@ use Tarzancodes\RolesAndPermissions\Repositories\BelongsToManyRepository;
 
 trait HasRoles
 {
-    /**
-     * Holds the repository to use
-     *
-     * @var ModelRepository
-     */
-    private ModelRepository $repository;
-
-    /**
-     * Boot trait
-     * Set the repository to use
-     *
-     * @return void
-     */
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-
-        $this->repository = new ModelRepository($this);
-    }
-
     /**
      * Change the repository used to the pivot table repository
      *
@@ -58,7 +37,7 @@ trait HasRoles
             $permission = $permission->value;
         }
 
-        return $this->repository->can($permission, $arguments);
+        return $this->repository()->can($permission, $arguments);
     }
 
     /**
@@ -75,7 +54,7 @@ trait HasRoles
             throw new InvalidArgumentException();
         }
 
-        return $this->repository->holds(...$permissions);
+        return $this->repository()->holds(...$permissions);
     }
 
     /**
@@ -88,7 +67,7 @@ trait HasRoles
     {
         $roles = collect($roles)->flatten()->toArray();
 
-        return $this->repository->hasRole(...$roles);
+        return $this->repository()->hasRole(...$roles);
     }
 
     /**
@@ -101,7 +80,7 @@ trait HasRoles
     {
         $roles = collect($roles)->flatten()->toArray();
 
-        return $this->repository->hasRoles(...$roles);
+        return $this->repository()->hasRoles(...$roles);
     }
 
     /**
@@ -111,7 +90,7 @@ trait HasRoles
      */
     public function roles(): RoleCollection
     {
-        return $this->repository->roles();
+        return $this->repository()->roles();
     }
 
     /**
@@ -121,7 +100,7 @@ trait HasRoles
      */
     public function permissions(): PermissionCollection
     {
-        return $this->repository->permissions();
+        return $this->repository()->permissions();
     }
 
     /**
@@ -138,7 +117,7 @@ trait HasRoles
             throw new InvalidArgumentException();
         }
 
-        return $this->repository->assign(...$roles);
+        return $this->repository()->assign(...$roles);
     }
 
     /**
@@ -149,7 +128,7 @@ trait HasRoles
      */
     public function removeRoles(): bool
     {
-        return $this->repository->removeRoles(...func_get_args());
+        return $this->repository()->removeRoles(...func_get_args());
     }
 
     /**
@@ -162,7 +141,7 @@ trait HasRoles
     {
         $role = collect($role)->flatten()->toArray();
 
-        return $this->repository->removeRole(...$role);
+        return $this->repository()->removeRole(...$role);
     }
 
     /**
@@ -177,7 +156,7 @@ trait HasRoles
             throw new InvalidArgumentException();
         }
 
-        return $this->repository->authorize(...$permissions);
+        return $this->repository()->authorize(...$permissions);
     }
 
     /**
@@ -192,7 +171,7 @@ trait HasRoles
             throw new InvalidArgumentException();
         }
 
-        return $this->repository->authorizeRole(...$role);
+        return $this->repository()->authorizeRole(...$role);
     }
 
     /**
@@ -205,7 +184,7 @@ trait HasRoles
     {
         $role = collect($role)->flatten()->toArray();
 
-        return $this->repository->authorizeRole($role);
+        return $this->repository()->authorizeRole($role);
     }
 
     /**
@@ -218,7 +197,7 @@ trait HasRoles
     {
         $permissions = collect($permissions)->flatten()->toArray();
 
-        return $this->repository->give(...$permissions);
+        return $this->repository()->give(...$permissions);
     }
 
     /**
@@ -231,7 +210,7 @@ trait HasRoles
     {
         $permissions = collect(func_get_args())->flatten()->toArray();
 
-        return $this->repository->revoke(...$permissions);
+        return $this->repository()->revoke(...$permissions);
     }
 
     /**
@@ -251,14 +230,12 @@ trait HasRoles
     }
 
     /**
-     * Get current repository
+     * Get model repository
      *
-     * Used for testing
-     *
-     * @return RolesContract
+     * @return ModelRepository
      */
-    public function getRepository(): RolesContract
+    public function repository(): ModelRepository
     {
-        return $this->repository;
+        return new ModelRepository($this);
     }
 }
