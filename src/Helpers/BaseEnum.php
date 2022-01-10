@@ -37,7 +37,7 @@ abstract class BaseEnum extends Enum
     final public static function all(): Collection
     {
         return new static::$collectionClass(
-            static::getInstanceFromValues(static::getValues())
+            static::getInstancesFromValues(static::getValues())
         );
     }
 
@@ -46,7 +46,7 @@ abstract class BaseEnum extends Enum
      *
      * @return array
      */
-    public static function getInstanceFromValues(...$values): array
+    public static function getInstancesFromValues(...$values): array
     {
         $values = collect($values)->flatten()->all();
 
@@ -66,7 +66,7 @@ abstract class BaseEnum extends Enum
     {
         $values = collect($values)->flatten()->all();
 
-        return new static::$collectionClass(static::getInstanceFromValues($values));
+        return new static::$collectionClass(static::getInstancesFromValues($values));
     }
 
     /**

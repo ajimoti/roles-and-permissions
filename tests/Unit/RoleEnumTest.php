@@ -14,7 +14,7 @@ it('role with zero permissions should not throw errors', function () {
 })->group('role');
 
 it('can get role instance from values', function () {
-    $roleInstances = MerchantRole::getInstanceFromValues(MerchantRole::RetailManager, MerchantRole::CustomerAttendant);
+    $roleInstances = MerchantRole::getInstancesFromValues(MerchantRole::RetailManager, MerchantRole::CustomerAttendant);
 
     foreach ($roleInstances as $instance) {
         expect($instance)->toBeInstanceOf(MerchantRole::class);

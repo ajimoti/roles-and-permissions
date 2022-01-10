@@ -82,12 +82,12 @@ abstract class BaseRole extends BaseEnum
                 if (static::usesHierarchy()) {
                     // Return the present role's permissions,
                     // and permissions of roles that are lower than this in the array. (i.e roles with lower indexes)
-                    $permissions = $permissionClass::getInstanceFromValues($rolesAndPermissions[$role] ?? []);
+                    $permissions = $permissionClass::getInstancesFromValues($rolesAndPermissions[$role] ?? []);
 
                     foreach (static::hold($role)->getLowerRoles()->toArray() as $lowerRole) {
                         $permissions = array_merge(
                             $permissions,
-                            $permissionClass::getInstanceFromValues($rolesAndPermissions[$lowerRole] ?? [])
+                            $permissionClass::getInstancesFromValues($rolesAndPermissions[$lowerRole] ?? [])
                         );
                     }
 
@@ -95,7 +95,7 @@ abstract class BaseRole extends BaseEnum
                 } else {
                     $allPermissions = array_merge(
                         $allPermissions,
-                        $permissionClass::getInstanceFromValues($rolesAndPermissions[$role])
+                        $permissionClass::getInstancesFromValues($rolesAndPermissions[$role])
                     );
                 }
             }

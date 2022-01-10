@@ -17,6 +17,7 @@ test('permission collection has the right values', function () {
     expect($user->permissions())->toBeInstanceOf(PermissionCollection::class);
 
     expect($user->permissions()->toArray())->toBe(Role::getPermissions(Role::SuperAdmin, Role::Admin)->toArray());
+    expect($user->permissions()->toArray())->toBe(Role::SuperAdmin()->permissions->merge(Role::Admin()->permissions)->toArray());
 
     $user->permissions()->each(function ($permission) {
         expect($permission)->toBeInstanceOf(BasePermission::class);
@@ -51,7 +52,6 @@ test('role collection has the right values for pivot records', function () {
     });
 })->group('permissionCollection');
 
-
 test('can get collection of permissions from permission values', function () {
     $collection = Permission::collect(Permission::BuyProduct, Permission::DeleteProduct);
 
@@ -60,5 +60,25 @@ test('can get collection of permissions from permission values', function () {
     foreach ($collection as $permission) {
         expect($permission)->toBeInstanceOf(Permission::class);
         expect($permission)->toHaveProperties(['value', 'key', 'description', 'title']);
+
+        if ($permission->value === Permission::BuyProduct) {
+            expect($permission->value)->toBe(Permission::BuyProduct);
+            expect($permission->key)->toBe('BuyProduct');
+            expect($permission->description)->toBe('Can buy product');
+            expect($permission->title)->toBe('Buy product');
+        } else {
+            expect($permission->value)->toBe(Permission::DeleteProduct);
+            expect($permission->key)->toBe('DeleteProduct');
+            expect($permission->description)->toBe('Can delete product');
+            expect($permission->title)->toBe('Delete product');
+        }
     }
+})->group('permissionCollection');
+
+test('can check model permission by passing permissionCollection as an argument', function () {
+    $user = User::factory()->create();
+    $user->assign(Role::SuperAdmin, Role::Admin);
+
+    expect($user->holds(Role::SuperAdmin()->permissions))->toBeTrue();
+    expect($user->holds(Role::Customer()->permissions))->toBeFalse();
 })->group('permissionCollection');
