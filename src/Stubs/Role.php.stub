@@ -6,6 +6,11 @@ use Ajimoti\RolesAndPermissions\Helpers\BaseRole;
 
 final class DummyClass extends BaseRole
 {
+    /**
+    * Sample roles
+    * replace these roles with what works for your application,
+    * and attach permissions to you roles in the permissions() method below
+    **/
     // These are sample roles, replace these roles with what works for your application
     const SuperAdmin = 'super_admin';
     const Admin = 'admin';
@@ -21,17 +26,17 @@ final class DummyClass extends BaseRole
         return [
             self::SuperAdmin => [
                 // Super Admin permissions should be here
-                Permission::DeleteProduct, Permission::DeleteTransaction, Permission::ViewTransaction
+                // Permission::DeleteProduct,
             ],
 
             self::Admin => [
                 // Admin permissions should be here
-                Permission::MarkAsSoldOut,  Permission::EditProduct, Permission::CreateProduct,
+                // Permission::MarkAsSoldOut,
             ],
 
             self::Customer => [
                 // Customer permissions should be here
-                Permission::BuyProduct,
+                // Permission::ViewTransaction,
             ],
         ];
     }

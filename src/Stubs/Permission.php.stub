@@ -6,16 +6,16 @@ use Ajimoti\RolesAndPermissions\Helpers\BasePermission;
 
 final class DummyClass extends BasePermission
 {
-    // Sample permissions, replace these permissions with what works for your application
+    /**
+    * Sample permissions
+    * replace these permissions with what works for your application
+    **/
 
     // Product permissions
-    const DeleteProduct = 'delete_product';
-    const MarkAsSoldOut = 'mark_as_sold_out';
-    const EditProduct = 'edit_product';
-    const CreateProduct = 'create_product';
-    const BuyProduct = 'buy_product';
+    // const DeleteProduct = 'delete_product';
+    // const MarkAsSoldOut = 'mark_as_sold_out';
 
     // Transactions permissions
-    const DeleteTransaction = 'delete_transaction';
-    const ViewTransaction = 'view_transaction';
+    // const DeleteTransaction = 'delete_transaction';
+    // const ViewTransaction = 'view_transaction';
 }

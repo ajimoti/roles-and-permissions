@@ -23,9 +23,7 @@ class RolesAndPermissionsCommand extends Command
 
     public function handle(): int
     {
-        $this->info('Installing Ajimoti roles and permissions...');
-
-        $this->info('Publishing configuration...');
+        $this->info('Installing roles and permissions...');
 
         // Publish config file
         if ($this->configExists('roles-and-permissions.php')) {
@@ -40,8 +38,7 @@ class RolesAndPermissionsCommand extends Command
             $this->info('Published configuration');
         }
 
-        $this->call('make:role', ['name' => 'Role']);
-        $this->call('make:permission', ['name' => 'Permission']);
+        $this->runCommands();
 
         $this->comment('Package installed successfully.');
 
@@ -90,5 +87,12 @@ class RolesAndPermissionsCommand extends Command
         }
 
         $this->call('vendor:publish', $params);
+    }
+
+    private function runCommands()
+    {
+        $this->call('make:role', ['name' => 'Role']);
+        $this->call('make:permission', ['name' => 'Permission']);
+        $this->call('migrate');
     }
 }
