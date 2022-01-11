@@ -6,6 +6,9 @@ This package allows you to assign roles and permissions to any laravel model, or
 
 Built and written by [Ajimoti Ibukun](https://www.linkedin.com/in/ibukun-ajimoti-3420a786/)
 
+## Documentation
+You can read the proper [documentation here](https://roles.ajimoti.com/docs/intro)
+
 ## Quick Samples
 
 ### On a Model
