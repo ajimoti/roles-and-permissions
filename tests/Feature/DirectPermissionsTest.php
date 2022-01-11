@@ -1,10 +1,8 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
 use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
+use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
+use Tarzancodes\RolesAndPermissions\Tests\Models\User;
 
 beforeEach(function () {
     $this->model = User::factory()->create();
