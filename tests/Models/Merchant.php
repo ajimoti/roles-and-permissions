@@ -1,11 +1,11 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Tests\Models;
+namespace Ajimoti\RolesAndPermissions\Tests\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\HasRoles;
-use Tarzancodes\RolesAndPermissions\Tests\Factories\MerchantFactory;
+use Ajimoti\RolesAndPermissions\HasRoles;
+use Ajimoti\RolesAndPermissions\Tests\Factories\MerchantFactory;
 
 class Merchant extends Model
 {

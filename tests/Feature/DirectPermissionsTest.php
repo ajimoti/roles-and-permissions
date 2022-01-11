@@ -1,10 +1,8 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
-use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
+use Ajimoti\RolesAndPermissions\Tests\Models\User;
+use Ajimoti\RolesAndPermissions\Tests\Enums\Permission;
+use Ajimoti\RolesAndPermissions\Exceptions\PermissionDeniedException;
 
 beforeEach(function () {
     $this->model = User::factory()->create();
@@ -31,6 +29,13 @@ it('a model can be given a permission', function () {
     expect($this->model->authorize(Permission::getInstancesFromValues($this->permission)))->toBeTrue();
 
     expect($this->model->authorize($this->permission))->toBeTrue();
+})->group('directPermissions');
+
+it('can fetch direct permissions', function () {
+    expect($this->model->give($this->permission))->toBeTrue();
+
+    expect($this->model->directPermissions()->first()->value)->toBe($this->permission);
+
 })->group('directPermissions');
 
 it('can revoke direct permission', function () {

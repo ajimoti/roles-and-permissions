@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Tests\Enums;
+namespace Ajimoti\RolesAndPermissions\Tests\Enums;
 
-use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
+use Ajimoti\RolesAndPermissions\Helpers\BaseRole;
 
 final class MerchantRole extends BaseRole
 {

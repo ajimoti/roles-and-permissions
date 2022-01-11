@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Models;
+namespace Ajimoti\RolesAndPermissions\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 

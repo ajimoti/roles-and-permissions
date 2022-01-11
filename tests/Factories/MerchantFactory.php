@@ -1,9 +1,9 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Tests\Factories;
+namespace Ajimoti\RolesAndPermissions\Tests\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
+use Ajimoti\RolesAndPermissions\Tests\Models\Merchant;
 
 class MerchantFactory extends Factory
 {

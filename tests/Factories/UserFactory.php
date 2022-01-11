@@ -1,9 +1,9 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Tests\Factories;
+namespace Ajimoti\RolesAndPermissions\Tests\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
+use Ajimoti\RolesAndPermissions\Tests\Models\User;
 
 class UserFactory extends Factory
 {

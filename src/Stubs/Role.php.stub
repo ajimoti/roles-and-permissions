@@ -2,7 +2,7 @@
 
 namespace DummyNamespace;
 
-use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
+use Ajimoti\RolesAndPermissions\Helpers\BaseRole;
 
 final class DummyClass extends BaseRole
 {

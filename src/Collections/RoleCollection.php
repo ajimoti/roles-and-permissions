@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Collections;
+namespace Ajimoti\RolesAndPermissions\Collections;
 
 use Illuminate\Support\Collection;
 

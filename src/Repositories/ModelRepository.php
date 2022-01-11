@@ -1,19 +1,19 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Repositories;
+namespace Ajimoti\RolesAndPermissions\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
-use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
-use Tarzancodes\RolesAndPermissions\Concerns\Authorizable;
-use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
-use Tarzancodes\RolesAndPermissions\Contracts\DirectPermissionsContract;
-use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
-use Tarzancodes\RolesAndPermissions\Facades\Check;
-use Tarzancodes\RolesAndPermissions\Models\ModelPermission;
-use Tarzancodes\RolesAndPermissions\Models\ModelRole;
+use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
+use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
+use Ajimoti\RolesAndPermissions\Concerns\Authorizable;
+use Ajimoti\RolesAndPermissions\Concerns\HasRoles;
+use Ajimoti\RolesAndPermissions\Contracts\DirectPermissionsContract;
+use Ajimoti\RolesAndPermissions\Contracts\RolesContract;
+use Ajimoti\RolesAndPermissions\Facades\Check;
+use Ajimoti\RolesAndPermissions\Models\ModelPermission;
+use Ajimoti\RolesAndPermissions\Models\ModelRole;
 
 class ModelRepository implements RolesContract, DirectPermissionsContract
 {
@@ -248,7 +248,7 @@ class ModelRepository implements RolesContract, DirectPermissionsContract
     public function revoke(...$permissions): bool
     {
         if (empty($permissions)) {
-            // Delete every permission if none are specified
+            // Delete every permission if none was specified
             return $this->model->modelPermissions()->delete();
         }
 

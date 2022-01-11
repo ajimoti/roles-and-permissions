@@ -1,16 +1,16 @@
 {
-    "name": "tarzancodes/roles-and-permissions",
-    "description": "Implement roles and permissions on a laravel pivot table",
+    "name": "ajimoti/roles-and-permissions",
+    "description": "Implement roles and permissions on your laravel application, supports many-to-many relationship (pivot tables).",
     "keywords": [
-        "tarzancodes",
+        "ajimoti",
         "laravel",
         "roles-and-permissions"
     ],
-    "homepage": "https://github.com/tarzancodes/roles-and-permissions",
+    "homepage": "https://github.com/ajimoti/roles-and-permissions",
     "license": "MIT",
     "authors": [
         {
-            "name": "ajibukunoluwa",
+            "name": "ajimoti",
             "email": "ibukunajmoti@gmail.com",
             "role": "Developer"
         }
@@ -31,12 +31,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Tarzancodes\\RolesAndPermissions\\": "src"
+            "Ajimoti\\RolesAndPermissions\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tarzancodes\\RolesAndPermissions\\Tests\\": "tests"
+            "Ajimoti\\RolesAndPermissions\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -50,10 +50,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Tarzancodes\\RolesAndPermissions\\RolesAndPermissionsServiceProvider"
+                "Ajimoti\\RolesAndPermissions\\RolesAndPermissionsServiceProvider"
             ],
             "aliases": {
-                "RolesAndPermissions": "Tarzancodes\\RolesAndPermissions\\Facades\\RolesAndPermissions"
+                "RolesAndPermissions": "Ajimoti\\RolesAndPermissions\\Facades\\RolesAndPermissions"
             }
         }
     },

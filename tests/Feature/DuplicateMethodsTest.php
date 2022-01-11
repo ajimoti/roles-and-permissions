@@ -1,8 +1,8 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
+use Ajimoti\RolesAndPermissions\Tests\Models\User;
+use Ajimoti\RolesAndPermissions\Tests\Models\Merchant;
+use Ajimoti\RolesAndPermissions\Tests\Enums\MerchantRole;
 
 beforeEach(function () {
     config()->set('roles-and-permissions.roles_enum.merchant_user', MerchantRole::class);

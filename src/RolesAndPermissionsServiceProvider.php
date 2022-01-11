@@ -1,13 +1,13 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions;
+namespace Ajimoti\RolesAndPermissions;
 
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Tarzancodes\RolesAndPermissions\Commands\GeneratePermissionFile;
-use Tarzancodes\RolesAndPermissions\Commands\GenerateRoleFile;
-use Tarzancodes\RolesAndPermissions\Commands\RolesAndPermissionsCommand;
-use Tarzancodes\RolesAndPermissions\Helpers\Check;
+use Ajimoti\RolesAndPermissions\Commands\GeneratePermissionFile;
+use Ajimoti\RolesAndPermissions\Commands\GenerateRoleFile;
+use Ajimoti\RolesAndPermissions\Commands\RolesAndPermissionsCommand;
+use Ajimoti\RolesAndPermissions\Helpers\Check;
 
 class RolesAndPermissionsServiceProvider extends PackageServiceProvider
 {

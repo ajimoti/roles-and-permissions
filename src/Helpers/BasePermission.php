@@ -1,9 +1,9 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Helpers;
+namespace Ajimoti\RolesAndPermissions\Helpers;
 
 use Illuminate\Support\Collection;
-use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
+use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
 
 abstract class BasePermission extends BaseEnum
 {

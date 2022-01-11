@@ -1,13 +1,13 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
-use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
+use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
+use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
+use Ajimoti\RolesAndPermissions\Helpers\BasePermission;
+use Ajimoti\RolesAndPermissions\Tests\Enums\MerchantRole;
+use Ajimoti\RolesAndPermissions\Tests\Enums\Permission;
+use Ajimoti\RolesAndPermissions\Tests\Enums\Role;
+use Ajimoti\RolesAndPermissions\Tests\Models\Merchant;
+use Ajimoti\RolesAndPermissions\Tests\Models\User;
 
 test('permission collection has the right values', function () {
     $user = User::factory()->create();

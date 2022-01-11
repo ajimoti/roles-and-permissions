@@ -1,9 +1,9 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
+use Ajimoti\RolesAndPermissions\Exceptions\PermissionDeniedException;
+use Ajimoti\RolesAndPermissions\Tests\Enums\Role;
+use Ajimoti\RolesAndPermissions\Tests\Models\Merchant;
+use Ajimoti\RolesAndPermissions\Tests\Models\User;
 
 beforeEach(function () {
     auth()->login(User::factory()->create());

@@ -1,9 +1,9 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Repositories\BelongsToManyRepository;
-use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
+use Ajimoti\RolesAndPermissions\Repositories\BelongsToManyRepository;
+use Ajimoti\RolesAndPermissions\Repositories\ModelRepository;
+use Ajimoti\RolesAndPermissions\Tests\Models\Merchant;
+use Ajimoti\RolesAndPermissions\Tests\Models\User;
 
 beforeEach(fn () => auth()->login(User::factory()->create()));
 

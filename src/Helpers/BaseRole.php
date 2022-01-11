@@ -1,11 +1,11 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Helpers;
+namespace Ajimoti\RolesAndPermissions\Helpers;
 
 use Illuminate\Support\Collection;
-use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Permission;
+use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
+use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
+use Ajimoti\RolesAndPermissions\Tests\Enums\Permission;
 
 abstract class BaseRole extends BaseEnum
 {

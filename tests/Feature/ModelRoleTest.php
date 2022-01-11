@@ -1,11 +1,11 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
-use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationNameException;
-use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
-use Tarzancodes\RolesAndPermissions\Tests\Models\Merchant;
-use Tarzancodes\RolesAndPermissions\Tests\Models\User;
+use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
+use Ajimoti\RolesAndPermissions\Exceptions\InvalidRelationNameException;
+use Ajimoti\RolesAndPermissions\Exceptions\PermissionDeniedException;
+use Ajimoti\RolesAndPermissions\Tests\Enums\MerchantRole;
+use Ajimoti\RolesAndPermissions\Tests\Models\Merchant;
+use Ajimoti\RolesAndPermissions\Tests\Models\User;
 
 beforeEach(function () {
     config()->set('roles-and-permissions.roles_enum.merchant_user', MerchantRole::class);

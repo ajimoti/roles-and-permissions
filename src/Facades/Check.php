@@ -1,11 +1,11 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Facades;
+namespace Ajimoti\RolesAndPermissions\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Tarzancodes\RolesAndPermissions\Helpers\Check
+ * @see \Ajimoti\RolesAndPermissions\Helpers\Check
  */
 class Check extends Facade
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Helpers;
+namespace Ajimoti\RolesAndPermissions\Helpers;
 
 class Check
 {

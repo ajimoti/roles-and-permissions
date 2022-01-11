@@ -1,20 +1,22 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions;
+namespace Ajimoti\RolesAndPermissions;
 
 use Illuminate\Database\Eloquent\Model;
-use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
-use Tarzancodes\RolesAndPermissions\Contracts\RolesContract;
-use Tarzancodes\RolesAndPermissions\Exceptions\InvalidArgumentException;
-use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
-use Tarzancodes\RolesAndPermissions\Models\ModelPermission;
-use Tarzancodes\RolesAndPermissions\Models\ModelRole;
-use Tarzancodes\RolesAndPermissions\Repositories\BelongsToManyRepository;
-use Tarzancodes\RolesAndPermissions\Repositories\ModelRepository;
+use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
+use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
+use Ajimoti\RolesAndPermissions\Contracts\RolesContract;
+use Ajimoti\RolesAndPermissions\Exceptions\InvalidArgumentException;
+use Ajimoti\RolesAndPermissions\Helpers\BasePermission;
+use Ajimoti\RolesAndPermissions\Models\ModelPermission;
+use Ajimoti\RolesAndPermissions\Models\ModelRole;
+use Ajimoti\RolesAndPermissions\Repositories\BelongsToManyRepository;
+use Ajimoti\RolesAndPermissions\Repositories\ModelRepository;
 
 trait HasRoles
 {
+    use HasDirectPermissions;
+
     /**
      * Change the repository used to the pivot table repository
      *
@@ -189,45 +191,11 @@ trait HasRoles
     }
 
     /**
-     * Give a model direct permissions.
-     *
-     * @param string|int|array $permissions
-     * @return bool
-     */
-    public function give(...$permissions)
-    {
-        $permissions = collect($permissions)->flatten()->toArray();
-
-        return $this->repository()->give(...$permissions);
-    }
-
-    /**
-     * Revoke a model permissions.
-     *
-     * @param string|int|array $permissions
-     * @return bool
-     */
-    public function revoke()
-    {
-        $permissions = collect(func_get_args())->flatten()->toArray();
-
-        return $this->repository()->revoke(...$permissions);
-    }
-
-    /**
      * Get the modelRoles relationship.
      */
     public function modelRoles()
     {
         return $this->morphMany(ModelRole::class, 'model');
-    }
-
-    /**
-     * Get the modelPermissions relationship.
-     */
-    public function modelPermissions()
-    {
-        return $this->morphMany(ModelPermission::class, 'model');
     }
 
     /**

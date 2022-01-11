@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Contracts;
+namespace Ajimoti\RolesAndPermissions\Contracts;
 
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
 
 interface RolesContract extends PermissionsContract
 {

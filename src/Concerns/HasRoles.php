@@ -1,9 +1,9 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Concerns;
+namespace Ajimoti\RolesAndPermissions\Concerns;
 
-use Tarzancodes\RolesAndPermissions\Collections\PermissionCollection;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
+use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
+use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
 
 trait HasRoles
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Helpers;
+namespace Ajimoti\RolesAndPermissions\Helpers;
 
 use BadMethodCallException;
 use Exception;
@@ -9,9 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Tarzancodes\RolesAndPermissions\Collections\RoleCollection;
-use Tarzancodes\RolesAndPermissions\Concerns\HasRoles;
-use Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationNameException;
+use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
+use Ajimoti\RolesAndPermissions\Concerns\HasRoles;
+use Ajimoti\RolesAndPermissions\Exceptions\InvalidRelationNameException;
 
 class Pivot
 {

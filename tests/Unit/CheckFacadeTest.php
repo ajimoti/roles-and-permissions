@@ -1,6 +1,6 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Facades\Check;
+use Ajimoti\RolesAndPermissions\Facades\Check;
 
 it('can check that all values in an array exists in another', function () {
     $array = ['foo', 'bar', 'baz'];

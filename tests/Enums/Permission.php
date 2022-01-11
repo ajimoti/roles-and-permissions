@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Tests\Enums;
+namespace Ajimoti\RolesAndPermissions\Tests\Enums;
 
-use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
+use Ajimoti\RolesAndPermissions\Helpers\BasePermission;
 
 final class Permission extends BasePermission
 {

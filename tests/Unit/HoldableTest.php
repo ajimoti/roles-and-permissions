@@ -1,6 +1,6 @@
 <?php
 
-use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
+use Ajimoti\RolesAndPermissions\Tests\Enums\MerchantRole;
 
 beforeEach(function () {
     $this->activeRole = MerchantRole::Distributor;

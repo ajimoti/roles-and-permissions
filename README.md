@@ -109,7 +109,7 @@ Below is a sample of what a `app\Enums\Role.php` class can look like:
 
 namespace  App\Enums;
 
-use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
+use Ajimoti\RolesAndPermissions\Helpers\BaseRole;
 
 final  class  Role  extends  BaseRole
 {
@@ -170,7 +170,7 @@ From the above class, the constants `SuperAdmin`, `Admin` and `Customer` are the
 ```php
 Use app\Enums\Role.php
 
-$roles = Role::all() // returns an instance of Tarzancodes\RolesAndPermissions\Collections\RoleCollection
+$roles = Role::all() // returns an instance of Ajimoti\RolesAndPermissions\Collections\RoleCollection
 $roles->toArray(); // returns an array of all roles
 ```
 
@@ -236,7 +236,7 @@ Below is an example of what the class will look like:
 <?php
 namespace  App\Enums;
 
-use Tarzancodes\RolesAndPermissions\Helpers\BasePermission;
+use Ajimoti\RolesAndPermissions\Helpers\BasePermission;
 
 final  class  Permission  extends  BasePermission
 {
@@ -255,7 +255,7 @@ You can get all the available permissions:
 ```php
 use App\Enums\Permission;
 
-$permissions = Permission::all(); // returns an instance of Tarzancodes\RolesAndPermissions\Collections\PermissionCollection
+$permissions = Permission::all(); // returns an instance of Ajimoti\RolesAndPermissions\Collections\PermissionCollection
 ```
 
 You can decide to have your permissions in separate files. To do this run the command below, then make sure to the `protected static $permissionClass` property on your role enum class to the newly generated permission file.
@@ -272,14 +272,14 @@ protected static $permissionClass = ExamplePermission::class
 ```
 
 ## Basic Usage
-After installation, add the `Tarzancodes\RolesAndPermissions\HasRoles` trait to the model you want to use the package on.
+After installation, add the `Ajimoti\RolesAndPermissions\HasRoles` trait to the model you want to use the package on.
 
 Using the `User` model as an example:
 
 `app\Models\User.php`
 ```php
 use Illuminate\Foundation\Auth\User  as Authenticatable;
-use Tarzancodes\RolesAndPermissions\HasRoles;
+use Ajimoti\RolesAndPermissions\HasRoles;
 
 class  User  extends  Authenticatable
 {
@@ -303,7 +303,7 @@ $user->assign(Role::SuperAdmin, Role::Admin); // returns boolean
 ### Get roles
 ```php
 // Get user roles
-$user->roles(); // returns an instance of Tarzancodes\RolesAndPermissions\Collections\RoleCollection 
+$user->roles(); // returns an instance of Ajimoti\RolesAndPermissions\Collections\RoleCollection 
 
 foreach($user->roles() as $role) {
 	dd($role); // returns an instance of the role enum class.
@@ -330,7 +330,7 @@ From the above snippet, each `$role` is an instance of the `App\Enums\Role` enum
 | `key` | This is the same text as the constant's declaration |
 |`description`|This is a conversion of the constant to `constant` to `sentence case`. You can use the `getDescription()` method to overwrite this value. |
 
->`Tarzancodes\RolesAndPermissions\Collections\RoleCollection` extends laravel's `Illuminate\Support\Collection`. This means you can treat the `roles()` response as a laravel collection. You can chain any method to e.g `$user->roles()->toArray()`
+>`Ajimoti\RolesAndPermissions\Collections\RoleCollection` extends laravel's `Illuminate\Support\Collection`. This means you can treat the `roles()` response as a laravel collection. You can chain any method to e.g `$user->roles()->toArray()`
 
 ### Get Permissions
 ```php
@@ -454,7 +454,7 @@ From the above database structure, the content of the `app\Models\User.php` shou
 `app\Models\User.php`
 ```php
 use Illuminate\Foundation\Auth\User  as Authenticatable;
-use Tarzancodes\RolesAndPermissions\HasRoles;
+use Ajimoti\RolesAndPermissions\HasRoles;
 
 class User extends Authenticatable
 {
@@ -468,11 +468,11 @@ class User extends Authenticatable
     // ...
 }
 ```
-By importing the `Tarzancodes\RolesAndPermissions\HasRoles` trait and having the `BelongsToMany` relationship, a user can now be assigned roles on a merchant, and perform permissions associated with the roles they are assigned.
+By importing the `Ajimoti\RolesAndPermissions\HasRoles` trait and having the `BelongsToMany` relationship, a user can now be assigned roles on a merchant, and perform permissions associated with the roles they are assigned.
 
 After doing the above, the package provides a `of()` method that will be used to perform roles and permissions related logic on the pivot record.
 
-The `of()` method returns an instance of `Tarzancodes\RolesAndPermissions\Repositories\BelongsToManyRepository` class, which has the same methods used in the [Basic usage section](https://blah.com)
+The `of()` method returns an instance of `Ajimoti\RolesAndPermissions\Repositories\BelongsToManyRepository` class, which has the same methods used in the [Basic usage section](https://blah.com)
 
 `assign()`, `holds()`, `can()`, `hasRole()`, `authorize()`, `authorizeRole()`, and `removeRoles()`
 
@@ -613,7 +613,7 @@ $user->of($merchant)->removeRoles([Role::SuperAdmin, Role::Admin]); // returns b
 ```
 
 >Note: Provided the model extends Laravel `
-Illuminate\Foundation\Auth\User`, these methods are also available to the authenticated user via the `Auth` facade's `user` method. i.e `auth()->user()->of($merchant)` will also return an instance of `Tarzancodes\RolesAndPermissions\Repositories\BelongsToManyRepository`
+Illuminate\Foundation\Auth\User`, these methods are also available to the authenticated user via the `Auth` facade's `user` method. i.e `auth()->user()->of($merchant)` will also return an instance of `Ajimoti\RolesAndPermissions\Repositories\BelongsToManyRepository`
 
 By default, when the `removeRoles()` method is called on a pivot record, the record is not deleted. Instead, the `role` column of that record is set to `null`. If you want the record to be deleted when `removeRoles()` is called, set the `$deletePivotOnRemove` property in your role enum class to `true`.
 
@@ -629,7 +629,7 @@ For example:
 <?php
 namespace  App\Enums;
 
-use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
+use Ajimoti\RolesAndPermissions\Helpers\BaseRole;
 
 protected static $useHierarchy = true;
 
@@ -663,7 +663,7 @@ From the structure above, the following are true
 - A `Admin` can `edit products` and `buy products` (inherits the `customer` permissions).
 - A `SuperAdmin` can `delete products`, `edit products` and `buy products` (inherits both `Admin` and `Customer` permissions).  
 
-It is important that the roles in the `permissions()` method appear in the same order they are declared as constants. If not an `Tarzancodes\RolesAndPermissions\Exceptions\InvalidRoleHierarchyException` exception will be thrown. You can checkout the [exception section](https://blah.com) for better understanding.
+It is important that the roles in the `permissions()` method appear in the same order they are declared as constants. If not an `Ajimoti\RolesAndPermissions\Exceptions\InvalidRoleHierarchyException` exception will be thrown. You can checkout the [exception section](https://blah.com) for better understanding.
 
 ### Getting other roles
 There are times you want to get the lower or higher roles of a selected role. Explained below is how to achieve this:
@@ -777,7 +777,7 @@ $user->of($merchant)
 #### Invalid Relation Name Exception
 This exception is only applies when using the package on a pivot table.
 
->An instance of `Tarzancodes\RolesAndPermissions\Exceptions\InvalidRelationNameExceptionException` is thrown whenever the package can not resolve the `belongsToMany` relationship name
+>An instance of `Ajimoti\RolesAndPermissions\Exceptions\InvalidRelationNameExceptionException` is thrown whenever the package can not resolve the `belongsToMany` relationship name
 
 When the `of()` method is chained to a model, the package will automatically use Laravel relationship naming convention to guess the relationship name. If the package cannot find a method with the relationship name in your model class, this exception is thrown.
 
@@ -803,12 +803,12 @@ $user->of($merchant, 'userMerchants')->assign(Role::SuperAdmin);
 ```
 
 ### Permission Denied Exception
-An instance of `Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException` is thrown when a provided `roles` or `permissions` are not assigned to the model.
+An instance of `Ajimoti\RolesAndPermissions\Exceptions\PermissionDeniedException` is thrown when a provided `roles` or `permissions` are not assigned to the model.
 
 You will only experience these exceptions when using the `authorize()` or `authorizeRole()` method. If you do not want exceptions to be thrown, you should use the any of the other methods as they only return booleans e.g. `can()`, `holds()`, `hasRole()`
 
 ### Invalid Role Hierarchy Exception
-An instance of `Tarzancodes\RolesAndPermissions\Exceptions\InvalidRoleHierarchyException` is thrown when the `$useHierarchy` static property of a role enum class is set to true, and the roles in the `permissions()` method do NOT appear in the same order that they are declared as constants.
+An instance of `Ajimoti\RolesAndPermissions\Exceptions\InvalidRoleHierarchyException` is thrown when the `$useHierarchy` static property of a role enum class is set to true, and the roles in the `permissions()` method do NOT appear in the same order that they are declared as constants.
 
 When setting the roles to be in hierarchy, it is important that the roles constants are arranged in the same order that they were declared in the `permissions()` array. If they are not arranged in the same order they were declared, the `InvalidRoleHierarchyException` is thrown.
 
@@ -834,7 +834,7 @@ The right way to do this is to have two different enum files, have the general r
 <?php
 namespace  App\Enums;
 
-use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
+use Ajimoti\RolesAndPermissions\Helpers\BaseRole;
 
 final  class  Role  extends  BaseRole
 {
@@ -857,7 +857,7 @@ The command above will generate a `app\Enums\MerchantRole.php`. We can then upda
 <?php
 namespace  App\Enums;
 
-use Tarzancodes\RolesAndPermissions\Helpers\BaseRole;
+use Ajimoti\RolesAndPermissions\Helpers\BaseRole;
 
 final  class  MerchantRole  extends  BaseRole
 {

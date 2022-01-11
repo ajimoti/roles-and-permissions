@@ -1,8 +1,8 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Concerns;
+namespace Ajimoti\RolesAndPermissions\Concerns;
 
-use Tarzancodes\RolesAndPermissions\Exceptions\PermissionDeniedException;
+use Ajimoti\RolesAndPermissions\Exceptions\PermissionDeniedException;
 
 trait Authorizable
 {

@@ -1,12 +1,12 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Tests\Models;
+namespace Ajimoti\RolesAndPermissions\Tests\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Tarzancodes\RolesAndPermissions\HasRoles;
-use Tarzancodes\RolesAndPermissions\Tests\Factories\UserFactory;
+use Ajimoti\RolesAndPermissions\HasRoles;
+use Ajimoti\RolesAndPermissions\Tests\Factories\UserFactory;
 
 class User extends Authenticatable
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Exceptions;
+namespace Ajimoti\RolesAndPermissions\Exceptions;
 
 use Exception;
 

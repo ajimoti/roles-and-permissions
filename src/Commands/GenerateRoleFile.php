@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Commands;
+namespace Ajimoti\RolesAndPermissions\Commands;
 
 use Illuminate\Console\GeneratorCommand;
 

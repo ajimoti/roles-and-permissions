@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Contracts;
+namespace Ajimoti\RolesAndPermissions\Contracts;
 
 interface PivotContract
 {

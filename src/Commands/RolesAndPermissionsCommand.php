@@ -1,6 +1,6 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Commands;
+namespace Ajimoti\RolesAndPermissions\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
@@ -23,7 +23,7 @@ class RolesAndPermissionsCommand extends Command
 
     public function handle(): int
     {
-        $this->info('Installing Tarzancodes roles and permissions...');
+        $this->info('Installing Ajimoti roles and permissions...');
 
         $this->info('Publishing configuration...');
 
@@ -81,7 +81,7 @@ class RolesAndPermissionsCommand extends Command
     private function publishConfiguration($forcePublish = false)
     {
         $params = [
-            '--provider' => "Tarzancodes\RolesAndPermissions\RolesAndPermissionsServiceProvider",
+            '--provider' => "Ajimoti\RolesAndPermissions\RolesAndPermissionsServiceProvider",
             '--tag' => "roles-and-permissions-config",
         ];
 

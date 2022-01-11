@@ -1,12 +1,12 @@
 <?php
 
-namespace Tarzancodes\RolesAndPermissions\Tests;
+namespace Ajimoti\RolesAndPermissions\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Tarzancodes\RolesAndPermissions\RolesAndPermissionsServiceProvider;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\MerchantRole;
-use Tarzancodes\RolesAndPermissions\Tests\Enums\Role;
+use Ajimoti\RolesAndPermissions\RolesAndPermissionsServiceProvider;
+use Ajimoti\RolesAndPermissions\Tests\Enums\MerchantRole;
+use Ajimoti\RolesAndPermissions\Tests\Enums\Role;
 
 class TestCase extends Orchestra
 {
@@ -15,7 +15,7 @@ class TestCase extends Orchestra
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(
-            fn (string $modelName) => 'Tarzancodes\\RolesAndPermissions\\Tests\\Factories\\'.class_basename($modelName).'Factory'
+            fn (string $modelName) => 'Ajimoti\\RolesAndPermissions\\Tests\\Factories\\'.class_basename($modelName).'Factory'
         );
     }
 
