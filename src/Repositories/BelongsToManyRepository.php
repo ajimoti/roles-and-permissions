@@ -2,11 +2,6 @@
 
 namespace Ajimoti\RolesAndPermissions\Repositories;
 
-use BadMethodCallException;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use InvalidArgumentException;
 use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
 use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
 use Ajimoti\RolesAndPermissions\Concerns\Authorizable;
@@ -15,6 +10,11 @@ use Ajimoti\RolesAndPermissions\Contracts\RolesContract;
 use Ajimoti\RolesAndPermissions\Facades\Check;
 use Ajimoti\RolesAndPermissions\Helpers\BasePermission;
 use Ajimoti\RolesAndPermissions\Helpers\Pivot;
+use BadMethodCallException;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class BelongsToManyRepository implements RolesContract, PivotContract
 {

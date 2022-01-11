@@ -2,11 +2,11 @@
 
 namespace Ajimoti\RolesAndPermissions\Tests\Models;
 
+use Ajimoti\RolesAndPermissions\HasRoles;
+use Ajimoti\RolesAndPermissions\Tests\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Ajimoti\RolesAndPermissions\HasRoles;
-use Ajimoti\RolesAndPermissions\Tests\Factories\UserFactory;
 
 class User extends Authenticatable
 {

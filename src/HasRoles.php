@@ -2,7 +2,6 @@
 
 namespace Ajimoti\RolesAndPermissions;
 
-use Illuminate\Database\Eloquent\Model;
 use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
 use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
 use Ajimoti\RolesAndPermissions\Exceptions\InvalidArgumentException;
@@ -10,6 +9,7 @@ use Ajimoti\RolesAndPermissions\Helpers\BasePermission;
 use Ajimoti\RolesAndPermissions\Models\ModelRole;
 use Ajimoti\RolesAndPermissions\Repositories\BelongsToManyRepository;
 use Ajimoti\RolesAndPermissions\Repositories\ModelRepository;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasRoles
 {

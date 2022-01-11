@@ -2,8 +2,8 @@
 
 namespace Ajimoti\RolesAndPermissions\Tests\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Ajimoti\RolesAndPermissions\Tests\Models\Merchant;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class MerchantFactory extends Factory
 {

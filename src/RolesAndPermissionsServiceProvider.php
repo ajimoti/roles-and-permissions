@@ -2,12 +2,12 @@
 
 namespace Ajimoti\RolesAndPermissions;
 
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Ajimoti\RolesAndPermissions\Commands\GeneratePermissionFile;
 use Ajimoti\RolesAndPermissions\Commands\GenerateRoleFile;
 use Ajimoti\RolesAndPermissions\Commands\RolesAndPermissionsCommand;
 use Ajimoti\RolesAndPermissions\Helpers\Check;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class RolesAndPermissionsServiceProvider extends PackageServiceProvider
 {
