@@ -91,4 +91,4 @@ php artisan roles:install
 ```
 
 ## Documentation
-You can read the proper [documentation here](https://roles.ajimoti.com/docs/intro)
+Visit [https://roles.ajimoti.com/docs/intro](https://roles.ajimoti.com/docs/intro) to better understand how to use the package.
