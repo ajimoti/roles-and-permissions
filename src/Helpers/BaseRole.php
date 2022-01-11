@@ -2,10 +2,10 @@
 
 namespace Ajimoti\RolesAndPermissions\Helpers;
 
-use Illuminate\Support\Collection;
 use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
 use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
 use Ajimoti\RolesAndPermissions\Tests\Enums\Permission;
+use Illuminate\Support\Collection;
 
 abstract class BaseRole extends BaseEnum
 {

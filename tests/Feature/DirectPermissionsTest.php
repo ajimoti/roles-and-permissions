@@ -1,8 +1,8 @@
 <?php
 
-use Ajimoti\RolesAndPermissions\Tests\Models\User;
-use Ajimoti\RolesAndPermissions\Tests\Enums\Permission;
 use Ajimoti\RolesAndPermissions\Exceptions\PermissionDeniedException;
+use Ajimoti\RolesAndPermissions\Tests\Enums\Permission;
+use Ajimoti\RolesAndPermissions\Tests\Models\User;
 
 beforeEach(function () {
     $this->model = User::factory()->create();
@@ -35,7 +35,6 @@ it('can fetch direct permissions', function () {
     expect($this->model->give($this->permission))->toBeTrue();
 
     expect($this->model->directPermissions()->first()->value)->toBe($this->permission);
-
 })->group('directPermissions');
 
 it('can revoke direct permission', function () {

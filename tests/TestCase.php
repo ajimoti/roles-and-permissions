@@ -2,11 +2,11 @@
 
 namespace Ajimoti\RolesAndPermissions\Tests;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Orchestra\Testbench\TestCase as Orchestra;
 use Ajimoti\RolesAndPermissions\RolesAndPermissionsServiceProvider;
 use Ajimoti\RolesAndPermissions\Tests\Enums\MerchantRole;
 use Ajimoti\RolesAndPermissions\Tests\Enums\Role;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {

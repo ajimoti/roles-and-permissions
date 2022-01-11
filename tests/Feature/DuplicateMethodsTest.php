@@ -1,8 +1,8 @@
 <?php
 
-use Ajimoti\RolesAndPermissions\Tests\Models\User;
-use Ajimoti\RolesAndPermissions\Tests\Models\Merchant;
 use Ajimoti\RolesAndPermissions\Tests\Enums\MerchantRole;
+use Ajimoti\RolesAndPermissions\Tests\Models\Merchant;
+use Ajimoti\RolesAndPermissions\Tests\Models\User;
 
 beforeEach(function () {
     config()->set('roles-and-permissions.roles_enum.merchant_user', MerchantRole::class);

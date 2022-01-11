@@ -2,10 +2,10 @@
 
 namespace Ajimoti\RolesAndPermissions\Tests\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Ajimoti\RolesAndPermissions\HasRoles;
 use Ajimoti\RolesAndPermissions\Tests\Factories\MerchantFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Merchant extends Model
 {

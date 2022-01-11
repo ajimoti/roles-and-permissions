@@ -2,9 +2,6 @@
 
 namespace Ajimoti\RolesAndPermissions\Repositories;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use InvalidArgumentException;
 use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
 use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
 use Ajimoti\RolesAndPermissions\Concerns\Authorizable;
@@ -14,6 +11,9 @@ use Ajimoti\RolesAndPermissions\Contracts\RolesContract;
 use Ajimoti\RolesAndPermissions\Facades\Check;
 use Ajimoti\RolesAndPermissions\Models\ModelPermission;
 use Ajimoti\RolesAndPermissions\Models\ModelRole;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 
 class ModelRepository implements RolesContract, DirectPermissionsContract
 {

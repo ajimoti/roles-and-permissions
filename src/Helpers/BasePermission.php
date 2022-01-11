@@ -2,8 +2,8 @@
 
 namespace Ajimoti\RolesAndPermissions\Helpers;
 
-use Illuminate\Support\Collection;
 use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
+use Illuminate\Support\Collection;
 
 abstract class BasePermission extends BaseEnum
 {

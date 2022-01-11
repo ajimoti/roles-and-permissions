@@ -2,9 +2,9 @@
 
 namespace Ajimoti\RolesAndPermissions;
 
+use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
 use Ajimoti\RolesAndPermissions\Models\ModelPermission;
 use Ajimoti\RolesAndPermissions\Repositories\ModelRepository;
-use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
 
 trait HasDirectPermissions
 {

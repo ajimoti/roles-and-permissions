@@ -2,8 +2,8 @@
 
 namespace Ajimoti\RolesAndPermissions\Tests\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Ajimoti\RolesAndPermissions\Tests\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class UserFactory extends Factory
 {
