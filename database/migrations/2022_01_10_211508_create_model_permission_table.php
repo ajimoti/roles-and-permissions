@@ -15,7 +15,8 @@ class CreateModelPermissionTable extends Migration
     {
         Schema::create('model_permission', function (Blueprint $table) {
             $table->string('permission');
-            $table->morphs('model');
+            $table->string('model_type');
+            $table->string('model_id'); // for cases where the model id is uuid
             $table->timestamps();
 
             $table->unique(['permission', 'model_id', 'model_type']);

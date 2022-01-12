@@ -15,7 +15,8 @@ class CreateModelRoleTable extends Migration
     {
         Schema::create('model_role', function (Blueprint $table) {
             $table->string('role');
-            $table->morphs('model');
+            $table->string('model_type');
+            $table->string('model_id');  // for cases where the model id is uuid
             $table->timestamps();
 
             $table->unique(['role', 'model_id', 'model_type']);
