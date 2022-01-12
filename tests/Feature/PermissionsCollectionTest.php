@@ -18,9 +18,9 @@ test('permission collection has the right values', function () {
 
     expect(
         array_diff(
-        $user->permissions()->toArray(),
-        Role::getPermissions(Role::Admin, Role::SuperAdmin)->toArray()
-    )
+            $user->permissions()->toArray(),
+            Role::getPermissions(Role::Admin, Role::SuperAdmin)->toArray()
+        )
     )->toBeEmpty();
 
     $user->permissions()->each(function ($permission) {
