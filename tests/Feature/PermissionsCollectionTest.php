@@ -16,9 +16,11 @@ test('permission collection has the right values', function () {
 
     expect($user->permissions())->toBeInstanceOf(PermissionCollection::class);
 
-    expect(array_diff(
+    expect(
+        array_diff(
         $user->permissions()->toArray(),
-        Role::getPermissions(Role::Admin, Role::SuperAdmin)->toArray())
+        Role::getPermissions(Role::Admin, Role::SuperAdmin)->toArray()
+    )
     )->toBeEmpty();
 
     $user->permissions()->each(function ($permission) {
