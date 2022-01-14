@@ -178,6 +178,11 @@ class ModelRepository implements RolesContract, DirectPermissionsContract
         return new RoleCollection($cleanRoles ?? []);
     }
 
+    /**
+     * Give the model's permissions directly.
+     *
+     * @return bool
+     */
     public function give(...$permissions): bool
     {
         $permissions = collect($permissions)->flatten()->all();
