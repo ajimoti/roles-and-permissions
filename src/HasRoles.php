@@ -9,11 +9,14 @@ use Ajimoti\RolesAndPermissions\Helpers\BasePermission;
 use Ajimoti\RolesAndPermissions\Models\ModelRole;
 use Ajimoti\RolesAndPermissions\Repositories\BelongsToManyRepository;
 use Ajimoti\RolesAndPermissions\Repositories\ModelRepository;
+use Ajimoti\RolesAndPermissions\Traits\HasDirectPermissions;
+use Ajimoti\RolesAndPermissions\Traits\SupportsMagicCalls;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasRoles
 {
     use HasDirectPermissions;
+    use SupportsMagicCalls;
 
     /**
      * Change the repository used to the pivot table repository
@@ -204,5 +207,17 @@ trait HasRoles
     public function repository(): ModelRepository
     {
         return new ModelRepository($this);
+    }
+
+    public function __call($method, $parameters)
+    {
+        if ($this->isPossibleMagicCall($method)) {
+            return $this->performMagic(
+                $method,
+                $this->repository()->getRoleEnumClass()
+            );
+        }
+
+        return parent::__call($method, $parameters);
     }
 }

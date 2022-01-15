@@ -1,6 +1,6 @@
 <?php
 
-namespace Ajimoti\RolesAndPermissions;
+namespace Ajimoti\RolesAndPermissions\Traits;
 
 use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
 use Ajimoti\RolesAndPermissions\Models\ModelPermission;
