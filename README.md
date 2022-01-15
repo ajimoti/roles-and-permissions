@@ -24,9 +24,13 @@ $user->assign(Role::SuperAdmin);
 
 // Check if the user has the role
 $user->hasRole(Role::SuperAdmin);
+// Or 
+$user->isSuperAdmin(); // returns true
 
 // Check if the user can perform a operation
-$user->can(Permission::DeleteTransactions);
+$user->can(Permission::DeleteTransactions); 
+// Or 
+$user->canDeleteTransactions(); 
 
 // Check if the user has multiple permissions
 $user->holds(Permission::DeleteTransactions, Permission::BlockUsers);
