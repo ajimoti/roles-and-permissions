@@ -3,7 +3,6 @@
 namespace Ajimoti\RolesAndPermissions\Traits;
 
 use Illuminate\Support\Str;
-use Ajimoti\RolesAndPermissions\Contracts\RolesContract;
 
 trait SupportsMagicCalls
 {
@@ -43,8 +42,8 @@ trait SupportsMagicCalls
             // When the user uses the magic method is[Role]()
             // to check if the model has the role.
             $role = substr($method, 2);
-            return $this->hasRole(constant("{$enumClass}::{$role}"));
 
+            return $this->hasRole(constant("{$enumClass}::{$role}"));
         } elseif (Str::startsWith($method, 'can') && Str::length($method) > 3) {
             // When the user uses the magic method can[Permission]()
             // to check if the model has the permission.
