@@ -9,9 +9,9 @@ use Ajimoti\RolesAndPermissions\Helpers\BasePermission;
 use Ajimoti\RolesAndPermissions\Models\ModelRole;
 use Ajimoti\RolesAndPermissions\Repositories\BelongsToManyRepository;
 use Ajimoti\RolesAndPermissions\Repositories\ModelRepository;
-use Illuminate\Database\Eloquent\Model;
 use Ajimoti\RolesAndPermissions\Traits\HasDirectPermissions;
 use Ajimoti\RolesAndPermissions\Traits\SupportsMagicCalls;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasRoles
 {
@@ -213,7 +213,8 @@ trait HasRoles
     {
         if ($this->isPossibleMagicCall($method)) {
             return $this->performMagic(
-                $method, $this->repository()->getRoleEnumClass()
+                $method,
+                $this->repository()->getRoleEnumClass()
             );
         }
 

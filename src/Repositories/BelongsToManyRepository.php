@@ -10,12 +10,12 @@ use Ajimoti\RolesAndPermissions\Contracts\RolesContract;
 use Ajimoti\RolesAndPermissions\Facades\Check;
 use Ajimoti\RolesAndPermissions\Helpers\BasePermission;
 use Ajimoti\RolesAndPermissions\Helpers\Pivot;
+use Ajimoti\RolesAndPermissions\Traits\SupportsMagicCalls;
 use BadMethodCallException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Ajimoti\RolesAndPermissions\Traits\SupportsMagicCalls;
 
 class BelongsToManyRepository implements RolesContract, PivotContract
 {
@@ -253,7 +253,8 @@ class BelongsToManyRepository implements RolesContract, PivotContract
 
         if ($this->isPossibleMagicCall($method)) {
             return $this->performMagic(
-                $method, $this->pivot->getRoleEnumClass()
+                $method,
+                $this->pivot->getRoleEnumClass()
             );
         }
 
