@@ -265,7 +265,7 @@ class ModelRepository implements RolesContract, DirectPermissionsContract
      *
      * @return string
      */
-    private function getRoleEnumClass(): string
+    public function getRoleEnumClass(): string
     {
         $tableName = $this->model->getTable();
 

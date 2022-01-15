@@ -15,10 +15,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use Ajimoti\RolesAndPermissions\Traits\SupportsMagicCalls;
 
 class BelongsToManyRepository implements RolesContract, PivotContract
 {
     use Authorizable;
+    use SupportsMagicCalls;
 
     /**
      * Methods used to filter results when defining a 'belongsToMany' relationship
@@ -205,6 +207,7 @@ class BelongsToManyRepository implements RolesContract, PivotContract
             return $query->detach();
         }
 
+        // If the role enum class isn't set to delete pivot records, we'll just set the role column to null.
         return $query->updateExistingPivot($this->relatedModel->id, [$this->roleColumnName => null]);
     }
 
@@ -246,6 +249,12 @@ class BelongsToManyRepository implements RolesContract, PivotContract
             $this->pivot->appendCondition($method, $parameters);
 
             return $this;
+        }
+
+        if ($this->isPossibleMagicCall($method)) {
+            return $this->performMagic(
+                $method, $this->pivot->getRoleEnumClass()
+            );
         }
 
         throw new BadMethodCallException(sprintf(
