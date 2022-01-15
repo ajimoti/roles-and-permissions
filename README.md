@@ -1,4 +1,4 @@
-# Laravel roles and permissions
+# Simple Laravel roles and permissions
 ![Banner](https://banners.beyondco.de/Simple%20Laravel%20Roles%20and%20Permissions.png?theme=dark&packageManager=composer+require&packageName=ajimoti%2Froles-and-permissions&pattern=architect&style=style_1&description=Assign+roles+and+permission+to+laravel+model&md=1&showWatermark=1&fontSize=100px&images=https%3A%2F%2Flaravel.com%2Fimg%2Flogomark.min.svg)
 
 ## Introduction
