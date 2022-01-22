@@ -10,6 +10,7 @@ use Ajimoti\RolesAndPermissions\Contracts\RolesContract;
 use Ajimoti\RolesAndPermissions\Facades\Check;
 use Ajimoti\RolesAndPermissions\Helpers\BasePermission;
 use Ajimoti\RolesAndPermissions\Helpers\Pivot;
+use Ajimoti\RolesAndPermissions\Traits\InteractsWithModel;
 use Ajimoti\RolesAndPermissions\Traits\SupportsMagicCalls;
 use BadMethodCallException;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +20,7 @@ use InvalidArgumentException;
 
 class BelongsToManyRepository implements RolesContract, PivotContract
 {
+    use InteractsWithModel;
     use Authorizable;
     use SupportsMagicCalls;
 

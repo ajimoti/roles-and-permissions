@@ -10,11 +10,13 @@ use Ajimoti\RolesAndPermissions\Models\ModelRole;
 use Ajimoti\RolesAndPermissions\Repositories\BelongsToManyRepository;
 use Ajimoti\RolesAndPermissions\Repositories\ModelRepository;
 use Ajimoti\RolesAndPermissions\Traits\HasDirectPermissions;
+use Ajimoti\RolesAndPermissions\Traits\InteractsWithModel;
 use Ajimoti\RolesAndPermissions\Traits\SupportsMagicCalls;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasRoles
 {
+    use InteractsWithModel;
     use HasDirectPermissions;
     use SupportsMagicCalls;
 
