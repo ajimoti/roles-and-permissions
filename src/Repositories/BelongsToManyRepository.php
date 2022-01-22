@@ -16,9 +16,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use Ajimoti\RolesAndPermissions\Traits\InteractsWithModel;
 
 class BelongsToManyRepository implements RolesContract, PivotContract
 {
+    use InteractsWithModel;
     use Authorizable;
     use SupportsMagicCalls;
 

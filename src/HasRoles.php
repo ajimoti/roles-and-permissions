@@ -12,9 +12,11 @@ use Ajimoti\RolesAndPermissions\Repositories\ModelRepository;
 use Ajimoti\RolesAndPermissions\Traits\HasDirectPermissions;
 use Ajimoti\RolesAndPermissions\Traits\SupportsMagicCalls;
 use Illuminate\Database\Eloquent\Model;
+use Ajimoti\RolesAndPermissions\Traits\InteractsWithModel;
 
 trait HasRoles
 {
+    use InteractsWithModel;
     use HasDirectPermissions;
     use SupportsMagicCalls;
 
