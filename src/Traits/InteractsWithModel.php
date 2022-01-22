@@ -2,8 +2,8 @@
 
 namespace Ajimoti\RolesAndPermissions\Traits;
 
-use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
 use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
+use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
 
 trait InteractsWithModel
 {
