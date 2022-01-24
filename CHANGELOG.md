@@ -2,6 +2,15 @@
 
 All notable changes to `roles-and-permissions` will be documented in this file.
 
+## 1.1.2 - 2022-01-24
+
+** Minor Changes**
+
+- [ ] Merged `traits` folder content into `concerns` folder
+- [ ] Fetched all roles and permissions outside loops.
+
+**Full Changelog**: https://github.com/ajimoti/roles-and-permissions/compare/1.1.1...1.1.2
+
 ## 1.1.1 - 2022-01-22
 
 ## What's Changed
