@@ -158,10 +158,11 @@ class BelongsToManyRepository implements RolesContract, PivotContract
     {
         $roles = collect($roles)->flatten()->toArray();
         $roleEnumClass = $this->pivot->getRoleEnumClass();
+        $allRoles = $roleEnumClass::all()->toArray();
 
         DB::beginTransaction();
         foreach ($roles as $role) {
-            if (! in_array($role, $roleEnumClass::all()->toArray())) {
+            if (! in_array($role, $allRoles)) {
                 throw new InvalidArgumentException(
                     sprintf(
                         'The role "%s" does not exist on the "%s" enum class.',

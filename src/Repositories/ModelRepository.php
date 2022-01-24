@@ -98,6 +98,7 @@ class ModelRepository implements RolesContract, DirectPermissionsContract
     {
         $roles = collect($roles)->flatten()->all();
         $roleEnumClass = $this->getRoleEnumClass();
+        $allRoles = $roleEnumClass::all()->toArray();
 
         $exitingRoles = $this->model->modelRoles()->whereIn($this->getRoleColumnName(), $roles)
                             ->select($this->getRoleColumnName())
@@ -106,7 +107,7 @@ class ModelRepository implements RolesContract, DirectPermissionsContract
 
         DB::beginTransaction();
         foreach ($roles as $role) {
-            if (! in_array($role, $roleEnumClass::all()->toArray())) {
+            if (! in_array($role, $allRoles)) {
                 throw new InvalidArgumentException(
                     sprintf(
                         'The role "%s" does not exist on the "%s" enum class.',
@@ -187,6 +188,7 @@ class ModelRepository implements RolesContract, DirectPermissionsContract
     {
         $permissions = collect($permissions)->flatten()->all();
         $roleEnumClass = $this->getRoleEnumClass();
+        $allPermissions = $roleEnumClass::$permissionClass::all()->toArray();
 
         $exitingPermissions = $this->model->modelPermissions()->whereIn('permission', $permissions)
                             ->get()->pluck('permission')
@@ -194,7 +196,7 @@ class ModelRepository implements RolesContract, DirectPermissionsContract
 
         DB::beginTransaction();
         foreach ($permissions as $permission) {
-            if (! in_array($permission, $roleEnumClass::$permissionClass::all()->toArray())) {
+            if (! in_array($permission, $allPermissions)) {
                 throw new InvalidArgumentException(
                     sprintf(
                         'The permission "%s" does not exist on the "%s" enum class.',
