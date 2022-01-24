@@ -4,14 +4,14 @@ namespace Ajimoti\RolesAndPermissions;
 
 use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
 use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
+use Ajimoti\RolesAndPermissions\Concerns\HasDirectPermissions;
+use Ajimoti\RolesAndPermissions\Concerns\InteractsWithModel;
+use Ajimoti\RolesAndPermissions\Concerns\SupportsMagicCalls;
 use Ajimoti\RolesAndPermissions\Exceptions\InvalidArgumentException;
 use Ajimoti\RolesAndPermissions\Helpers\BasePermission;
 use Ajimoti\RolesAndPermissions\Models\ModelRole;
 use Ajimoti\RolesAndPermissions\Repositories\BelongsToManyRepository;
 use Ajimoti\RolesAndPermissions\Repositories\ModelRepository;
-use Ajimoti\RolesAndPermissions\Concerns\HasDirectPermissions;
-use Ajimoti\RolesAndPermissions\Concerns\InteractsWithModel;
-use Ajimoti\RolesAndPermissions\Concerns\SupportsMagicCalls;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasRoles
