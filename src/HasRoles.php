@@ -9,9 +9,9 @@ use Ajimoti\RolesAndPermissions\Helpers\BasePermission;
 use Ajimoti\RolesAndPermissions\Models\ModelRole;
 use Ajimoti\RolesAndPermissions\Repositories\BelongsToManyRepository;
 use Ajimoti\RolesAndPermissions\Repositories\ModelRepository;
-use Ajimoti\RolesAndPermissions\Traits\HasDirectPermissions;
-use Ajimoti\RolesAndPermissions\Traits\InteractsWithModel;
-use Ajimoti\RolesAndPermissions\Traits\SupportsMagicCalls;
+use Ajimoti\RolesAndPermissions\Concerns\HasDirectPermissions;
+use Ajimoti\RolesAndPermissions\Concerns\InteractsWithModel;
+use Ajimoti\RolesAndPermissions\Concerns\SupportsMagicCalls;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasRoles

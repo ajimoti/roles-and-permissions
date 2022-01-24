@@ -1,6 +1,6 @@
 <?php
 
-namespace Ajimoti\RolesAndPermissions\Traits;
+namespace Ajimoti\RolesAndPermissions\Concerns;
 
 use Ajimoti\RolesAndPermissions\Collections\PermissionCollection;
 use Ajimoti\RolesAndPermissions\Collections\RoleCollection;
