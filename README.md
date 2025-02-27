@@ -5,10 +5,10 @@
 
 This package allows you to assign roles and permissions to any laravel model, or on a pivot table (`many to many relationship`).
 
-Built and written by [Ajimoti Ibukun](https://www.linkedin.com/in/ibukun-ajimoti-3420a786/)
+Built and written by [Ajimoti John](https://www.linkedin.com/in/john-ajimoti-3420a786/)
 
 ## Documentation
-You can read the proper [documentation here](https://roles.ajimoti.com/docs/intro)
+You can read the proper [documentation here](https://roles-and-permissions-documentation-two.vercel.app/docs/intro)
 
 ## Quick Samples
 
@@ -96,7 +96,7 @@ php artisan roles:install
 ```
 
 ## Documentation
-Visit [https://roles.ajimoti.com/docs/intro](https://roles.ajimoti.com/docs/intro) to better understand how to use the package.
+Visit [documentation here](https://roles-and-permissions-documentation-two.vercel.app/docs/intro) to better understand how to use the package.
 
 ## Testing
 
